@@ -2548,6 +2548,87 @@ loop.run_until_complete(asyncio.wait(tasks))
 
 
 
+# Aiohttp
+
+urllib 和 requests 模块都不支持异步，所以这里引入另外一个库 aiohttp，用法和 requests 类似
+
+```
+# 实例化一个请求对象
+with aiohttp.ClientSession() as sess:
+	with sess.get(url, headers, params, proxy)
+	with sess.get(url, headers, data, proxy)
+```
+
+
+
+只有 proxy 参数与 requests 不一样
+
+```
+proxy = "http://ip:port"
+```
+
+> requests 中代理是用字典，aiohttp是用字符串
+
+
+
+获取返回值
+
+```
+# 返回文本
+res = sess.text()
+
+# 返回bytes
+res = sess.read()
+```
+
+
+
+# JS 混淆、逆向
+
+利用 execjs 执行网页上的 js
+
+```
+# 利用当前页面JS文件，对需要POST的DATA进行加密
+import execjs
+import requests
+
+node = execjs.get()
+
+# 定义参数
+method = 'GETCITYWEATHER'
+city = '北京'
+type = 'HOUR'
+start_time = ''
+end_time = ''
+
+# Compile javascript
+# 加密解密 function 所在的 js
+file = 'jsCode.js'
+ctx = node.compile(open(file, encoding='utf-8').read())
+
+# 拿到最终混淆加密过的data
+js = 'getPostParamcode("{0}","{1}","{2}", "{3}", "{4}")'.format(method, city, type, start_time, end_time)
+params = ctx.eval(js)
+
+# 发起post请求
+url = 'https://www.aqistudy.cn/apinew/aqistudyapi.php'
+response_text = requests.post(url, data={'d':params}).text
+
+# 这里获取的是混淆后的响应体结果
+print(response_text)
+
+# 解密
+js = 'decodeData("{0}")'.format(response_text)
+decrypted_data = ctx.eval(js)
+print(decrypted_data)
+```
+
+> getPostParamcode 和 decodeData 都是通过分析页面中 js 文件拿到的 function
+
+
+
+PS： 可以使用 Chrome 或 Firefox 的 Event listener 获取元素绑定 JS，然后依次分析。
+
 
 
 # 九、Scrapy 框架
