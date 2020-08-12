@@ -667,22 +667,6 @@ len(str)  # 求 str 字符串长度
 
 
 
-字符映射 - maketrans()方法
-
-```
-from string import maketrans   # 必须调用 maketrans 函数。
-
-intab = "aeiou"
-outtab = "12345"
-trantab = maketrans(intab, outtab)
-
-str = "this is string example....wow!!!"
-print str.translate(trantab)
-
-# 输出结果
-th3s 3s str3ng 2x1mpl2....w4w!!!
-```
-
 
 
 ### 6.4 文本对齐
@@ -702,7 +686,7 @@ str.zfill(width)  # 返回指定长度的字符串，原字符串右对齐，前
 ```
 str.lstrip([chars])  # 去掉 str 左侧的空白字符
 str.rstrip([chars])  # 去掉 str 右侧的空白字符
-str.([chars])  # 去掉 str 两侧所有空格
+str.strip([chars])  # 去掉 str 两侧所有空格
 ```
 
 
@@ -1555,22 +1539,6 @@ a, b = b, a
 
 ## 5. 其他函数
 
-### filter() 函数
-
-filter() 函数可以让我们调用一个自定义方法，然后用这个方法遍历一个迭代数据，达到过滤的效果。如下方代码，我们定义了一个 odd() 函数来判断奇数，然后将这个函数当做参数传入 filter()，返回一个对象。
-
-```
-def odd(x):
- return x%2  # 如果是奇数返回1，如果是偶数返回0
-temp = range(10)
-show=filter(odd,temp)  # 用odd(x)函数遍历temp中所有元素，经过运算如果为真则保留。
-print(list(show))  # 用 list 查看对象内容
-```
-
-> 第一个参数方法，第二个参数迭代数据，返回一个对象
-
-
-
 ### id() 函数
 
 查看变量内存地址
@@ -1583,6 +1551,39 @@ print('0x%x' % id(a))
 # 输出结果
 # 2024142768
 # 0x78a5f7b0  # 一般内存用16进制表示
+```
+
+
+
+### dir() 函数
+
+列出类或对象中所有属性和方法
+
+```
+print(dir(list))
+```
+
+
+
+### chr(), ord()
+
+```
+# 将字符转换为ASCII
+print(chr('a'))
+
+# 将ASCII转换为数字
+print(ord(97))
+
+```
+
+
+
+进制转换
+
+```
+bin(obj)  # 二进制
+oct(obj)  # 八进制
+hex(obj)  # 十六进制
 ```
 
 
@@ -1694,8 +1695,65 @@ fun1()
 
 
 
-闭包
-就是函数中返回另外一个函数
+**闭包基础**
+
+把一个函数当做另外一个函数的返回值
+
+```
+def fun1():
+    print('我是fun1，我被调用了')
+    return 'fun1'
+
+def fun2():
+    print('我是fun2，我被调用了')
+    return fun1()
+
+x = fun2()
+```
+
+> 当进行赋值的时候，会执行 fun2() 时，fun1 也会被调用，最后 x 的值是 fun1 的返回值
+
+
+
+```
+def fun1():
+    print('我是fun1，我被调用了')
+    return 'fun1'
+
+def fun2():
+    print('我是fun2，我被调用了')
+    return fun1
+
+x = fun2()
+```
+
+> 进行赋值的时候，会将fun2的返回值给x，而fun2的返回值是fun1函数的内存地址，所以fun1不会被执行。
+
+
+
+```
+def fun1():
+    print('我是fun1，我被调用了')
+    return 'fun1'
+
+def fun2():
+    print('我是fun2，我被调用了')
+    return fun1
+
+x = fun2()
+
+# 此时x相当于fun1，所以x()就相当于fun1()
+x()
+
+# 先调用fun2，然后再调用 fun1
+fun2()()
+```
+
+
+
+闭包应用
+
+闭包概念：在一个内部函数中，对外部作用域的变量进行引用，(并且一般外部函数的返回值为内部函数)，那么内部函数就被认为是闭包。简单来说就是有一个嵌套函数，然后内部函数需要引用一个外部变量，并且外部函数的返回值是这个内部函数。
 
 ```
 def fun1(x):
@@ -1720,6 +1778,7 @@ print(fun1(5)(6)) # 同理，fun1(5) 返回值是 fun2(),所以 fun1(5)(6) 可�
 def fun1():
     x=5
     def fun2():
+    	# 这里让x变量不再重新声明一个新变量，而是使用外部函数中的变量
         nonlocal x
         x*=x
         return x
@@ -1729,7 +1788,91 @@ print(fun1())
 
 
 
+**计算代码运行时间**
+
+```
+import time
+
+start = time.time()
+x = 0
+for i in range(1,10000000):
+    x += i
+print(x)
+end = time.time()
+print('代码运行时间为{}'.format(end - start))
+```
+
+
+
+写成函数来计算时间
+
+```
+import time
+
+def calc_time(fn):
+    start = time.time()
+    fn()
+    end = time.time()
+    print('代码运行时间为{}'.format(end - start))
+
+def test():
+    x = 0
+    for i in range(1,10000000):
+        x += i
+    print(x)
+    
+calc_time(test)
+```
+
+
+
 装饰器也是闭包的一种应用
+
+```
+import time
+
+def calc_time(fn):
+    def inner():
+        start = time.time()
+        fn()
+        end = time.time()
+        print('代码运行时间为{}'.format(end - start))
+    return inner
+
+# 1. 自动调用 calc_time 函数
+# 2. 并且将被装饰的函数以参数形式传递给 calc_time 函数
+@calc_time
+def test():
+    x = 0
+    for i in range(1,10000000):
+        x += i
+    print(x)
+
+# 此时 test 函数已经被装饰。变成了 inner 函数
+# @calc_time 的意义 test = calc_time(test)
+# calc_time(test) 的返回值是 inner
+# test() 就相当于 inner()
+test()
+```
+
+
+
+装饰器一般应用在不改动原代码的情况下，给代码添加新功能，比如原代码中只显示时间，需要在不改动原代码的情况下，让同样的函数前边加上当地时间四个字。
+
+源代码：
+
+```
+import time
+
+def getXXXTime():
+    return time.strftime('%Y_%m_%d %H:%M:%S',time.localtime())
+
+print (getXXXTime())  
+```
+
+
+
+装饰器修改代码：
 
 ```
 import time
@@ -1771,12 +1914,257 @@ print (getXXXTime())
 ```
 
 
+**带返回值函数的装饰器**
+
+```
+import time
+
+def calc_time(fn):
+    def inner():
+        start = time.time()
+        fn()
+        end = time.time()
+        print('代码运行时间为{}'.format(end - start))
+    return inner
+
+@calc_time
+def test():
+    x = 0
+    for i in range(1,10000000):
+        x += i
+    return x
+
+# 这时候输出的test函数运行结果是空，因为test()已经不是调用test()了，调用的是calc_time(test)，
+# 所以返回值是 inner 函数的运行结果，而inner没有返回值，所以是空
+print(test())
+```
+
+
+
+修改代码，我们只需要让 inner 函数有返回值，就可以输出 calc_time(test) 函数的返回值了。
+
+```
+import time
+
+def calc_time(fn):
+    def inner():
+        start = time.time()
+        s = fn()
+        end = time.time()
+        print('代码运行时间为{}'.format(end - start))
+        return s
+    return inner
+
+@calc_time
+def test():
+    x = 0
+    for i in range(1,10000000):
+        x += i
+    return x
+
+
+print(test())
+```
+
+
+
+**带参数的函数装饰器**
+
+需要将 inner，fn，都加上参数
+
+```
+import time
+
+def calc_time(fn):
+    def inner(x):
+        start = time.time()
+        s = fn(x)
+        end = time.time()
+        print('代码运行时间为{}'.format(end - start))
+        return s
+    return inner
+
+@calc_time
+def test(n):
+    x = 0
+    for i in range(1,n):
+        x += i
+    return x
+
+
+print(test(10000000))
+```
+
+
+
+传不确定参数
+
+```
+def play_limit(fn):
+    def inner(x, y, *args, **kwargs):
+        if args[0] <= 22:
+            fn(x,y)
+        else:
+            print('太晚了，赶紧睡')
+    return inner
+
+@play_limit
+def play_game(name, game):
+    print('{}正在玩{}'.format(name, game))
+
+play_game('张三','王者荣耀', 23)
+```
+
+
+
+传字典参数
+
+```
+def play_limit(fn):
+    def inner(x, y, *args, **kwargs):
+        if kwargs['clock'] <= 22:
+            fn(x,y)
+        else:
+            print('太晚了，赶紧睡')
+    return inner
+
+@play_limit
+def play_game(name, game):
+    print('{}正在玩{}'.format(name, game, clock=18))
+
+play_game('张三','王者荣耀', clock=23)
+```
+
+
+
+建议不要用 kwargs['index']形式获取value值，如果没有传参的话，会被报错，建议用 kwargs.get('clock') 来代替。并且可以设置默认值
+
+```
+def play_limit(fn):
+    def inner(x, y, *args, **kwargs):
+        if kwargs.get('clock', 23) <= 22:
+            fn(x,y)
+        else:
+            print('太晚了，赶紧睡')
+    return inner
+
+@play_limit
+def play_game(name, game):
+    print('{}正在玩{}'.format(name, game, clock=18))
+
+play_game('张三','王者荣耀')
+```
+
+
+
+即使这样，我们还是需要在源代码中修改一下传入新参数。装饰器可以做到对源代码不做任何修改的进行传参。
+
+```
+def play_limit(clock):
+    def handle_action(fn):
+        def do_action(name,game):
+            if clock <21:
+                fn(name,game)
+            else:
+                print('太晚了，不能玩游戏')
+        return do_action
+    return handle_action
+
+@play_limit(22)
+def play_game(name, game):
+    print('{}正在玩{}'.format(name, game))
+
+play_game('张三','王者荣耀')
+```
+
+> 多嵌套了一层，相当于将 play_game = play_limit(22)(play_game)
+
+
+
+- play_game = play_limit(22) 拿到了返回值 handle_action，这时候 play_game 就变成了 handle_action 函数的内存地址
+- 然后再用 handle_action(play_game)，返回值是 do_action，两层嵌套下来，play_game 就变成了 do_action
+
+
+
+查看用户权限应用
+
+```
+user_permission = 15
+
+DEL_PERMISSION = 8  # 1000
+READ_PERMISSION = 4  # 0100
+WRITE_PERMISSION = 2  # 0010
+EXE_PERMISSION = 1  # 0001
+
+def check_permission(x,y):
+    def handle_action(fn):
+        def do_action():
+            if x & y !=0:  # 有权限，可以执行
+                fn()
+            else:
+                print('对不起，您没有相应的权限')
+        return do_action
+    return handle_action
+
+@check_permission(user_permission, READ_PERMISSION)
+def read():
+    print('有读取权限')
+
+@check_permission(user_permission, WRITE_PERMISSION)
+def write():
+    print('有写入权限')
+
+@check_permission(user_permission, EXE_PERMISSION)
+def exe():
+    print('有执行权限')
+
+@check_permission(user_permission, DEL_PERMISSION)
+def delete():
+    print('有删除权限')
+
+
+read()
+write()
+exe()
+delete()
+```
 
 
 
 ## 7. 匿名函数 lambda
 
-定义一个lambda函数，冒号左边为参数，右侧为返回值
+函数的赋值
+
+```
+def fun1():
+    return 1+2
+
+add = fun1
+print(add())
+```
+
+> 赋值语句 x = y，其实就是把 y 的地址给x。而函数也是一样，将自身函数的内存地址告诉一个变量。相当于给原函数起了一个别名
+>
+> add = fun1() 和 add = fun1 是不同的，一个是获得fun1的返回值，另外一个是获得fun1的内存地址。
+
+
+
+![image-20200805172218408](images/python/image-20200805172218408.png)
+
+
+
+也可以用 id 方法来查看两个函数的内存地址
+
+```
+print(id(fun1))
+print(id(add))
+```
+
+
+
+
+
+定义一个lambda函数，冒号左边为参数，右侧为返回值，因为匿名函数没有名字，所以还需要将匿名函数的内存地址给一个变量，这样才可以调用。
 
 ```
 a = lambda x:x+10
@@ -1796,6 +2184,17 @@ print(a(3,4))
 
 # 输出结果
 7
+```
+
+
+
+匿名函数的常用应用场景是将自身作为参数放在另外一个函数当中
+
+```
+def calc(x, y, fn):
+    return fn(x,y)
+x = calc(10, 5, lambda x, y: x+y)
+print(x)
 ```
 
 
@@ -2063,6 +2462,20 @@ print(id(blist))
 17150984
 ```
 
+> copy() 方法只是浅拷贝（只会复制第一层数组，如果多层数组嵌套则需要使用深拷贝方法 copy.deepcopy() ，需要引入 copy 模块
+
+
+
+可以去 http://www.pythontutor.com/visualize.html 来查看数据的可视化分析
+
+```
+import copy
+
+list1 = ['a',[1,2,3],'b','c']
+list2 = list1.copy()
+list3 = copy.deepcopy(list1)
+```
+
 
 
 数组比较运算
@@ -2101,6 +2514,49 @@ list2 = [num**2 for num in list1]
 ```
 
 >前边是一个函数的返回值，后边为 for in 遍历语句，遍历后返回的数值保存在 list2 列表中
+
+
+
+列表推导式还可以添加其他条件语句
+
+```
+list1 = [i for i in range(10) if i % 2 == 0]
+print(list1)
+
+# 输出结果
+[0, 2, 4, 6, 8]
+```
+
+
+
+进阶1
+
+```
+list1 = [(x, y) for x in range(5, 9) for y in range(10, 20)]
+```
+
+相当于
+
+```
+for x in range(5, 9):
+    for y in range(10, 20):
+        list2.append((x, y))
+```
+
+
+
+进阶2
+
+```
+m = [i for i in range(0, 100)]
+n = [m[j:j+3] for j in range(1, 100, 3)]
+```
+
+
+
+
+
+
 
 
 
@@ -2535,6 +2991,29 @@ print(dict1)
 
 
 
+## 10. 字典推导式
+
+```
+dict1 = {'a':100, 'b':200, 'c':300}
+dict2 = {v:k for k,v in dict1.items()}
+```
+
+
+
+相当于
+
+```
+dict1 = {'a':100, 'b':200, 'c':300}
+dict2 = {}
+
+for x,y in dict1.items():
+    dict2[y] = x
+
+print(dict2)
+```
+
+
+
 # 十三、集合（Set）
 
 集合：是一个无序且不重复的元素集合。集合最多的应用场景就是去重（删除重复元素），并且会自动将数组进行正序排列。
@@ -2726,6 +3205,192 @@ True
 ## 4. 遍历方法
 
 用 for in 语句可以遍历字符串、列表、元组、字典。
+
+
+
+## 5. 迭代操作函数
+
+### sorted() 函数
+
+```
+sorted(iterable, cmp=None, key=None, reverse=False)
+```
+
+- iterable -- 可迭代对象。
+- cmp -- 比较的函数，这个具有两个参数，参数的值都是从可迭代对象中取出，此函数必须遵守的规则为，大于则返回1，小于则返回-1，等于则返回0。
+- key -- 主要是用来进行比较的元素，只有一个参数，具体的函数的参数就是取自于可迭代对象中，指定可迭代对象中的一个元素来进行排序。
+- reverse -- 排序规则，reverse = True 降序 ， reverse = False 升序（默认）。
+
+
+
+```
+dict1 = {'a':3, 'b':2, 'c':1}
+print(sorted(dict1.values()))
+```
+
+> 字典默认按照key进行排序
+
+
+
+列表中的字典（JSON数据）
+
+```
+students = [
+    {'name':'zhangsan', 'age':20, 'score':80, 'height':177},
+    {'name':'lisi', 'age':18, 'score':100, 'height':167},
+    {'name':'wangwu', 'age':19, 'score':66, 'height':173},
+    {'name':'zhaoliu', 'age':22, 'score':59, 'height':185},
+]
+
+# 传入的foo函数需要一个参数，而这个参数就会遍历列表中所有元素
+# 将需要指定排序的元素返回，则会按照该元素升序排列
+def foo(x):
+    return x['age']
+
+print(sorted(students, key=foo))
+```
+
+
+
+匿名函数写法
+
+```
+print(sorted(students, key=lambda x: x['age']))
+```
+
+
+
+
+
+### filter() 函数
+
+filter() 函数可以让我们调用一个自定义方法，然后用这个方法遍历一个迭代数据，达到过滤的效果。
+
+
+
+```
+filter(function, iterable)
+```
+
+- function -- 判断函数。
+- iterable -- 可迭代对象。
+
+
+
+如下方代码，我们定义了一个 odd() 函数来判断奇数，然后将这个函数当做参数传入 filter()，返回一个对象。
+
+```
+def odd(x):
+ return x%2  # 如果是奇数返回1，如果是偶数返回0
+temp = range(10)
+show=filter(odd,temp)  # 用odd(x)函数遍历temp中所有元素，经过运算如果为真则保留。
+print(list(show))  # 用 list 查看对象内容
+
+# lambda 函数简写
+print(list(filter(lambda x:x%2, range(10))))
+```
+
+> 第一个参数方法，第二个参数迭代数据，返回一个对象，因为对象是迭代数据，所以需要用list转换成列表显示。
+
+
+
+思考：
+
+如果将 odd 函数写成这样会是什么结果？
+
+```
+def odd(x):
+    if x%2 == 0:
+        return x 
+```
+
+
+
+进阶
+
+```
+students = [
+    {'name': 'zhangsan', 'age': 20, 'score': 80, 'height': 177},
+    {'name': 'lisi', 'age': 18, 'score': 100, 'height': 167},
+    {'name': 'wangwu', 'age': 19, 'score': 66, 'height': 173},
+    {'name': 'zhaoliu', 'age': 22, 'score': 59, 'height': 185},
+]
+
+
+# 传入的foo函数需要一个参数，而这个参数就会遍历列表中所有元素
+# 将不符合条件的元素过滤掉
+def foo(x):
+    if x['age'] <= 20:
+        return x
+
+
+print(list(filter(foo,students)))
+
+# 简写
+print(list(filter(lambda x: x['age'] <= 20, students)))
+```
+
+
+
+### map()
+
+**map()** 会根据提供的函数对指定序列做映射。遍历跌倒数据中每一个元素，然后将元素以参数形式传入函数中，进行遍历操作。
+
+
+
+```
+map(function, iterable, ...)
+```
+
+- function -- 函数
+- iterable -- 一个或多个序列
+
+
+
+将列表中每个元素进行加2操作
+
+```
+list1 = range(10)
+
+def foo(x):
+    x+=2
+    return x
+
+print(list(map(foo,list1)))
+
+# 简写
+print(list(map(lambda x:x+2, range(10))))
+```
+
+
+
+### reduce()
+
+**reduce()** 函数会对参数序列中元素进行累积。
+
+函数将一个数据集合（链表，元组等）中的所有数据进行下列操作：用传给 reduce 中的函数 function（有两个参数）先对集合中的第 1、2 个元素进行操作，得到的结果再与第三个数据用 function 函数运算，最后得到一个结果。
+
+```
+reduce(function, iterable[, initializer])
+```
+
+- function -- 函数，有两个参数
+- iterable -- 可迭代对象
+- initializer -- 可选，初始参数
+
+
+
+```
+print(reduce(lambda x,y: x+y['score'], students, 0))
+```
+
+> 因为第一个和第二个数据都是列表，但是执行第三次操作的时候，x 就不是 x['score'] 的形式了。变成了 x = 180 的形式，所以无法继续操作，这时候需要设置一个初始值0，这样x以后每次相加都会是数字形式迭代。
+
+
+
+### 
+
+
 
 
 
@@ -4111,6 +4776,479 @@ print(player2)
 
 
 
+## 3. 可迭代对象
+
+可迭代对象有很多种： list/tuple/dict/set/str/range/filter/map
+
+而可迭代对象都可以遍历，用 `for...in 可迭代对象`
+
+
+
+什么是可迭代对象？
+
+只要内置方法中有 `__iter__` 方法的对象就是可迭代对象
+
+
+
+```
+from collections.abc import Iterable
+
+class Demo(object):
+    def __init__(self,x):
+        self.x = x
+
+class Iter(object):
+    def __init__(self,x):
+        self.x = x
+    def __iter__(self):
+        pass
+
+d = Demo(100)
+print(isinstance(d, Iterable))
+
+names = list('hello')
+print(isinstance(names,Iterable))
+
+i = Iter(100)
+print(isinstance(names,Iterable))
+```
+
+> 虽然创建了 i 这个可迭代对象，但是不可以用 for...in 遍历。因为 `__iter__` 方法里边没有内容。而 for...in 循环的本质就是调用 `__iter__` 方法，然后返回一个对象，之后调用这个对象的 `__next__` 方法。
+
+
+
+```
+from collections.abc import Iterable
+
+class Foo(object):
+    def __next__(self):
+        return 1
+
+class Demo(object):
+    def __init__(self,x):
+        self.x = x
+
+class Iter(object):
+    def __init__(self,x):
+        self.x = x
+    def __iter__(self):
+        x = Foo()
+        return x
+
+d = Demo(100)
+print(isinstance(d, Iterable))
+
+names = list('hello')
+print(isinstance(names,Iterable))
+
+i = Iter(100)
+print(isinstance(names,Iterable))
+
+for j in i:
+    print(j)
+```
+
+> 不过这样会陷入死循环，一致调用 `__next__` 方法
+
+
+
+```
+class Iter(object):
+    def __init__(self,x):
+        self.x = x
+        self.count = 0
+    def __iter__(self):
+        return self
+    def __next__(self):
+        self.count += 1
+        if self.count <= self.x:
+            return 'hello'
+        else:
+            raise StopIteration  # 终止迭代器
+
+test = Iter(10)
+
+for i in test:
+    print(i)
+```
+
+
+
+再稍作修改，上边的对象就可以变成 range 了
+
+```
+class Iter(object):
+    def __init__(self,x):
+        self.x = x
+        self.count = 0
+    def __iter__(self):
+        return self
+    def __next__(self):
+        self.count += 1
+        if self.count <= self.x:
+            return self.count - 1
+        else:
+            raise StopIteration  # 终止迭代器
+
+test = Iter(10)
+
+for i in test:
+    print(i)
+```
+
+
+
+内置函数中的 iter 本质上就是调用魔术方法 `__iter__` ， next 方法就是调用 `__next__` 魔术方法
+
+```
+d = Demo(d)
+i = iter(d)
+print(next(i))
+
+# 相当于
+i = d.__iter__()
+i.__next__
+```
+
+> iter函数还可以将可迭代对象转换为迭代器。
+
+
+
+用迭代方法计算 Fibnacci 第 n 位
+
+```
+class Fibnacci(object):
+    def __init__(self,n):
+        self.n = n
+        self.num1 = self.num2 = 1
+        self.count = 0
+    def __iter__(self):
+        return self
+    def __next__(self):
+        self.count += 1
+        if self.count <= self.n:
+            x = self.num1
+            self.num1, self.num2 = self.num2, self.num1 + self.num2
+            return x
+        else:
+            raise StopIteration  # 终止迭代器
+
+f = Fibnacci(12)
+
+for i in f:
+    print(i)
+```
+
+> 如果只想得到指定位置，做个循环让迭代器进行计算，然后用 next 调用下一个即可。
+>
+> ```
+> for i in f:
+> 	pass
+> print(next(f))
+> ```
+
+
+
+### 3.1 zip 函数
+
+zip 函数可以将多个可迭代对象连接起来，将每个可迭代对象的同下标元素合并生成一个元组。
+
+```
+from collections.abc import Iterator, Iterable, Generator
+
+list1 = [1,2,3]
+list2 = [4,5,6]
+zipdata = zip(list1,list2)
+print(zipdata)
+
+print(isinstance(zipdata, Iterable))
+print(isinstance(zipdata, Iterator))
+print(isinstance(zipdata, Generator))
+
+# 输出结果
+<zip object at 0x02F3E028>
+[(1, 4), (2, 5), (3, 6)]
+True
+True
+False
+```
+
+> 从结果可以看出，zip函数会返回一个元组，并且是迭代器。
+
+
+
+可以用 for 循环来遍历 zip
+
+```
+list1 = [1,2,3]
+list2 = [4,5,6]
+zipdata = zip(list1,list2)
+
+for (x, y) in zipdata:
+    print ('{}+{}={}'.format(x,y,x+y))
+```
+
+
+
+用zip来创建字典
+
+```
+list1 = ['name','age','score']
+list2 = ['张三','18','90']
+dict1 = {}
+for (k,v) in zip(list1,list2):
+    dict1[k] = v
+
+print(dict1)
+```
+
+```
+list1 = ['name','age','score']
+list2 = ['张三','18','90']
+dict1 = dict(zip(list1,list2))
+
+print(dict1)
+```
+
+
+
+
+
+### 3.2 enumerate 函数
+
+同时生成可迭代对象中元素的值和索引
+
+```
+from collections.abc import Iterator, Iterable, Generator
+
+list1 = ['张三', '李四', '王五', '赵六']
+enu = enumerate(list1)
+print(enu)
+print(list(enu))
+
+print(isinstance(enu, Iterable))
+print(isinstance(enu, Iterator))
+print(isinstance(enu, Generator))
+
+
+# 输出结果
+[(0, '张三'), (1, '李四'), (2, '王五'), (3, '赵六')]
+```
+
+
+
+
+
+## 4. 生成器
+
+列表与生成器和迭代器的区别就是，列表需要占内存，而生成器和迭代器是将数据算出来的，不用将数据存储在内存当中。
+
+
+
+生成器生成方法：
+
+- 使用推导式，只是将[]换成()
+- 使用函数 + yield
+
+
+
+### 4.1 推导式生成器
+
+```
+g = (x for x in range(100))
+print(type(g))
+print(g)
+
+# 调用生成器中的下一个元素
+print(next(g))
+```
+
+
+
+判断 range 是否可迭代、迭代器、生成器
+
+```
+from collections.abc import Iterable, Iterator, Generator
+
+r = range(10)
+print(isinstance(r, Iterable))
+print(isinstance(r, Iterator))
+print(isinstance(r, Generator))
+
+# 输出结果
+True
+False
+False
+```
+
+> 所以range只是一个可迭代对象，而不是迭代器，也不是生成器
+
+
+
+再来看看用生成器生成的对象
+
+```
+g = (x for x in range(100))
+print(isinstance(g, Iterable))
+print(isinstance(g, Iterator))
+print(isinstance(g, Generator))
+
+# 输出结果
+True
+True
+True
+```
+
+
+
+
+
+### 4.2 函数 + yield
+
+yield 类似于 return，当碰到 return，我们会将 return 后边的变量作为返回值返回给函数。而 yield 则将跟随的变量作为一个生成器对象返回给函数。
+
+```
+def fun():
+    for i in range(5):
+        yield i
+        print('------->'i)
+
+g = fun()
+print(g)
+
+# 输出结果
+<generator object fun at 0x016ACD10>
+```
+
+
+
+调用 next 方法
+
+```
+def fun():
+    for i in range(5):
+        yield i
+        print('------->'i)
+
+g = fun()
+print(g)
+print(next(g))
+
+# 输出结果
+<generator object fun at 0x008BDCD8>
+0
+```
+
+> 可以看到只输出了第一个返回值0，并没有输出 yield 后边的代码，因为 yield 有两个功能，一个是暂停，另外一个是给出返回值
+
+
+
+当第二次执行 next 时，程序会返回到之前暂停的位置，然后继续执行后边的代码，再次进入循环
+
+```
+def fun():
+    for i in range(5):
+        yield i
+        print('------->'i)
+
+g = fun()
+print(g)
+print(next(g))
+print(next(g))
+
+# 输出结果
+<generator object fun at 0x008BDCD8>
+0
+```
+
+
+
+send 方法，将参数传送给函数中 yield
+
+```
+def fun():
+    for i in range(5):
+        x = yield i
+        print(x)
+
+g = fun()
+g.send(None)
+g.send(10)
+```
+
+> 第一次send必须传入空值，因为第一次 yield 返回 i，但是还没有进行赋值操作，所以此时 yield 是空值
+
+
+
+```
+# 菲波那切数列
+def Fib(max):
+    n, a, b = 0, 0, 1
+    while n < max:
+        yield b
+        a, b = b, a + b
+        n = n + 1
+    return '亲！没有数据了...'
+# 调用方法，生成出10个数来
+f=Fib(10)
+# 使用一个循环捕获最后return 返回的值，保存在异常StopIteration的value中
+while  True:
+    try:
+        x=next(f)
+        print("f:",x)
+    except StopIteration as e:
+        print("生成器最后的返回值是：",e.value)
+        break
+```
+
+
+
+通过生成器 yield 实现协程
+
+```
+def study():
+    for i in range(5):
+        print('学习中------>', i)
+        yield
+
+def listen():
+    for i in range(5):
+        print('音乐中------>', i)
+        yield
+
+def wechat():
+    for i in range(5):
+        print('聊天中------>', i)
+        yield
+
+
+c1 = study()
+c2 = listen()
+c3 = wechat()
+
+
+while True:
+    c1.__next__()
+    c2.__next__()
+    c3.__next__()
+```
+
+> 运行函数的时候碰到 yield 就会暂停函数，然后返回给赋值对象。然后一直调用 next 就可以简单实现协程效果。切换运行的代码块。
+
+
+
+### 4.3 迭代器和生成器
+
+- 迭代器是一个可以记住遍历的位置的对象。迭代器对象从集合的第一个元素开始访问，直到所有的元素被访问完结束。迭代器只能往前不会后退。
+
+- 生成器是一个返回迭代器的函数，只能用于迭代操作，更简单点理解生成器就是一个迭代器。
+
+
+
+
+
+
+
 # 十七、异常处理
 
 在编写程序的时候，程序经常会报错，我们称这些报错信息为异常。
@@ -4301,6 +5439,33 @@ try:
 except Exception as result:
     print("发现错误：%s" % result)
 ```
+
+
+
+可以直接创建自定义异常类
+
+```
+class LenthError(Exception):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def __str__(self):
+        return '长度必须要在{}至{}之间'.format(self.x, self.y)
+
+
+password = input('Please input your password:')
+m = 6
+n = 12
+if m <= len(password) <= n:
+    print('密码正确')
+else
+    raise LenthError(m,n)
+```
+
+
+
+
 
 
 
@@ -4654,6 +5819,43 @@ f = open("文件名", "访问方式")
 
 
 
+### 4.1 with 上下文管理器
+
+with 关键词是一个上下文管理器，经常与文件打开配合，如： `with open` ，用来自动关闭文件。如果一个程序中需要打开多个文件，那么打开太多文件的话，会出现错误 too many open files。用 with 关键字配合 open 后，会自动关闭文件。
+
+```
+with open('files.txt', 'w') as fp:
+	fp.write('something')
+```
+
+
+
+- with 语句后边跟一个对象
+- 当进入with代码块时，会自动调用对象中的 `__enter__` 方法
+- 当 with 代码块结束的时候，会自动调用 `__exit__` 方法
+
+
+
+```
+class Demo():
+    def __enter__(self):
+        print('enter方法被调用了')
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print('exit方法被调用了')
+
+def create_job():
+    return Demo()
+
+with Demo() as d:
+    print(d)
+```
+
+> 这里的 d 不是 Demo() 对象，而是类中 `__enter__`方法的返回值
+
+
+
+
+
 ## 5. 写入文件
 
 ```
@@ -4665,6 +5867,14 @@ f.write("今天天气真好")
 
 # 关闭文件
 f.close()
+```
+
+
+
+用 print 函数也可以直接写入文件
+
+```
+print('hello', file=open('ss.txt', 'w'))
 ```
 
 
@@ -4748,6 +5958,57 @@ while True:
 file_read.close()
 file_write.close()
 ```
+
+
+
+## 文件对象的其他方法
+
+file 对象使用 open 函数来创建，下表列出了 file 对象常用的函数：
+
+| 序号 | 方法及描述                                                   |
+| :--- | :----------------------------------------------------------- |
+| 1    | file.close()关闭文件。关闭后文件不能再进行读写操作。         |
+| 2    | file.flush()刷新文件内部缓冲，直接把内部缓冲区的数据立刻写入文件, 而不是被动的等待输出缓冲区写入。**只有关闭文件才会从缓存中写入文件。** |
+| 3    | file.fileno()返回一个整型的文件描述符(file descriptor FD 整型), 可以用在如os模块的read方法等一些底层操作上。 |
+| 4    | file.isatty()如果文件连接到一个终端设备返回 True，否则返回 False。 |
+| 5    | file.next()返回文件下一行。                                  |
+| 6    | [file.read(size\])从文件读取指定的字节数，如果未给定或为负则读取所有。 |
+| 7    | [file.readline(size\])读取整行，包括 "\n" 字符。             |
+| 8    | [file.readlines(sizeint\])读取所有行并返回列表，若给定sizeint>0，则是设置一次读多少字节，这是为了减轻读取压力。 |
+| 9    | [file.seek(offset, whence\])设置文件当前位置**（参数是文本的字节数）** |
+| 10   | file.tell()返回文件当前位置。                                |
+| 11   | [file.truncate(size\])截取文件，截取的字节通过size指定，默认为当前文件位置。 |
+| 12   | file.write(str)将字符串写入文件，返回的是写入的字符长度。    |
+| 13   | file.writelines(sequence)向文件写入一个序列字符串列表，如果需要换行则要自己加入每行的换行符。 |
+
+
+
+## 文件读取时经常出现的 GBK 错误是什么？
+
+在读取文件的时候，经常会出现如下错误
+
+```
+UnicodeDecodeError: 'gbk' codec can't decode byte 0x98 in position 18: illegal multibyte sequence
+```
+
+
+
+修复错误的方法也很简单，只要在打开文件的时候加上 `encoding='utf8'` 就可以了
+
+```
+f = open('ss.txt', 'r', encoding='utf8')
+print(f.readline())
+```
+
+
+
+很多人都知道解决办法，却不知道为什么会报错，从 python3 开始，文件的存储都是以 UTF8 格式存储的，那么这个 GBK 错误是怎么来的？主要是因为 UTF-8 占3个字节，读取造成了混乱。
+
+
+
+
+
+
 
 
 

@@ -1515,10 +1515,6 @@ pattern = '\S'  # 匹配单个非空格符、制表符
 ```
 \n	匹配换行符
 \t	匹配制表符
-
-\A	匹配字符串开始
-\Z	匹配字符串结束（只匹配到换行符前）
-\z	匹配字符串结束
 ```
 
 
@@ -1543,9 +1539,9 @@ print(res.group())
 
 # 输出结果
 iloveyou  # 因为\w不匹配空格，所以停止匹配
-
-# 如果字符串首字母为空格的话，那么则直接返回
 ```
+
+> 如果字符串首字母为空格的话，那么则直接返回
 
 
 
@@ -1579,14 +1575,6 @@ print(data.group())
 ```
 
 > 如果使用 `.*` 则会匹配到 `<h1>RUNOOB-菜鸟教程</h1>`
-
-
-
-与 `*` 搭配会出现问题
-
-```
-reg = re.compile('\w*?')  # 只返回空，因为*代表任意次，所以0次也可以，直接返回
-```
 
 
 
@@ -1727,7 +1715,7 @@ print(res.group())
 ```
 import re
 
-content = '''Hello 123 
+content = '''Hello 123
 World'''
 result = re.findall('^He.*?(\d+).*World$', content, re.S)
 print(result)
@@ -1823,8 +1811,6 @@ pattern = '\W'
 result = re.split(pattern, vars)
 print(result)
 ~~~
-
-
 
 > *maxsplit* 参数，默认为0，有多少匹配就分割多少次。如果设置了该参数，则分割指定次数，剩下的字符返回到列表最后一个元素
 
@@ -2135,7 +2121,9 @@ res = requests.get(url, headers=headers, proxies=proxies, timeout=5)
 
 
 
-# 八、多线程
+# 八、多任务
+
+多线程
 
 https://www.cnblogs.com/fnng/p/3670789.html
 
@@ -2145,13 +2133,52 @@ demon & join
 
 https://blog.csdn.net/Mr_health/article/details/86176261
 
+
+
+在 Windows 中，我们经常在同一时间同时运行多个程序，比如说你一边打游戏、一边听音乐、同时还在后台下载着文件、而且你正在进行直播。这些任务同时进行就是多任务。
+
+
+
+多任务的两种表现方式
+
+- 并发
+- 并行
+
+
+
+**并发**
+
+现在 CPU 都是多核、多线程，那么在发明多核多线程之前的CPU是如何进行多任务的呢？
+
+
+
+![image-20200729001456516](images/crawler/image-20200729001456516.png)
+
+
+
+对于单核 CPU 处理多任务，操作系统轮流让各个任务交替执行。CPU 会根据需求对各个任务分配时间，执行任务1、然后切换到任务2、再切换到任务3。由于交替时间非常快，所以我们会觉得所有程序在一起运行。
+
+
+
+**并行**
+
+并行才是真正意义的多任务，在多核 CPU处理任务时，操作系统会给CPU的每一个内核安排一个任务执行。
+
+
+
+![image-20200729001515422](images/crawler/image-20200729001515422.png)
+
+
+
+
+
 ## 1. 进程和线程的概念
 
 ### 1.1 进程
 
 简单的说：**进程就是运行着的程序**。
 
-我们写的python程序（或者其他应用程序比如画笔、qq等），运行起来，就称之为一个**进程**，在windows下面打开任务管理器，里面显示了当前系统上运行着的进程。
+进程（process）是资源分配的最小单位。我们写的python程序（或者其他应用程序比如画笔、qq等），运行起来，就称之为一个**进程**，在windows下面打开任务管理器，里面显示了当前系统上运行着的进程。
 
 ![白月黑羽Python3教程](http://cdn1.python3.vip/imgs/gh/36257654_36931680-3344f066-1ef6-11e8-9c71-bad64c5624c7.png)
 
@@ -2167,13 +2194,285 @@ https://blog.csdn.net/Mr_health/article/details/86176261
 
 
 
-## 2. 多线程处理工作
+## 2. 多进程
 
-为了加快程序的效率，充分利用计算机的硬件优势。将 CPU 多核的优势充分利用，多线程可以帮助我们更快的完成我们所需要的工作。10个人干活肯定要比1个人干活要快！
+**单进程处理工作**
+
+我们平常的代码其实都是单进程或单线程。
+
+```
+def fun1():
+	print(1)
+def fun2():
+	print(2)
+	
+fun1()
+fun2()
+```
+
+> 这样 代码必然是先运行fun1，再运行fun2，如果把 print 语句看做调用其他函数，比如说一个看下载文件的函数，一个播放音乐的函数。那么我们就需要让他们同时执行才可以达到我们想要的效果。
+
+
+
+**多进程处理工作**
+
+多进程的原理就是让程序创建一个新的进程，让主进程执行 fun1，让新创建出来的进程（子进程）执行 fun2，从而达到我们想要的目的。
+
+![image-20200729001417500](images/crawler/image-20200729001417500.png)
+
+
+
+### 2.1 进程创建步骤
+
+1. 导入进程包
+
+```
+import multiprocessing
+```
+
+
+
+2. 通过进程类创建进程对象
+
+```
+进程对象 = multiprocessing.Process()
+```
+
+> 需要跟参数 target 指定任务名，即 target = 函数名
+
+
+
+3. 启动进程执行任务
+
+```
+进程对象.start()
+```
+
+
+
+**使用多进程实现多任务**
+
+```
+import multiprocessing
+import time
+
+
+def sing():
+    for i in range(3):
+        print("唱歌...")
+        time.sleep(0.5)
+
+
+def dance():
+    for i in range(3):
+        print("跳舞...")
+        time.sleep(0.5)
+
+
+if __name__ == "__main__":
+
+    sing_process = multiprocessing.Process(target=sing)
+    dance_process = multiprocessing.Process(target=dance)
+
+    sing_process.start()
+    dance_process.start()
+```
+
+
+
+### 2.2 给进程传入参数
+
+以元组方式传入参数，单参数需要补上逗号
+
+```
+sing_process = multiprocessing.Process(target=sing, args=(3,))
+```
+
+
+
+以字典方式传入参数
+
+```
+sing_process = multiprocessing.Process(target=sing, kwargs={"num":3})
+```
+
+
+
+### 2.3 获取进程编号
+
+- 获取当前进程编号 os.getpid()
+- 获取父进程编号 os.getppid()
+
+
+
+以上代码中，其实有三个进程，一个是主进程，两个子进程。sing 和 dance 都是由主进程创建出来的子进程。所以用显示进程编号的时候可以看到三个不同的进程编号。
+
+
+
+### 2.4 守护进程
+
+因为所有的进程都是由主进程分离出来的，那么当主进程执行完毕后，子进程会不会自动关闭呢？
+
+
+
+```
+import multiprocessing
+import time
+import os
+
+def work():
+    for i in range(10):
+        print("working...")
+        time.sleep(0.2)
+
+if __name__ == "__main__":
+    work_process = multiprocessing.Process(target=work)
+    work_process.start()
+    time.sleep(1)
+    print("主进程执行完毕")
+```
+
+
+
+输出结果：
+
+```
+working...
+working...
+working...
+working...
+working...
+主进程执行完毕
+working...
+working...
+working...
+working...
+working...
+```
+
+
+
+可以看到主进程在1秒后已经执行完毕，但是程序并没有关闭，依旧会等待子进程执行完毕后才会出现 `Process finished with exit code 0` 的字样
+
+
+
+如果想实现主进程执行完毕，子进程自动关闭的效果，需要在子进程 start() 前，设置守护进程 daemon。子进程会守护主进程。
+
+```
+work_process.daemon = True
+```
+
+
+
+另外还可以在子进程参数添加 daemon 守护进程
+
+```
+work_process = multiprocessing.Process(target=work, daemon=True)
+```
+
+
+
+### 2.5 案例 - 多进程拷贝文件
+
+```
+import os
+import multiprocessing
+
+
+def copy_file(file_name, source_dir, dest_dir):
+    source_path = source_dir + "/" + file_name
+    dest_path = dest_dir + "/" + file_name
+
+    with open(source_path, 'rb') as source_file:
+        with open(dest_path, 'wb') as dest_file:
+            while True:
+                data = source_file.read(1024)
+                if data:
+                    dest_file.write(data)
+                else:
+                    break
+
+
+if __name__ == '__main__':
+    source_dir = 'python'
+    dest_dir = '/home/python/desktop/test'
+
+    try:
+        os.mkdir(dest_dir)
+    except:
+        print("dest DIR is already existed")
+
+    file_list = os.listdir(source_dir)
+
+    for file_name in file_list:
+        sub_process = multiprocessing.Process(target=copy_file, args=(file_name, source_dir, dest_dir))
+        sub_process.start()
+
+```
+
+
+
+
+
+## 3. 多线程
+
+进程是分配资源的最小单位，线程是程序执行的最小单位，一旦创建一个进程就会创建一个资源，我们不能说需要和两个人聊天就需要开两个QQ程序。这样就造成了资源的浪费。而现实的做法就是开一个QQ程序，在QQ程序中在开两个窗口就可以了。而这两个窗口就是多线程。
+
+
+
+一个进程中至少有一个线程来执行程序，进程获取系统资源，然后把这些资源分配给线程。其他线程可以共同使用同一个进程的资源。
+
+
+
+线程的实现方式和进程类似。在进程中默认有一个线程，我们称之为主线程。单线程执行程序和单进程执行方式一样，由上到下依次执行。
+
+
+
+而多线程工作方式就是在进程中创建出一个新的线程，这个线程称为子线程。
+
+
+
+![image-20200729223402564](images/crawler/image-20200729223402564.png)
+
+
 
 
 
 应用程序必须 通过操作系统提供的 **系统调用**，请求操作系统分配一个新的线程。python3 将 系统调用创建线程 的功能封装在 标准库 threading 中。
+
+
+
+### 3.1 线程创建步骤
+
+1. 导入线程模块
+
+```
+import threading
+```
+
+
+
+2. 通过线程类创建线程对象
+
+```
+线程对象 = threading.Thread(target=任务名)
+```
+
+
+
+3. 启动线程执行任务
+
+```
+线程对象.start()
+```
+
+
+
+> 线程的创建方法和进程的创建方法几乎一样。传入参数方法也一样
+
+
+
+**使用多线程执行程序**
 
 ```
 print('主线程执行代码') 
@@ -2209,7 +2508,29 @@ print('主线程结束')
 
 
 
-阻塞线程 join
+### 3.2 给线程传入参数
+
+线程和进程的传入方式是完全一样的。
+
+
+
+以元组方式传入参数，单参数需要补上逗号
+
+```
+sing_thread = threading.Thread(target=sing, args=(3,))
+```
+
+
+
+以字典方式传入参数
+
+```
+sing_thread = threading.Thread(target=sing, kwargs={"num":3})
+```
+
+
+
+### 3.3 阻塞线程 join
 
 因为很多时候，我们希望等待所有子线程执行完毕后，再继续执行多线程任务 start() 后边的代码，比如说：爬虫多线程爬取所有页面后，再来处理爬取回来的内容。如果主线程比子线程结束快的话，那么我们的数据就没有爬取完整就进行了数据处理。就好像一个领导把任务分给几个员工，等几个员工完成工作后，他需要收集他们的提高报告，进行后续处理。
 
@@ -2223,36 +2544,191 @@ print('主线程结束')
 
 
 
-创建10个线程
+### 3.4 线程执行顺序
+
+查看线程信息
 
 ```
-from threading import Thread
-from time import sleep
-
-# 至少两个参数
-def threadFunc(num, amount):
-    print("新线程%s" % str(num))
-    sleep(1)
-
-
-threadlist = []
-
-for i in range(10):
-	# 第一个参数必须是迭代数据，第二个参数可以忽略
-    thread = Thread(target=threadFunc, args=(i, 1))
-    thread.start()
-    # 将所有线程对象加入列表中
-    threadlist.append(thread)
-
-# 阻塞所有子线程，等待所有子线程结束再继续往下执行
-for thread in threadlist:
-    thread.join()
-
-print("主线程结束")
-
+current_thread = threading.current_thread()
+print(current_thread)
 ```
 
 
+
+线程的执行顺序是无序的
+
+```
+import multiprocessing
+import threading
+import time
+import os
+
+def task():
+    time.sleep(1)
+    thread = threading.current_thread()
+    print(thread)
+
+if __name__ == "__main__":
+    for i in range(5):
+        sub_thread = threading.Thread(target=task)
+        sub_thread.start()
+```
+
+
+
+输出结果：
+
+```
+<Thread(Thread-1, started 19036)>
+<Thread(Thread-5, started 9260)><Thread(Thread-3, started 14872)><Thread(Thread-4, started 9584)><Thread(Thread-2, started 4532)>
+```
+
+> 可以看出线程是根据CPU分配的无序状态
+
+
+
+
+
+同样试验了一下多进程的执行顺序
+
+```
+import multiprocessing
+import threading
+import time
+import os
+
+def task():
+    time.sleep(9)
+    process = multiprocessing.current_process()
+    print(process)
+
+if __name__ == "__main__":
+    for i in range(5):
+        sub_process = multiprocessing.Process(target=task)
+        sub_process.start()
+```
+
+> 发现多进程是按照顺序执行的
+
+
+
+## 4. 进程与线程对比
+
+进程和线程都可以完成多任务，而进程和线程还是有所区别的，打比方来说，多进程我们可以看做多个QQ的运行，而多线程是在QQ程序中开多个聊天窗口。一个程序至少有一个进程，一个进程至少有一个线程。线程是进程的一个实体。同属一个进程的线程可以共享该进程的所拥有的全部资源（该进程的全局变量），不同进程间的全局变量不能共享。多进程之间的全局变量无法通用，但是可以使用参数传递数据。
+
+
+
+相同点：
+
+- 创建方式
+- 开始方式
+- 传参方式
+- 阻塞方式
+- 守护方式
+  - 线程中可以使用 `线程.setDaemon(True)` 
+
+
+
+不同点：
+
+- 进程资源开销要比线程大
+- 进程是操作系统资源分基本单位，线程是CPU调度基本单位
+- 线程不能独立执行，必须依存在进程中
+- 进程可以使用多核，线程不能
+- 进程在运行中拥有独立内存资源，而多个线程共享内存。
+
+
+
+
+
+
+
+## 5. 进程池和线程池
+
+### 5.1 进程池
+
+为了不浪费资源，我们一般不会有一个任务就创建一个进程，这样的话就会造成进程的浪费。进程池的作用是限制进程数量，让已经创建的进程不断的接任务，当完成已经分配的任务时，进程不会结束，继续接着完成下一个任务。进程池是循环进程完成任务的一种方法。
+
+1.进程池需要导入 multiprocessing 中的Pool
+ 2.创建进程池时Pool()中的参数表示同时启动的进程数
+ 如果不写则表示本机的逻辑核心数
+ 3.进程池中进程启动不用写 start 语句
+ 4.进程池必须先关闭才能join
+ 5.进程池join后，父进程会等待池内所有进程执行完毕再向下执行
+ 6.进程池内的进程启动顺序由操作系统来决定
+
+
+
+```
+from multiprocessing import Pool
+import time, random
+
+
+def func(num):
+    print("子进程%d启动" % num)
+    start = time.time()
+    time.sleep(random.choice([1, 2, 3]))
+    end = time.time()
+    print("子进程%d结束，耗时%d秒" % (num, end-start))
+
+
+def func1():
+    print("我是一个子进程，我负责计算1+1=2")
+
+
+if __name__ == '__main__':
+    print("父进程启动")
+    # Pool中的参数表示同时启动进程的数量，如果不写则表示本机逻辑核心数
+    # 进程池中的进程启动顺序由系统来决定
+    pp = Pool(2)
+    # # 此处为用for循环建立多个子进程，但是子进程的功能都相同
+    # for i in range(10):
+    #     pp.apply_async(func, args=(i,))
+
+    # 此处为单个建立子进程，子进程的功能可以不同
+    pp.apply_async(func, args=(1,))
+    pp.apply_async(func1)
+
+    # 进程池中进程不需要写start语句
+    # 进程池进行join时必须先关闭
+    pp.close()
+    # 进程池join后父进程会等待进程池中所有程序结束才继续执行
+    pp.join()
+    print("父进程结束")
+```
+
+
+
+pool.map 启动进程池
+
+```
+from multiprocessing import Pool
+import time
+
+def main(n):
+    print("进程池%s" % str(n))
+    time.sleep(2)
+
+
+if __name__ == '__main__':
+    start = time.time()
+    # Pool 默认大小是CPU的逻辑核心数，可以指定
+    # 进程池中的进程启动顺序由系统来决定
+    pool = Pool()  
+    pool.map(main, range(10))
+    print(time.time() - start)
+
+```
+
+> pool.map 中的两个参数：
+>
+> 参数1：回调函数，需要多进程执行的函数
+>
+> 参数2：一个可迭代数据，每一个迭代元素会以参数形式传入给回调函数
+
+
+
+### 5.2 线程池
 
 简单代码
 
@@ -2283,13 +2759,247 @@ print("主线程结束")
 
 
 
+创建10个线程
+
+```
+from threading import Thread
+from time import sleep
+
+# 带两个参数
+def threadFunc(num,):
+    print("新线程%s" % str(num))
+    sleep(1)
+
+
+threadlist = []
+
+for i in range(10):
+	# 以元组方式传入参数
+    thread = Thread(target=threadFunc, args=(i,))
+    thread.start()
+    # 将所有线程对象加入列表中
+    threadlist.append(thread)
+
+# 阻塞所有子线程，等待所有子线程结束再继续往下执行
+for thread in threadlist:
+    thread.join()
+
+print("主线程结束")
+
+```
+
+
+
+```
+import requests
+# from multiprocessing import Process
+from threading import Thread
+import time
+
+
+def work(n):
+    print(f'开始任务{n}')
+    time.sleep(3)
+    print(f'完成任务{n}')
+
+
+task_list = ['1', '2', '3']
+
+# 单进程工作
+# for item in task_list:
+#     work(item)
+
+if __name__ == '__main__':
+    plist = []
+    for item in task_list:
+        # 创建进程
+        p = Thread(target=work, args=(item,))
+        # 启动进程
+        p.start()
+        # 把创建的进程加入列表
+        plist.append(p)
+
+    for i in plist:
+        i.join()
+```
+
+
+
+另外一种方法创建线程池
+
+```
+from concurrent.futures import ThreadPoolExecutor
+import time
+import threading
+
+
+def work(n):
+    print(f'开始任务{n}:线程号：{threading.current_thread()}')
+    time.sleep(3)
+    print(f'完成任务{n}:线程号：{threading.current_thread()}')
+
+
+task_list = ['1', '2', '3']
+
+# 创建进程池
+if __name__ == '__main__':
+    pool = ThreadPoolExecutor(max_workers=3)
+    for item in task_list:
+        pool.submit(work, item)
+
+    pool.shutdown(True)
+```
 
 
 
 
-多线程处理公共数据
+
+
+
+## 6. 多线程处理公共数据
+
+### 6.1 锁对象
 
 当多线程同时对一个变量（列表、字典）进行数据处理的时候，就会出现冲突。为了防止这种冲突，我们需要对公共变量加锁处理，让公共变量被一个线程处理的时候，其他线程无法同时对这个变量处理。
+
+
+
+```
+import threading
+
+data = 0
+
+def task_add():
+    global data
+    for i in range(1000000):
+        lock.acquire()
+        data += 1
+        lock.release()
+
+
+def task_sub():
+    global data
+    for i in range(1000000):
+        lock.acquire()
+        data -= 1
+        lock.release()
+        
+if __name__ == "__main__":
+    add_thread = threading.Thread(target=task_add)
+    sub_thread = threading.Thread(target=task_sub)
+    
+    add_thread.start()
+    sub_thread.start()
+    
+    add_thread.join()
+    sub_thread.join()
+    
+    print(data)
+    print("程序结束")
+```
+
+> 每次的输出结果都不一样，因为在相加的时候，变量还没有加进去，就被第二个线程拿走了 data 的使用权。
+
+
+
+可以用更简单的卖票问题来演示一下：
+
+```
+import threading
+import time
+
+ticket = 5
+
+def sell_ticket():
+    global ticket
+    while True:
+        if ticket > 0:
+            time.sleep(0.1)
+            ticket -= 1
+            print('{}卖出一张票，还剩{}张'.format(threading.current_thread().name, ticket))
+        else:
+            print('票卖完了')
+            break
+
+t1 = threading.Thread(target=sell_ticket, name='线程1')
+t2 = threading.Thread(target=sell_ticket, name='线程2')
+t1.start()
+t2.start()
+```
+
+> 输出结果会出现 -1 张的超卖现象，如果单线程的话，则不会出现这个问题，在最后一张票卖完后，判断 ticket>0那里就会直接跳转到else，但是由于是多线程，所以再最后只剩一张票的时候，两个线程都拿到了数据读取权，都判断出ticket > 0 ，所以再sleep 0.1 秒后，都对 ticket 进行了 -1 操作。造成了 -1 出现。
+
+
+
+
+
+线程锁
+
+只需要在数据写入前，放上一把锁，然后写入完毕后，将锁解开。
+
+```
+lock = threading.Lock()
+
+def task_add():
+    global data
+    for i in range(1000000):
+        lock.acquire()
+        data += 1
+        lock.release()
+        
+def task_sub():
+    global data
+    for i in range(1000000):
+        lock.acquire()
+        data -= 1
+        lock.release()
+```
+
+
+
+和 with open 一样，锁也可以使用 with 关键字，with lock
+
+```
+import threading
+
+lock = threading.Lock()
+with lock:
+    # 这里写自己的代码
+    pass
+```
+
+> `with` 语句会在这个代码块执行前自动获取锁，在执行结束后自动释放锁。
+
+
+
+```
+import threading
+import time
+
+ticket = 5
+lock = threading.Lock()
+
+
+def sell_ticket():
+    global ticket
+    while True:
+        with lock:
+            if ticket > 0:
+                time.sleep(0.1)
+                ticket -= 1
+                print('{}卖出一张票，还剩{}张'.format(threading.current_thread().name, ticket))
+            else:
+                print('票卖完了')
+                break
+
+
+t1 = threading.Thread(target=sell_ticket, name='线程1')
+t2 = threading.Thread(target=sell_ticket, name='线程2')
+t1.start()
+t2.start()
+```
+
+
 
 ```
 from threading import Thread,Lock
@@ -2333,127 +3043,454 @@ print(f'最后我们的账号余额为 {bank["byhy"]}')
 
 
 
-Deamon 守护线程
+### 6.2 可重入锁（RLock）
 
+有时候在同一个线程中，我们可能会多次请求同一资源（就是，获取同一锁钥匙），俗称锁嵌套。
 
-
-
-
-```
-import requests
-# from multiprocessing import Process
-from threading import Thread
-import time
-
-
-def work(n):
-    print(f'开始任务{n}')
-    time.sleep(3)
-    print(f'完成任务{n}')
-
-
-task_list = ['1', '2', '3']
-
-# 单进程工作
-# for item in task_list:
-#     work(item)
-
-if __name__ == '__main__':
-    plist = []
-    for item in task_list:
-        # 创建进程
-        p = Thread(target=work, args=(item,))
-        # 启动进程
-        p.start()
-        # 把创建的进程加入列表
-        plist.append(p)
-
-    for i in plist:
-        i.join()
-```
-
-
-
-线程池
+如果还是按照常规的做法，会造成死锁的。比如，下面这段代码，你可以试着运行一下。会发现并没有输出结果。
 
 ```
-from concurrent.futures import ThreadPoolExecutor
-import time
 import threading
 
+def main():
+    n = 0
+    lock = threading.Lock()
+    with lock:
+        for i in range(10):
+            n += 1
+            with lock:
+                print(n)
 
-def work(n):
-    print(f'开始任务{n}:线程号：{threading.current_thread()}')
-    time.sleep(3)
-    print(f'完成任务{n}:线程号：{threading.current_thread()}')
+t1 = threading.Thread(target=main)
+t1.start()
+```
 
 
-task_list = ['1', '2', '3']
 
-# 创建进程池
-if __name__ == '__main__':
-    pool = ThreadPoolExecutor(max_workers=3)
-    for item in task_list:
-        pool.submit(work, item)
+是因为，第二次获取锁时，发现锁已经被同一线程的人拿走了。自己也就理所当然，拿不到锁，程序就卡住了。threading模块除了提供Lock锁之外，还提供了一种可重入锁RLock，专门来处理这个问题。
 
-    pool.shutdown(True)
+
+
+```
+import threading
+
+def main():
+    n = 0
+    # 生成可重入锁对象
+    lock = threading.RLock()
+    with lock:
+        for i in range(10):
+            n += 1
+            with lock:
+                print(n)
+
+t1 = threading.Thread(target=main)
+t1.start()
+```
+
+
+
+### 6.3 Queue 队列
+
+Queue 队列是保证数据可以以正确顺序执行的一种方法，一般用于多线程或多进程，可以把队列看成一个容器，存放我们需要处理的数据。Queue 在多进程或多线程使用的时候分别调用不同的库，多进程调用的是 multiprocessing 库，而多进程调用的库是 queue
+
+
+
+Producer - Queue - Consumer
+
+多线程处理数据一般是以上模式，生产数据，然后存入队列，然后处理数据。当生产速度慢、处理速度快时，那么队列数据就会越来越少，当队列为空的时候，那么Consumer就需要等待新的数据被生产者生产继续存放到队列中。
+
+
+
+导入 queue 库
+
+```
+# 导入进程
+import multiprocessing
+
+# 导入线程 queue 队列
+import queue
+```
+
+
+
+创建 queue 对象，默认模式 FIFO（First in First Out），用put() 第一个对象进入队列，，用 get() 方法后，也是第一个取出来。
+
+```
+q = queue.Queue()
+
+# 将对象放入队列
+q.put(5)
+
+# 从队列中取出对象
+print(q.get())
+```
+
+> 多进程创建 queue 则是 `q = multiprocessing.Queue()`
+
+
+
+Queue 类里边有参数，放入参数则代表队列最多存储几个对象如，q = queue.Queue(5)，当放入对象超出指定范围的时候，则会陷入死循环。主要是因为队列里边只能放5个对象，程序陷入等待状态，如果此时从队列中取出一个对象，则程序继续运行。
+
+```
+import queue
+
+q = queue.Queue(5)
+for i in range(5):
+    q.put(i)
+
+q.put(5)  # 队列已经存满，陷入循环，后边的代码不再执行
+print(q.get())
+
+for i in range(5):
+    print(q.get())
+```
+
+> 同理，get() 也是一样，当队列中已经没有任何对象时，再用 get 方法取元素的话，也会陷入等待状态。
+
+
+
+put 参数
+
+```
+put(obj, block=True, timeout=None)
+```
+
+- block 阻塞（默认为 True，当队列已满时，自动进入等待模式
+- timeout（设置阻塞等待时间，如果超时则 raise 异常
+- `put_nowait(obj)` 相当于 `put(obj, block=False)` 也就是说不进行等待，当队列无法放入新元素时，raise 异常
+
+
+
+get 参数
+
+与 put 参数一样，都有阻塞开关和超时参数。
+
+```
+get(obj, block=True, timeout=None)
+```
+
+- `get_nowait(obj)` 与 `get(obj, block=False)` 是同样功能
+
+
+
+queue 方法：
+
+```
+import queue
+
+# 创建队列，放入5个对象
+q = queue.Queue()
+for i in range(5):
+	q.put(i)
+
+# 判断队列是否为空
+print(q.empty())
+
+# 判断队列是否已满
+print(q.full())
 
 ```
 
 
 
-## 3. 进程池
+队列种类：
 
-运行十次函数
+- 先进先出队列 queue.Queue
+- 后进先出队列 queue.LifoQueue (Queue的基础上进行的封装)
+- 优先级队列 queue.PriorityQueue (Queue的基础上进行的封装)
+- 双向队列 queue.deque
+
+
+
+应用场景：
+
+原理都明白，但是还是不知道为什么使用队列是不是？简单举例，这里是我们设置循环20次处理公共变量list
 
 ```
-from multiprocessing import Pool
+import threading
 import time
+num = []
 
-def main(n):
-    print("进程池%s" % str(n))
-    time.sleep(2)
+def produce():
+    global num
+    time.sleep(1)
+    for i in range(20):
+        num.append(i)
 
+def consume():
+    global num
+    time.sleep(0.3)
+    for i in range(20):
+        num.pop()
 
-if __name__ == '__main__':
-    start = time.time()
-    for i in range(10):
-        main(i)
-    print(time.time() - start)
+p1 = threading.Thread(target=produce, name='p1')
+c1 = threading.Thread(target=consume, name='c1')
+p1.start()
+c1.start()
+p1.join()
+c1.join()
+print('')
+print(num)
 ```
 
 
 
-创建10个进程
+有时候我们不知道具体数目，而且多线程是一边生产，一边处理。有时候生产的速度与处理的速度不一致，这就会造成异常。所以需要让多线程之间有数据之间的通信。就需要用到 queue。
 
 ```
-from multiprocessing import Pool
+import threading
 import time
+import queue
 
-def main(n):
-    print("进程池%s" % str(n))
-    time.sleep(2)
+q = queue.Queue()
 
 
-if __name__ == '__main__':
-    start = time.time()
-    pool = Pool()  # Pool 默认大小是CPU的核数，可以指定
-    pool.map(main, range(10))
-    print(time.time() - start)
+def produce():
+    time.sleep(1)
+    for i in range(20):
+        q.put(i)
 
+
+def consume():
+    time.sleep(0.3)
+    for i in range(20):
+        q.get()
+
+
+p1 = threading.Thread(target=produce)
+c1 = threading.Thread(target=consume)
+p1.start()
+c1.start()
+p1.join()
+c1.join()
+print(q.qsize())
 ```
 
-> pool.map 中的两个参数：
->
-> 参数1：回调函数，需要多进程执行的函数
->
-> 参数2：一个可迭代数据，每一个迭代元素会以参数形式传入给回调函数
+> 虽然处理的速度要比生产的速度快，但是当队列没有数据的时候，处理的线程就会陷入等待状态，然后直到有数据进到队列。
+
+
+
+另外如果是动态数据，队列也要比公共对象要好很多，因为可以一直等待处理数据。只要有新数据，那么就开始处理。
 
 
 
 
 
 # Asyncio 多任务异步处理
+
+## 协程
+
+协程就是让一个线程实现代码块相互切换运行，最大优化程序运行效率。
+
+
+
+实现协程的几种方法：
+
+- greenlet
+- yield 关键字
+- asyncio 装饰器
+- async、await 关键字
+
+
+
+通过 greenlet 实现协程
+
+```
+from greenlet import greenlet
+
+
+def func1():
+    print(1)  # 第二步：打印1
+    gr2.switch()  # 第三步：切换到 func2
+    print(2)  # 第六步：继续从上次暂停的地方执行
+    gr2.switch()  # 切换到 func2
+
+def func2():
+    print(3)  # 第四步：打印3
+    gr1.switch()  # 第五步：切换到 func1
+    print(4)
+    
+gr1 = greenlet(func1)
+gr2 = greenlet(func2)
+
+gr1.switch()  # 第一步，执行 func1
+```
+
+
+
+通过生成器 yield 实现协程
+
+```
+def study():
+    for i in range(5):
+        print('学习中------>', i)
+        yield
+
+def listen():
+    for i in range(5):
+        print('音乐中------>', i)
+        yield
+
+def wechat():
+    for i in range(5):
+        print('聊天中------>', i)
+        yield
+
+
+c1 = study()
+c2 = listen()
+c3 = wechat()
+
+
+while True:
+    c1.__next__()
+    c2.__next__()
+    c3.__next__()
+```
+
+> 运行函数的时候碰到 yield 就会暂停函数，然后返回给赋值对象。然后一直调用 next 就可以简单实现协程效果。切换运行的代码块。
+
+
+
+```
+def func1():
+    yield 1
+    yield from func2()
+    yield 2
+
+def func2():
+    yield 3
+    yield 4
+
+f1 = func1()
+for item in f1:
+    print(item)
+```
+
+
+
+asyncio 协程（3.4老版本使用）
+
+```
+import asyncio
+
+@asyncio.coroutine
+def func1():
+    print(1)
+    yield from asyncio.sleep(2)
+    print(2)
+
+@asyncio.coroutine
+def func2():
+    print(3)
+    yield from asyncio.sleep(2)
+    print(4)
+
+tasks = [
+    asyncio.ensure_future(func1()),
+    asyncio.ensure_future(func2())
+]
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(asyncio.wait(tasks))
+```
+
+
+
+async, await 关键字协程（3.8以后使用）
+
+```
+import asyncio
+
+async def func1():
+    print(1)
+    await asyncio.sleep(2)
+    print(2)
+
+
+async def func2():
+    print(3)
+    await asyncio.sleep(2)
+    print(4)
+
+tasks = [
+    asyncio.ensure_future(func1()),
+    asyncio.ensure_future(func2())
+]
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(asyncio.wait(tasks))
+```
+
+
+
+协程的应用意义：
+
+避免浪费等待时间，最大效率让 CPU 为我们工作！当碰到需要等待的任务（比如发送请求之类的），协程会切换到另外一个代码块去执行。等待结束后，再切回来继续执行。
+
+
+
+普通下载：
+
+```
+import requests
+
+
+def download_image(url):
+    print('开始下载', url)
+    res = requests.get(url)
+    print('下载完成')
+    file_name = url.rsplit('_')[-1]
+    with open(file_name, 'wb') as file_obj:
+        file_obj.write(res.content)
+
+if __name__ == '__main__':
+    url_list = [
+        'https://www.autoimg.cn/120x120_1.jpg',
+        'https://www.autoimg.cn/120x120_2.jpg',
+        'https://www.autoimg.cn/120x120_3.jpg'
+    ]
+
+    for item in url_list:
+        download_image(item)
+```
+
+
+
+协程下载
+
+```
+import aiohttp
+import asyncio
+
+
+def fetch(session, url):
+    print('发送请求', url)
+    async with session.get(url, verify_ssl=False) as response:
+        content = await response.content.read()
+        file_name = url.rsplit('_')[-1]
+        with open(file_name, 'wb') as file_obj:
+            file_obj.write(content)
+
+
+async def main():
+    async with aiohttp.ClientSession() as session:
+        url_list = [
+            'https://www.autoimg.cn/120x120_1.jpg',
+            'https://www.autoimg.cn/120x120_2.jpg',
+            'https://www.autoimg.cn/120x120_3.jpg'
+        ]
+        tasks = [asyncio.create_task(fetch(session, url)) for url in url_list]
+        await asyncio.wait(tasks)
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
+
+```
+
+
 
 ## 安装 asyncio
 
@@ -2465,12 +3502,14 @@ pip install asyncio
 
 ## 协程对象
 
-如果一个函数的定义被 async 关键词修饰，则该函数就变成了一个特殊的函数。
+如果一个函数的定义被 async 关键词修饰，则该函数就变成了一个特殊的函数。我们称为协程函数，协程函数的返回值我们称作协程对象。
 
 ```
+# 创建协程函数
 async def my_fun():
 	print("Test Code")
 
+# 创建协程对象
 c = my_fun()
 print(c)
 ```
@@ -2479,6 +3518,94 @@ print(c)
 >
 > - 该函数调用后函数的内部实现语句不会被立即执行
 > - 该 async 会返回一个协程对象
+
+
+
+
+
+## 事件循环
+
+事件循环也是一个对象，可以看做是一个容器，可以将多个任务对象存放在事件循环中。如果事件循环启动后，则事件循环对象可以异步的将每一个任务对象进行执行。
+
+
+
+事件循环会循环判断任务列表中的任务是否需要执行，如果需要执行，那么就运行代码块，执行完毕后将任务放到已完成任务列表中。如果所有任务都执行完毕，则终止循环。
+
+
+
+```
+# 创建事件循环对象
+loop = asyncio.get_event_loop()
+
+# 将 task 存储到事件循环对象中
+loop.run_until_complete(task)
+```
+
+
+
+将协程对象放入到事件循环当中
+
+```
+import asyncio
+
+async def task():
+    print('task')
+
+c = task()
+
+# 创建事件循环对象
+loop = asyncio.get_event_loop()
+
+# 将 task 存储到事件循环对象中
+loop.run_until_complete(c)
+```
+
+
+
+3.7 版本之后，可以直接使用 `asyncio.run()` 直接运行循环
+
+```
+asyncio.run(task)
+```
+
+
+
+## 等待对象
+
+await 关键字后边需要加上可等待的对象（协程对象、Future、Task对象）
+
+
+
+```
+import asyncio
+
+async def func1():
+    print('start task1')
+    await asyncio.sleep(2)
+    print('task1 end')
+    return '返回值'
+
+async def func2():
+    print('start task2')
+    res = await func1()
+    print('task2 end')
+    print(res)
+
+asyncio.run(func2())
+```
+
+执行顺序：
+
+- 执行 func2
+- 在输出 start task2
+- 暂停协程函数
+- 开始等待 func1 运行结果
+- 将 func1 的返回值给 res
+- 然后继续运行 func2 后边的代码
+
+
+
+
 
 
 
@@ -2491,18 +3618,6 @@ task = asyncio.ensure_future(c)
 ```
 
 
-
-## 事件循环
-
-事件循环也是一个对象，可以看做是一个容器，可以将多个任务对象存放在事件循环中。如果事件循环启动后，则事件循环对象可以异步的将每一个任务对象进行执行。
-
-```
-# 创建事件循环对象
-loop = asyncio.get_event_loop()
-
-# 将 task 存储到事件循环对象中
-loop.run_until_complete(task)
-```
 
 
 

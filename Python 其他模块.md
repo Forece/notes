@@ -451,7 +451,32 @@ wc.to_file("py.png")
 
 
 
-# 11. MD5
+# 11. 加密模块 hashlib 
+
+单项加密：只有加密过程，不能解密（MD5, SHA）
+
+对称加密：
+
+非对称加密：
+
+
+
+MD5 加密
+
+```
+import hashlib
+
+# 生成对象
+x = hashlib.md5()
+
+# 将字符串abc以md5方式加密
+x.update('abc'.encode('utf-8'))
+
+# 输出加密过后的密文
+print(x.hexdigest())
+```
+
+
 
 让文件名以 md5 形式命名，防止下载重复
 
@@ -464,5 +489,79 @@ def save_image(content):
     	with open(file_path, 'wb') as f:
     		f.write(content)
     		f.close()
+```
+
+
+
+SHA 加密
+
+```
+import hashlib
+
+hash1 = hashlib.sha1('123456'.encode())
+hash2 = hashlib.sha224('123456'.encode())
+hash3 = hashlib.sha256('123456'.encode())
+hash4 = hashlib.sha384('123456'.encode())
+```
+
+
+
+# 12. uuid
+
+uuid 模块是为了生成全局唯一id，UUID是128位的全局唯一标识符，通常由32字节的字符串表示。它可以保证时间和空间的唯一性，也称为GUID，全称为：
+
+```objectivec
+UUID —— Universally Unique IDentifier      Python 中叫 UUID
+GUID —— Globally Unique IDentifier          C#  中叫 GUID
+```
+
+
+
+UUID1
+
+由MAC地址、当前时间戳、随机数生成。可以保证全球范围内的唯一性，但MAC的使用同时带来安全性问题，局域网中可以使用IP来代替MAC。
+
+```
+import uuid
+
+print(uuid.uuid1())
+
+# 输出结果
+2b7dda1f-d84e-11ea-ae59-1c1b0d6b347d
+```
+
+
+
+# 13. CSV
+
+csv 文件是一个文本格式的表格文件，也就是说没有 excel 加密方式。用文本方式存储表格数据，以逗号来分隔列，回车分隔行
+
+
+
+```
+import csv
+
+file = open('demo.csv', 'w', encoding='utf-8', newline='')
+w = csv.writer(file)
+
+# 写入单行数据
+w.writerow(['name','age','score','city'])
+w.writerow(['zhangsan','19','90','beijing'])
+
+# 写入多行数据
+w.writerows(
+    [
+        ['name','age','score','city'],
+        ['zhangsan','19','90','beijing']
+    ]
+)
+
+# 读取数据
+r = csv.reader(file)
+# 遍历csv数据
+for data in r:
+    print(data)
+
+file.close()
 ```
 
