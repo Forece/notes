@@ -1721,7 +1721,7 @@ result = re.findall('^He.*?(\d+).*World$', content, re.S)
 print(result)
 ```
 
-
+> 使用re.S参数以后，正则表达式会将这个字符串作为一个整体，将“\n”当做一个普通的字符加入到这个字符串中，在整体中进行匹配。如果网页源码比较大的话，不建议使用 re.S ，因为耗费资源比较多。还是直接使用 \s* 来代表换行比较好
 
 
 
@@ -2609,6 +2609,43 @@ if __name__ == "__main__":
 ```
 
 > 发现多进程是按照顺序执行的
+
+
+
+### 3.5 线程的返回值
+
+```
+from threading import Thread
+
+def foo(number):
+    time.sleep(20)
+    return number
+
+class MyThread(Thread):
+
+    def __init__(self, number):
+        Thread.__init__(self)
+        self.number = number
+
+    def run(self):
+        self.result = foo(self.number)
+
+    def get_result(self):
+        return self.result
+
+
+thd1 = MyThread(3)
+thd2 = MyThread(5)
+thd1.start()
+thd2.start()
+thd1.join()
+thd2.join()
+
+print thd1.get_result()
+print thd2.get_result()
+```
+
+
 
 
 
@@ -3594,6 +3631,8 @@ async def func2():
 asyncio.run(func2())
 ```
 
+
+
 执行顺序：
 
 - 执行 func2
@@ -3607,59 +3646,188 @@ asyncio.run(func2())
 
 
 
-
-
 ## 任务对象
 
-创建任务对象需要基于已有的协程对象。任务对象是一个高级的协程对象。可以返回协程对象中的状态。
+创建任务对象需要基于已有的协程对象。任务对象是一个高级的协程对象。可以返回协程对象中的状态。任务对象用于在事件循环中添加多个任务。
+
+
 
 ```
-task = asyncio.ensure_future(c)
-```
-
-
-
-
-
-如果协程函数中有 return 值，那么事件循环中被执行的任务对象不会有返回值。需要给任务对象绑定一个回调函数
-
-
-
-定义一个回调函数
-
-```
-def parse(task):
-	page_text = task.result()
-	print('i am a callback', page_text)
-```
-
-> 必须有一个参数，该参数就表示该函数的调用者
-
-
-
-给任务对象绑定回调函数
-
-```
-task.add_done_callback(parse)
+# Python 3.7 版本之前
+asyncio.ensure_future(协程对象)
 ```
 
 
 
-将多个任务对象放到循环中
+```
+# Python 3.7 版本之后
+asyncio.create_task(协程对象)
+```
+
+
 
 ```
-tasks = []
-for ur in urls:
-	c = get_request(url)
-	task = asyncio.ensure_future(c)
-	task.add_done_callback(parse)
-	tasks.append(task)
+import asyncio
+
+async def func():
+    print(1)
+    await asyncio.sleep(2)
+    print(2)
+    return('返回值')
+
+async def main():
+    print('main开始')
+
+	# 创建 task 对象，将当前任务对象加入到事件循环当中
+    task1 = asyncio.create_task(func())
+    task2 = asyncio.create_task(func())
+
+    print('main结束')
 	
-loop - asyncio.get_event_loop()
-loop.run_until_complete(asyncio.wait(tasks))
+	# 当协程遇到IO操作时，自动切换执行其他任务
+	# 此处 await 是等待响应协程运行完毕，并获取返回值
+    ret1 = await task1
+    ret2 = await task2
+    print(ret1, ret2)
+
+asyncio.run(main())
 ```
 
-> wait 表示挂起，将任务列表中每个任务对象进行挂起。
+
+
+一般会将任务对象放入列表当中
+
+```
+import asyncio
+
+async def func():
+    print(1)
+    await asyncio.sleep(2)
+    print(2)
+    return('返回值')
+
+async def main():
+    print('main开始')
+
+    # 创建任务对象列表，可以给任务对象用name属性标记
+    task_list = [
+        asyncio.create_task(func(), name='n1'),
+        asyncio.create_task(func(), name='n2')
+    ]
+
+    print('main结束')
+
+    # 返回值会保存在 done 当中， pending 是未完成任务
+    done, pending = await asyncio.wait(task_list, timeout=3)
+
+    print(done)
+
+asyncio.run(main())
+
+```
+
+
+
+## Future 对象
+
+Future 对象是比较底层的一个对象，一般不经常使用。任务对象继承 Future 对象，任务对象内部 await 结果的处理基于 Future 对象。
+
+
+
+```
+import asyncio
+
+
+async def set_after(fut):
+    await asyncio.sleep(2)
+    fut.set_result('666')
+
+
+async def main():
+    
+    # 获取当前事件循环
+    loop = asyncio.get_running_loop()
+    
+    # 创建一个 Future 对象
+    fut = loop.create_future()
+    
+    # 创建一个任务对象
+    await loop.create_task(set_after(fut))
+
+    # 等待 Future 对象获取最终结果
+    data = await fut
+    print(data)
+
+
+asyncio.run(main())
+
+```
+
+
+
+## concurrent.futures.Future 对象
+
+和普通 Future 对象不同，这个对象是使用线程池、进程池实现异步操作时用到的对象
+
+
+
+```
+import time
+from concurrent.futures import Future
+from concurrent.futures.thread import ThreadPoolExecutor
+from concurrent.futures.process import ProcessPoolExecutor
+
+def func(value):
+    time.sleep(1)
+    print(value)
+    return value
+
+# 创建线程池
+pool = ThreadPoolExecutor(max_workers=5)
+
+# 创建进程池
+# pool = ProcessPoolExecutor(max_workers=5)
+
+for i in range(10):
+    fut = pool.submit(func,1)
+    print(fut)
+```
+
+> 不经常使用，但是如果在异步编程时，碰到第三方库不支持异步的时候，需要进行线程、进程协调的情况下，则需要用到。
+
+
+
+示例：
+
+```
+import asyncio
+import requests
+
+
+async def download_image(url):
+    print('开始下载：', url)
+
+    loop = asyncio.get_event_loop()
+
+    future = loop.run_in_executor(None, requests.get, url)
+
+    response = await future
+    print('下载完成')
+
+
+if __name__ == '__main__':
+    url_list = [
+        'url1',
+        'url2',
+        'url3'
+    ]
+
+    tasks = [download_image(url) for url in url_list]
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(asyncio.wait(tasks))
+```
+
+
 
 
 
