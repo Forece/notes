@@ -2457,7 +2457,7 @@ ul li:nth-child(2n) {
 
 
 
-各行变色效果
+隔行变色效果
 
 nth-child() 参数可以是 even（偶数） 或是 odd（奇数）
 
