@@ -612,6 +612,8 @@ string = "True"
 # 在字符串中包含双引号
 string = "he said \"ok\""
 string = 'he said "ok"'
+string = "I'm OK"
+string = "I'm \"OK\""
 
 # 多行字符串
 string = """第一行
@@ -622,6 +624,7 @@ string = """第一行
 string = "第一行\n第二行\n第三行"
 
 # 解决转义字符 (\n)在字符串的问题
+path = "C:\new"
 path = "C:\\new"
 path = r"C:\new"
 path = "C:/new"
@@ -632,6 +635,9 @@ path = "C:/new"
 字符串变量拼接
 
 ~~~python
+# 字符串变量与其他变量联合使用
+print("我的名字是",name)
+
 # 字符串变量使用 + 拼接字符串
 print("string1" + "string2")
 
@@ -639,7 +645,7 @@ print("string1" + "string2")
 print("*" * 50)
 ~~~
 
-> 注意：数字型变量和字符串变量不能进行其他的运算
+> 注意：数字型变量和字符串变量不能进行运算，需要将其他类型的变量用 str() 转换成字符串变量。
 
 
 
@@ -673,7 +679,7 @@ True
 
 ~~~python
 # 转整形
-int("20.0")
+int("20")
 
 # 转浮点型
 float(3)
@@ -687,24 +693,32 @@ bool(0.0)
 
 
 
-int(), float(), str() 这几个转换数据类型的函数，不会改变原来变量的类型，只是新生成了一个新的变量。
+int(), float(), str(), bool() 这几个转换数据类型的函数，不会改变原来变量的类型，只是在内存中生成了一个新的数据。
 
 ~~~python
-num_a = 30.4
-num_b = 30.4
+num_a = 4.1
+num_b = 5.2
 int(num_a)  # 没有改变原来的 num_a，只是 int(num_a) 这个整体是整型
 num_b = int(num_b)  # 重新将变量赋值，所以数据类型已经改变
 print(type(num_a))
-print(type(nub_b))
+print(type(num_b))
 
 # 输出结果
 <class 'float'>
 <class 'int'>
 ~~~
 
+> 思考一下，如果 num_a, num_b 都是1.5的情况，用 id() 函数看一下他们转换后地址的变化。
+>
+> - num_a 内存地址
+> - num_b 内存地址
+> - int(num_a) 内存地址
+> - int(num_b) 内存地址
+> - num_b 被重新赋值后的内存地址
 
 
-# 三、输出函数 Print
+
+# 三、 Print 输出函数
 
 print 函数的作用，可以把 `""` 内部的内容，输出到屏幕上
 
@@ -713,16 +727,19 @@ print("Hello World!")  # 可以输出文字
 print(5+3)  # 可以计算
 print("Well" + "Done")  # 可以连接字符串
 print("Abc" + " 456")  # 带空格连接
-print("1.01 ** 365)  # 输出1.01的365次方
+print(1.01 ** 365)  # 输出1.01的365次方
 print("ABC" *8)  # 重复打印8遍ABC
 print("ABC\n" *8)  # 重复打印8遍ABC带换行
-print("c:\\hello.py")  # 用\来转义字符
+print("c:\\new_file.py")  # 用\来转义字符
 print('he said "OK"')  # 或直接用单引号来引用整个带符号的字符串
 ~~~
 
 ~~~python
 # 注意：字符串和数字不能同时输出，需要将数字转换为字符串如：
-print(phrase + "is" + str(age) + " years old")
+print(name + " is " + str(age) + " years old")
+
+# 如果需要将字符串类型的数字与整形或浮点型数据进行运算的话，也同样需要对字符串数据进行转换。
+print(int("68") + 32)
 ~~~
 
 
@@ -738,15 +755,15 @@ print("*", end="")
 ~~~
 
 ~~~python
-# 只输出换行
+# 只输出空行
 print("")
 ~~~
 
+> 思考题：print("\n") 会输出什么？
 
 
 
-
-# 四、数据输入 
+# 四、Input 输入函数
 
 使用 input 函数，可以将用户在控制台输入的数据传入变量
 
@@ -754,33 +771,70 @@ print("")
 input("这里的字符会在控制台中显示，并且等待用户输入字符")
 ~~~
 
+> 注意：所有利用 input 函数所输入的变量都是字符串变量。
+
 
 
 可以直接给 input 输入的数据赋值
 
 ```python
-temp=input("随便输入一个数字\n")
+temp1=input("随便输入一个数字:")
 ```
+
+
+
+
+
+# 练习：
+
+~~~
+计算各种水果的价格，
+可输入变量1：水果名称
+可输入变量2：水果价格
+可输入变量3：水果数量
+可输入变量4：姓名
+最后输出结果例：张三买了3个苹果，每个苹果价格是10元，总共花了30元。
+~~~
+
+
+
+~~~python
+# 计算各种水果的价格，
+# 可输入变量1：水果名称
+fruit_name = input("水果名称:")
+# 可输入变量2：水果价格
+fruit_price = input("水果价格:")
+# 可输入变量3：水果数量
+fruit_quantity = input("水果数量:")
+# 可输入变量4：姓名
+name = input("姓名:")
+# 最后输出结果例：张三买了3个苹果，每个苹果价格是10元，总共花了30元。
+result = name + "买了" + fruit_quantity + "个" + fruit_name + "，每个" + fruit_name + "价格是" + \
+         fruit_price + "元，总共花了" + str(float(fruit_price) * float(fruit_quantity)) + "元。"
+print(result)
+~~~
+
+
 
 
 
 # 五、帮助文档
 
-内置函数，英文为 Bulit-in functions，我的理解就是可以在 Python 的 IDLE 里面直接使用的函数，而其他函数使用是需要通过 import 语句调入扩展包后才能使用。
+内置函数，英文为 Bulit-in functions，是 Python 中自带的一些基本函数，像之前学的 print() , input() , id() , type()  这些都是 BIF。虽然有些函数也是 Python 自带的，不过是以包的方式存在，需要 import 语句导入才可以使用。比如：re 正则的包 
 
 
 
-在 Python 或 IDLE 中，输入 `dir(__builtins__)`可以看到 Python 提供的内置方法列表（注意，builtins 前后是两个下划线哦）其中小写的就是 BIF。如果想具体查看某个 BIF 的功能，比如 input()，可以在 shell 中输入 help(input)，就会得到这个 BIF 的功能描述。
+在 Python 或 IDLE 中，或者 Pycharm 中输入 `print(dir(__builtins__))`可以看到 Python 提供的内置方法列表（注意，builtins 前后是两个下划线）其中小写的就是 BIF。如果想具体查看某个 BIF 的功能，比如 input()，可以在 Python 环境中输入 help(input)，就会得到这个 BIF 的功能描述。
+
+
 
 ```python
-dir(__builtins__)  # 查看 Python 提供的内置方法列表
+print(dir(__builtins__))  # 查看 Python 提供的内置方法列表
 help(input)  # 查看 input 命令功能描述
 print(str.__doc__)  # 查看 str 函数文档
 ```
 
-
-
-输入函数，然后按 `.`  然后按 `Tab`，可以查看函数所有使用方法
+> help() 会比 `__doc__` 文档更详细一些
 
 
 
@@ -792,14 +846,21 @@ print(str.__doc__)  # 查看 str 函数文档
 + - * / %  # 加、减、乘、除、求余
 ~~~
 
+~~~python
+%  # 求余数
+print(5 % 2)  # 结果为1
+~~~
+
+
+
 ```python
 //  # 取整数 
-9//2  # 输出结果为4
+print(9 // 2)  # 结果为4
 ```
 
-```
+```python
 **  # 幂运算，又称作次方
-print(2**3)  # 求2的3次方
+print(2 ** 3)  # 求2的3次方，结果为8
 ```
 
 
@@ -807,10 +868,10 @@ print(2**3)  # 求2的3次方
 ## 2. 比较运算符
 
 ~~~python
-<
->
-<=
->=
+<  # 小于号
+>  # 大于号
+<=  # 小于等于
+>=  # 大于等于
 ==  # 相等
 !=  # 不等
 ~~~
@@ -825,7 +886,12 @@ or	 # 逻辑或
 not	 # 逻辑非
 ```
 
-a = 10, b = 20
+
+
+```
+a = 10
+b = 20
+```
 
 | 运算符 | 逻辑表达式 | 描述                                                         | 实例                    |
 | :----- | :--------- | :----------------------------------------------------------- | :---------------------- |
@@ -834,6 +900,25 @@ a = 10, b = 20
 | not    | not x      | 布尔"非" - 如果 x 为 True，返回 False 。如果 x 为 False，它返回 True。 | not(a and b) 返回 False |
 
 
+
+逻辑运算会出现短路问题
+
+短路是指如果在进行前面的表达式的运算过程，通过判断已经明确的知道整个表达式的结果，那么就不会进行后面表达式的运算判断。
+
+~~~python
+表达式1 and 表达式2 and 表达式3  # 当表达式1为False的时候，则整个表达式结果为False，则不会对表达式2、表达式3进行运算
+表达式1 or 表达式2 or 表达式3  # 当表达式1为True的时候，则整个表达式结果为True，则不会对表达式2、表达式3进行运算
+~~~
+
+
+
+~~~python
+# and 短路例子
+3>4 and print("test")
+
+# or 短路例子
+2>=1 or print("test")
+~~~
 
 
 
@@ -847,8 +932,6 @@ Python允许你同时为多个变量赋值。例如：
 a = b = c = 1
 a, b, c = 1, 2, "john"
 ```
-
-
 
 
 
@@ -2264,6 +2347,7 @@ print (getXXXTime())
 ```
 
 
+
 **带返回值函数的装饰器**
 
 ```
@@ -2904,7 +2988,49 @@ n = [m[j:j+3] for j in range(1, 100, 3)]
 
 
 
+### 9. 字符串切片
 
+sequence特性的数据对象 都支持 切片操作 ， 字符串是具有sequence特性的，当然也支持切片。
+
+假想我们手里有把刀，要从下面的字符串中切出你好，就应该在箭头所示的地方切两刀，就得到 `你好` 这个子字符串了
+
+![img](images/python/clipboard-1594876325560.png)
+
+
+
+如果用正数表示就是 2 和 4 ， Python中可以用 hello[2:4] 这样的切片表达式来得到该字符串。 大家可以运行如下代码看看
+
+```
+hello = '刘总你好啊'
+print(hello[2:4])  # 输出你好
+```
+
+
+
+当然也可以用负数表示， 就是 -3 和 -1 ， Python中可以用 hello[-3:-1] 这样的切片表达式来得到该字符串。 大家可以运行如下代码看看
+
+```
+hello = '刘总你好啊'
+print(hello[-3:-1])  # 输出你好
+```
+
+
+
+省略切片索引：
+
+```
+ hello[2:]  # 输出你好啊
+ hello[:-3]  # 输出刘总
+```
+
+
+
+切片步数：
+
+```
+str[start:stop:step]
+hello[0::2] # 输出刘你啊
+```
 
 
 

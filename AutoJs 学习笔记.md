@@ -185,11 +185,46 @@ https://www.jianshu.com/p/22a4c0b514fa
 
 
 
+~~~javascript
+// for 循环遍历对象
+var arr = [0,1,2,3,4];
+for(var i=0; i<=arr.length; i++){
+    log(i);
+}
+
+// forEach 遍历
+arr.forEach(function(ele){
+    console.log(ele);
+})
+
+// 省略 function
+arr.forEach((value,index) => {
+    console.log(value);
+  });
+~~~
+
+
+
 ### 2.7 函数的定义和参数
 
 
 
 ### 2.8 对象的操作
+
+~~~javascript
+// 使用Object.keys()遍历 
+var obj = {'0':'a','1':'b','2':'c'};
+Object.keys(obj).forEach(function(key){
+     console.log(key,obj[key]);
+});
+
+// 使用for..in..遍历
+var obj = {'0':'a','1':'b','2':'c'};
+for(var i in obj) {
+     console.log(i,":",obj[i]);
+}
+
+~~~
 
 
 
@@ -977,6 +1012,12 @@ View的可见性，该属性可以决定View是否显示出来。其值可以为
 
 设置文本的内容。例如`text="一段文本"`。
 
+~~~javascript
+<text text="一段文本"/>
+~~~
+
+
+
 
 
 #### 2.2 textColor
@@ -1398,10 +1439,31 @@ ui.layout(
     </vertical>
 );
 
-ui.run.click(function(){
-  // 脚本代码  
+ui.run.on("click",()=>{
+  log("我点击了第一个按钮");
 })
 
+ui.run.click(function(){
+  log("我点击了第一个按钮");
+})
+
+~~~
+
+
+
+~~~javascript
+"ui";
+ui.layout(
+    <vertical>
+        <button id="run" text="点击按钮运行脚本"/>
+    </vertical>
+);
+
+ui.all.click(all)
+
+function all(){
+  log("我点击了第一个按钮");
+}
 ~~~
 
 
@@ -1417,19 +1479,238 @@ ui.layout(
 );
 
 ui.run.click(function(){
-  // 脚本代码  
+  engines.execScriptFile("/sdcard/脚本/1.js");
 })
+~~~
+
+
+
+#### 8.3 阻塞情况
+
+~~~javascript
+"ui";
+ui.layout(
+    <vertical>
+        <button id="run" text="点击按钮运行脚本"/>
+    </vertical>
+);
+
+ui.run.click(function(){
+  threads.start(function(){
+  // 代码段
+  });
+});
 ~~~
 
 
 
 
 
+## 8. 与用户交互
+
+#### 8.1 对话框
+
+https://hyb1996.github.io/AutoJs-Docs/#/dialogs
 
 
-## 与用户交互
 
-对话框：https://hyb1996.github.io/AutoJs-Docs/#/dialogs
+对话框在普通脚本中，可以直接将返回值赋值给变量然后进行判断，如：
+
+~~~javascript
+var clear = confirm("要清除所有缓存吗?");
+if(clear){
+    alert("清除成功!");
+}
+~~~
+
+
+
+但是如果是在 ui 脚本中，则需要用回调函数或 Promise 形式
+
+~~~javascript
+"ui";
+//回调形式
+ confirm("要清除所有缓存吗?", function(clear){
+     if(clear){
+          alert("清除成功!");
+     }
+ });
+//Promise形式
+"ui";
+confirm("确定吗").then(value=>{
+    //当点击确定后会执行这里, value为true或false, 表示点击"确定"或"取消"
+});
+
+"ui";
+alert("嘿嘿嘿").then(()=>{
+    //当点击确定后会执行这里
+});
+~~~
+
+
+
+~~~javascript
+dialogs.alert(title[, content, callback])  // 弹出确定对话框，只有一个确定按钮
+dialogs.confirm(title[, content, callback])  // 弹出确认对话框，包含“是”、“否” 两个按钮
+dialogs.prompt(title[, prefill, callback])  // 显示一个包含输入框的对话框，等待用户输入内容
+dialogs.input(title[, prefill, callback])  // 该函数和rawInput的区别在于，会把输入的字符串用eval计算一遍再返回
+dialogs.select(title, items, callback)  // 显示一个带有选项列表的对话框，等待用户选择
+dialogs.singleChoice(title, items[, index, callback])  // 显示一个单选列表对话框，等待用户选择
+dialogs.multiChoice(title, items[, indices, callback])  // 显示一个多选列表对话框，等待用户选择
+~~~
+
+
+
+**dialogs.build** 
+
+可以创建一个可自定义的对话框，例如：
+
+```
+dialogs.build({
+    //对话框标题
+    title: "发现新版本",
+    //对话框内容
+    content: "更新日志: 新增了若干了BUG",
+    //确定键内容
+    positive: "下载",
+    //取消键内容
+    negative: "取消",
+    //中性键内容
+    neutral: "到浏览器下载",
+    //勾选框内容
+    checkBoxPrompt: "不再提示"
+}).on("positive", ()=>{
+    //监听确定键
+    toast("开始下载....");
+}).on("neutral", ()=>{
+    //监听中性键
+    app.openUrl("https://www.autojs.org");
+}).on("check", (checked)=>{
+    //监听勾选框
+    log(checked);
+}).show();
+```
+
+选项properties可供配置的项目为:
+
+- `title` {string} 对话框标题
+
+- `titleColor` {string} | {number} 对话框标题的颜色
+
+- `buttonRippleColor` {string} | {number} 对话框按钮的波纹效果颜色
+
+- `icon` {string} | {Image} 对话框的图标，是一个URL或者图片对象
+
+- `content` {string} 对话框文字内容
+
+- `contentColor`{string} | {number} 对话框文字内容的颜色
+
+- `contentLineSpacing`{number} 对话框文字内容的行高倍数，1.0为一倍行高
+
+- `items` {Array} 对话框列表的选项
+
+- `itemsColor` {string} | {number} 对话框列表的选项的文字颜色
+
+- ```
+  itemsSelectMode
+  ```
+
+   
+
+  {string} 对话框列表的选项选择模式，可以为:
+
+  - `select` 普通选择模式
+  - `single` 单选模式
+  - `multi` 多选模式
+
+- `itemsSelectedIndex` {number} | {Array} 对话框列表中预先选中的项目索引，如果是单选模式为一个索引；多选模式则为数组
+
+- `positive` {string} 对话框确定按钮的文字内容(最右边按钮)
+
+- `positiveColor` {string} | {number} 对话框确定按钮的文字颜色(最右边按钮)
+
+- `neutral` {string} 对话框中立按钮的文字内容(最左边按钮)
+
+- `neutralColor` {string} | {number} 对话框中立按钮的文字颜色(最左边按钮)
+
+- `negative` {string} 对话框取消按钮的文字内容(确定按钮左边的按钮)
+
+- `negativeColor` {string} | {number} 对话框取消按钮的文字颜色(确定按钮左边的按钮)
+
+- `checkBoxPrompt` {string} 勾选框文字内容
+
+- `checkBoxChecked` {boolean} 勾选框是否勾选
+
+- ```
+  progress
+  ```
+
+   
+
+  {Object} 配置对话框进度条的对象：
+
+  - `max` {number} 进度条的最大值，如果为-1则为无限循环的进度条
+  - `horizontal` {boolean} 如果为true, 则对话框无限循环的进度条为水平进度条
+  - `showMinMax` {boolean} 是否显示进度条的最大值和最小值
+
+- `cancelable` {boolean} 对话框是否可取消，如果为false，则对话框只能用代码手动取消
+
+- `canceledOnTouchOutside` {boolean} 对话框是否在点击对话框以外区域时自动取消，默认为true
+
+- `inputHint` {string} 对话框的输入框的输入提示
+
+- `inputPrefill` {string} 对话框输入框的默认输入内容
+
+通过这些选项可以自定义一个对话框，并通过监听返回的Dialog对象的按键、输入事件来实现交互。
+
+
+
+模拟alert对话框:
+
+```
+dialogs.build({
+    title: "你好",
+    content: "今天也要元气满满哦",
+    positive: "好的"
+}).show()
+```
+
+
+
+dialogs.build() 中的一些方法：
+
+~~~javascript
+show  // 对话框显示时会触发的事件。
+cancel  // 对话框被取消时会触发的事件。
+dismiss  // 对话框消失时会触发的事件。
+positive  // 确定按钮按下时触发的事件。
+negative  // 取消按钮按下时触发的事件。
+neutral  // 中性按钮按下时触发的事件。
+any  // 任意按钮按下时触发的事件。
+item_select  // 对话框列表(itemsSelectMode为"select")的项目被点击选中时触发的事件。
+single_choice  // 对话框单选列表(itemsSelectMode为"singleChoice")的项目被选中并点击确定时触发的事件。
+multi_choice  // 对话框多选列表(itemsSelectMode为"multiChoice")的项目被选中并点击确定时触发的事件。
+input  // 带有输入框的对话框当点击确定时会触发的事件。
+input_change  // 对话框的输入框的文本发生变化时会触发的事件。
+~~~
+
+
+
+例：
+
+~~~javascript
+dialogs.build({
+    title: "标题",
+    positive: "确定",
+    negative: "取消"
+}).on("cancel", (dialog)=>{
+    toast("对话框取消了");
+}).show();
+~~~
+
+
+
+
 
 悬浮窗：https://hyb1996.github.io/AutoJs-Docs/#/floaty
 
@@ -1502,6 +1783,31 @@ app.sendEmail(options)  // 根据选项options调用邮箱应用发送邮件。�
 
 
 
+~~~javascript
+app.startActivity(name)  // 启用APP特定页面（部分APP会隐藏 Activity 页面）
+
+如：打开指定QQ聊天页面
+var qq = "2732014414";
+app.startActivity({ 
+    action: "android.intent.action.VIEW", 
+    data:"mqq://im/chat?chat_type=wpa&version=1&src_type=web&uin=" + qq, 
+    packageName: "com.tencent.mobileqq", 
+});
+~~~
+
+
+
+`options` {Object} 选项，包括：
+
+- `action` {string} 意图的Action，指意图要完成的动作，是一个字符串常量，比如"android.intent.action.SEND"。当action以"android.intent.action"开头时，可以省略前缀，直接用"SEND"代替。参见[Actions](https://developer.android.com/reference/android/content/Intent.html#standard-activity-actions)。
+- `type` {string} 意图的MimeType，表示和该意图直接相关的数据的类型，表示比如"text/plain"为纯文本类型。
+- `data` {string} 意图的Data，表示和该意图直接相关的数据，是一个Uri, 可以是文件路径或者Url等。例如要打开一个文件, action为"android.intent.action.VIEW", data为"file:///sdcard/1.txt"。
+- `category` {Array} 意图的类别。比较少用。参见[Categories](https://developer.android.com/reference/android/content/Intent.html#standard-categories)。
+- `packageName` {string} 目标包名
+- `className` {string} 目标Activity或Service等组件的名称
+- `extras` {Object} 以键值对构成的这个Intent的Extras(额外信息)。提供该意图的其他信息，例如发送邮件时的邮件标题、邮件正文。参见[Extras](https://developer.android.com/reference/android/content/Intent.html#standard-extra-data)。
+- `flags` {Array} intent的标识，字符串数组，例如`["activity_new_task", "grant_read_uri_permission"]`。参见[Flags](https://developer.android.com/reference/android/content/Intent.html#setFlags(int))。
+
 
 
 ## 11. 全局函数
@@ -1539,27 +1845,304 @@ requiresAutojsVersion(version);  // 表示此脚本需要Auto.js版本达到指�
 
 ## 12. 事件与监听
 
+events模块提供了监听手机通知、按键、触摸的接口。您可以用他配合自动操作函数完成自动化工作。
+
+
+
+需要注意的是，事件的处理是单线程的，并且仍然在原线程执行，如果脚本主体或者其他事件处理中有耗时操作、轮询等，则事件将无法得到及时处理（会进入事件队列等待脚本主体或其他事件处理完成才执行）。例如:
+
+~~~javascript
+auto();
+events.observeNotification();
+events.on('toast', function(t){
+    //这段代码将得不到执行
+    log(t);
+});
+while(true){
+    //死循环
+}
+~~~
+
+
+
+~~~javascript
+events.observeKey()  // 启用按键监听，例如音量键、Home键。按键监听使用无障碍服务实现，
+events.onKeyDown(keyName, listener)  // 注册一个按键监听函数，当有keyName对应的按键被按下会调用该函数。
+events.onKeyUp(keyName, listener)  // 注册一个按键监听函数，当有keyName对应的按键弹起会调用该函数。
+events.onceKeyDown(keyName, listener)  // 注册一个按键监听函数，当有keyName对应的按键被按下时会调用该函数，之后会注销该按键监听器。
+events.onceKeyUp(keyName, listener)  // 注册一个按键监听函数，当有keyName对应的按键弹起时会调用该函数，之后会注销该按键监听器。
+events.removeAllKeyDownListeners(keyName)  // 删除该按键的KeyDown(按下)事件的所有监听。
+events.removeAllKeyUpListeners(keyName)  // 删除该按键的KeyUp(弹起)事件的所有监听。
+events.setKeyInterceptionEnabled([key, ]enabled)  // 设置按键屏蔽是否启用。所谓按键屏蔽指的是，屏蔽原有按键的功能，不指定则屏蔽所有key
+events.setTouchEventTimeout(timeout)  // 设置两个触摸事件分发的最小时间间隔。
+events.onTouch(listener)  // 注册一个触摸监听函数。相当于on("touch", listener)。
+events.removeAllTouchListeners()  // 删除所有事件监听函数。
+~~~
+
+
+
+keyName
+
+- `volume_up` 音量上键
+- `volume_down` 音量下键
+- `home` 主屏幕键
+- `back` 返回键
+- `menu` 菜单键
+
+
+
+~~~javascript
+//启用按键监听
+events.observeKey();
+//监听音量上键按下
+events.onKeyDown("volume_up", function(event){
+    toast("音量上键被按下了");
+});
+//监听菜单键按下
+events.onKeyDown("menu", function(event){
+    toast("菜单键被按下了");
+    exit();
+});
+~~~
+
+
+
+~~~javascript
+events.observeToast()  // 开启Toast监听。当有应用发出toast(气泡消息)时会触发该事件。
+
+例如：
+events.observeToast();
+events.onToast(function(toast){
+    log("Toast内容: " + toast.getText() + " 包名: " + toast.getPackageName());
+});
+~~~
+
+
+
+~~~javascript
+events.observeNotification()  // 开启通知监听。例如QQ消息、微信消息、推送等通知。
+
+events.obverseNotification();
+events.onNotification(function(notification){
+    log(notification.getText());
+});
+
+
+~~~
+
+
+
+Notification 对象
+
+~~~javascript
+Notification.number  // 通知数量。例如QQ连续收到两条消息时number为2。
+Notification.when  // 通知发出时间的时间戳
+Notification.getPackageName()  // 获取发出通知的应用包名。
+Notification.getTitle()  // 获取通知的标题。
+Notification.getText()  // 获取通知的内容。
+Notification.click()  // 点击该通知。
+Notification.delete()  // 删除该通知。
+~~~
+
 
 
 ## 13. HTTP 请求与响应
+
+http.get(url[, options, callback])
+
+~~~javascript
+console.show();
+var r = http.get("www.baidu.com", {
+    headers: {
+        'Accept-Language': 'zh-cn,zh;q=0.5',
+        'User-Agent': 'Mozilla/5.0(Macintosh;IntelMacOSX10_7_0)AppleWebKit/535.11(KHTML,likeGecko)Chrome/17.0.963.56Safari/535.11'
+    }
+});
+log("code = " + r.statusCode);
+log("html = " + r.body.string());
+~~~
+
+
+
+http.post(url, data[, options, callback])
+
+~~~javascript
+var url = "https://login.taobao.com/member/login.jhtml";
+var username = "你的用户名";
+var password = "你的密码";
+var res = http.post(url, {
+    "TPL_username": username,
+    "TPL_password": password
+});
+var html = res.body.string();
+if(html.contains("页面跳转中")){
+    toast("登录成功");
+}else{
+    toast("登录失败");
+}
+~~~
+
+
+
+http.postJson(url[, data, options, callback])
+
+~~~javascript
+var url = "http://www.tuling123.com/openapi/api";
+r = http.postJson(url, {
+    key: "65458a5df537443b89b31f1c03202a80",
+    info: "你好啊",
+    userid: "1",
+});
+toastLog(r.body.string());
+~~~
+
+
+
+http.postMultipart(url, files[, options, callback])
+
+~~~javascript
+var res = http.postMultipart(url, {
+    file: open("/sdcard/1.txt")
+});
+log(res.body.string());
+~~~
+
+
+
+http.request(url[, options, callback])
+
+~~~javascript
+var res = http.get("www.baidu.com");
+if(res.statusCode >= 200 && res.statusCode < 300){
+    toast("页面获取成功!");
+}else if(res.statusCode == 404){
+    toast("页面没找到哦...");
+}else{
+    toast("错误: " + res.statusCode + " " + res.statusMessage);
+}
+~~~
+
+
 
 
 
 ## 14. 多媒体
 
+~~~javascript
+//播放音乐
+media.playMusic("/sdcard/1.mp3");
+//让音乐播放完
+sleep(media.getMusicDuration());
+//暂停播放
+media.pauseMusic();
+media.resumeMusic()
+media.stopMusic()
+media.isMusicPlaying()
+media.getMusicDuration()
+media.getMusicCurrentPosition()
+~~~
+
 
 
 ## 15. 脚本引擎
+
+https://hyb1996.github.io/AutoJs-Docs/#/engines
+
+
+
+engines.execScriptFile(path[, config])
+
+```
+path {string} 要运行的脚本路径。
+config {Object} 运行配置项
+delay {number} 延迟执行的毫秒数，默认为0
+loopTimes {number} 循环运行次数，默认为1。0为无限循环。
+interval {number} 循环运行时两次运行之间的时间间隔，默认为0
+path {Array} | {string} 指定脚本运行的目录。这些路径会用于require时寻找模块文件。
+在新的脚本环境中运行脚本文件path。返回一个ScriptExecution对象。
+
+engines.execScriptFile("/sdcard/脚本/1.js");
+
+
+engines.stopAll()  // 停止所有正在运行的脚本。
+```
 
 
 
 ## 16. shell 命令
 
-关闭APP
+https://hyb1996.github.io/AutoJs-Docs/#/shell
+
+
+
+
 
 
 
 ## 17. 多线程
+
+threads模块提供了多线程支持，可以启动新线程来运行脚本。
+
+
+
+### 17.1 启动一个子线程
+
+~~~javascript
+var thread = threads.start(function(){
+    while(true){
+        log("子线程");
+    }
+});
+
+while(true){
+    log("脚本主线程");
+}
+
+//停止线程执行
+thread.interrupt();
+~~~
+
+
+
+### 17.2 停止子线程
+
+~~~javascript
+threads.shutDownAll()  // 停止所有通过threads.start()启动的子线程。
+~~~
+
+
+
+### 17.3 子线程对象 thread
+
+当用 threads.start 命令启动一个子线程的时候，并且将该线程赋值给一个变量，这个变量就是线程变量。
+
+
+
+thread.join()
+
+~~~javascript
+var sum = 0;
+//启动子线程计算1加到10000
+var thread = threads.start(function(){
+    for(var i = 0; i < 10000; i++){
+        sum += i;
+    }
+});
+//等待该线程完成
+thread.join();
+toast("sum = " + sum);
+~~~
+
+
+
+thread.interrupt()
+
+~~~javascript
+thread.interrupt();  // 停止线程执行
+
+~~~
+
+
 
 
 
@@ -1574,6 +2157,7 @@ requiresAutojsVersion(version);  // 表示此脚本需要Auto.js版本达到指�
 - 直接将脚本发送给朋友
 - 打包成 APK
 - 脚本云仓库 UI
+- 加密代码
 
 
 
@@ -1582,6 +2166,7 @@ requiresAutojsVersion(version);  // 表示此脚本需要Auto.js版本达到指�
 - 进入 Autojs 运行
 - 运行打包的 APK
 - 以 UI 模式运行
+- 定时运行（Autojs自带、Tasker）
 
 
 
@@ -1596,12 +2181,36 @@ requiresAutojsVersion(version);  // 表示此脚本需要Auto.js版本达到指�
 - 自动刷抖音
 - 抖音自动留言引流
 - 抢红包
+- 图灵机器人API
 
 
 
 # 五、常用自制 function
 
 ## 1. 屏蔽 APP 启动广告
+
+~~~javascript
+// 广告线程
+threads.start(function () {
+  while (true) {
+    skip_ad();
+  }
+});
+
+// 跳过广告
+function skip_ad() {
+  if (textContains("跳过").exists()) {
+    click("跳过");
+    log("已经跳过广告，停止此线程");
+    sleep(1000);
+    threads.shutDownAll();
+  }
+}
+~~~
+
+
+
+
 
 ## 2. 点击 clickable 属性为 false 的控件
 
@@ -1616,6 +2225,20 @@ if (btn){
 
 
 
+## 3. 为什么 Auto.js 老会卡住
+
+主要是因为用了 findOne() 方法，因为 findOne 不会返回 null ，如果找不到控件的话，就会一直卡在当前页面一直寻找控件。所以如果必须使用 findOne()的话，最好加个timeout，或者切换到 findOnce 的话，就可以了，不过需要注意的是 findOnce() 只会寻找一次，如果找不到就会返回 null。所以需要配合 sleep 或者 exists() 之类的函数的使用。
+
+
+
+## 4. UI 不能使用阻塞函数
+
+例如 sleep(), findOne()
+
+
+
+## 3. 压缩图片
+
 ~~~javascript
 //把图片压缩为原来的一半质量并保存
 var img = images.read("/sdcard/1.png");
@@ -1625,9 +2248,9 @@ app.viewFile("/sdcard/1.jpg");
 
 
 
-示例： (通过找QQ红点的颜色来判断是否有未读消息)
+## 4. 判断APP是否有未读消息
 
-```
+```javascript
 requestScreenCapture();
 launchApp("QQ");
 sleep(1200);
@@ -1663,7 +2286,7 @@ if(images.detectsColor(img, "#fed9a8", x, y)){
 
 
 
-一个最简单的找图例子如下：
+## 5. 找对应图片
 
 https://www.bilibili.com/video/BV1H4411G7xR
 
@@ -1677,6 +2300,8 @@ if(p){
     toast("没找到");
 }
 ```
+
+
 
 稍微复杂点的区域找图例子如下：
 
@@ -1700,12 +2325,16 @@ if(p){
 
 
 
+## 6. 遍历文件夹
+
 列出sdcard目录下所有文件和文件夹为:
 
 ```
 var arr = files.listDir("/sdcard/");
 log(arr);
 ```
+
+
 
 列出脚本目录下所有js脚本文件为:
 
@@ -1719,5 +2348,218 @@ log(jsFiles);
 
 
 
-## 3. 滑动控件
+## 3. 滑动控件（验证）
+
+
+
+## 4. 解屏方案
+
+一般会用 `device.isScreenOn()` 来判断屏幕是否黑屏，如果为 False 的话，代表现在是黑屏状态，然后启动唤醒屏幕的函数。
+
+
+
+### 4.1 无密码
+
+~~~javascript
+device.wakeup();
+~~~
+
+
+
+### 4.2 滑动解锁
+
+~~~javascript
+device.wakeup();
+sleep(1000)
+swipe(device.Width()/2, device.Height()/8*7, device.width/2,device.height/8, 1000)
+sleep(1500)
+~~~
+
+
+
+### 4.3 手势解锁
+
+~~~javascript
+gesture(duration, [x1, y1], [x2, y2], ...);
+~~~
+
+
+
+### 4.4 PIN 码
+
+~~~javascript
+var pin = "778899";
+for(var i=0; i<=pin.length; i++){
+    click(pin[i]);
+    sleep(500);
+}
+~~~
+
+
+
+### 4.5 text
+
+~~~javascript
+setText("778899");
+~~~
+
+
+
+## 5. 强制关闭应用
+
+// 4.1.1 无法使用（or 华为手机）
+
+~~~javascript
+function 关闭应用(packageName) {
+    var name = getPackageName(packageName); 
+    if(!name){
+        if(getAppName(packageName)){
+            name = packageName;
+        }else{
+            return false;
+        } 
+    }
+    app.openAppSetting(name);
+    text(app.getAppName(name)).waitFor();  
+    let is_sure = textMatches(/(.*强.*|.*停.*|.*结.*|.*行.*)/).findOne();
+    if (is_sure.enabled()) {
+        textMatches(/(.*强.*|.*停.*|.*结.*|.*行.*)/).findOne().click();
+        textMatches(/(.*确.*|.*定.*)/).findOne().click();
+        log(app.getAppName(name) + "应用已被关闭");
+        sleep(1000);
+        back();
+    } else {
+        log(app.getAppName(name) + "应用不能被正常关闭或不在后台运行");
+        back();
+    }
+}
+~~~
+
+
+
+~~~javascript
+function killApp(name){
+    let forcedStopStr = ["停", "强", "结束"];
+    let packageName = app.getPackageName(name);
+    if(packageName) {
+        app.openAppSetting(packageName);
+        text(name).waitFor();
+        for (var i=0; i<forcedStopStr.length; i++){
+            if(textContains(forcedStopStr[i]).exists()){
+                let forcedStop = textContains(forcedStopStr[i]).findOne();
+                if(forcedStop.enabled()) {
+                    forcedStop.click();
+                    text("确定").findOne().click();
+                    sleep(800);
+                    home();
+                    break;
+                }
+            }
+        }
+    }
+}
+~~~
+
+
+
+shell 关闭应用
+
+~~~javascript
+/*
+ * @Descripttion: Auto.js强制关闭软件函数
+                  不足之处：需要root
+ * @version: v1.0
+ * @Author: benjie
+ * @Date: 2020-06-27 17:34:12
+ * @LastEditors: benjie
+ * @LastEditTime: 2020-06-28 10:40:50
+ */
+var speed = 50;
+var height = device.height;
+var width = device.width;
+setScreenMetrics(width, height);
+
+// 打开屏幕
+device.wakeUp()// 唤醒屏幕
+swipe(width / 2, height - 500, width / 2, 0, random(16, 18) * speed);
+
+auto.waitFor();
+launchApp("浏览器");
+console.show();//开启悬浮窗权限
+console.info("打开浏览器");
+sleep(5000)
+
+// 关闭哪个软件，就把“浏览器”替换成该软件名称
+var packagename = getPackageName("浏览器");
+closeApp(packagename);
+
+function closeApp(packagename) {
+    var sh = new Shell(true);
+    //注册一个对象运用shell命令，true(真) 以root权限运行代码，默认为falae假
+    // console.log("am force-stop"+" "+packagename)
+    sh.exec("am force-stop"+" "+packagename);//执行代码运行中属于异步运行
+    //上面值com.android.browser是浏览器的包名。自行修改成想停止软件的包名
+    sleep(1000);
+    //给点延迟让前面的运行命令，一会软件就会关闭
+    sh.exit;
+    //退出Shell命令，正在执行的命令会被强制退出。所以上面加延迟
+    toast("关闭浏览器");
+}
+~~~
+
+
+
+~~~javascript
+function killApp(name) {
+    var packageName = app.getPackageName(name)
+    var sh = new Shell(true);
+    sleep(500);
+    sh.exec("am force - stop" + " " + packageName);
+    sleep(1000);
+    sh.exit;
+}
+~~~
+
+
+
+
+
+滑屏关闭应用
+
+~~~javascript
+function killApp(){
+    home();
+    sleep(1000);
+    swipe(device.width/2, device.height/100*98, device.width/2,device.height/100*20, 2500);
+    sleep(1000);
+    swipe(device.width/2, device.height/100*50, device.width/2,device.height/100*10, 1000);
+    sleep(1000);
+    back();
+}
+~~~
+
+
+
+~~~javascript
+function killApp(name){
+    home();
+    sleep(1000);
+    recents();
+    sleep(1000);
+    var a=className("FrameLayout").desc(name).findOne().bounds();
+    swipe(a.centerX(), a.centerY(), device.width/2,device.height/100*10, 1000);
+    sleep(1000);
+    back();
+}
+
+killApp("微信");
+~~~
+
+
+
+## 6. 定时运行
+
+https://www.bilibili.com/video/BV1vt4y127hU
+
+
 

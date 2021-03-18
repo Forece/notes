@@ -88,7 +88,7 @@
 
    
 
-4. 提交到远程仓库
+4. 提交到远程仓库（先从远程拉取，然后再push）
 
    ```
    git push origin master
