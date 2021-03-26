@@ -3527,8 +3527,6 @@ $_POST['age']";
 
 # N、MySQL
 
-https://www.bilibili.com/video/BV1f64y1Z71f?p=5
-
 MySQL 是一个关系型数据库管理系统，可以将数据保存到不同的表中。并且是一款开元、免费的数据库管理系统。
 
 
@@ -3536,6 +3534,8 @@ MySQL 是一个关系型数据库管理系统，可以将数据保存到不同�
 ## 1. Mysql 控制台命令
 
 ### 1.1 进入 MySQL 控制台：
+
+在 Windows 或 Linux 中进入 Mysql 控制台的命令是一样的，如：
 
 ```mysql
 mysql -h 数据库地址 -u 用户名 - p 密码
@@ -3578,11 +3578,11 @@ quit
 
 关于 ASCII、GBK、UTF-8 等一些说明：
 
-- **ASCII**(American Standard Code for Information Interchange，美国标准信息交换代码)是基于拉丁字母的一套电脑编码系统，主要用于显示现代英语和其他西欧语言。它是现今最通用的单字节编码系统，并等同于国际标准ISO/IEC 646。
+- **ASCII** (American Standard Code for Information Interchange，美国标准信息交换代码)是基于拉丁字母的一套电脑编码系统，主要用于显示现代英语和其他西欧语言。它是现今最通用的单字节编码系统，并等同于国际标准ISO/IEC 646。
 
-- **GBK编码****由于**ASCII编码不支持中文，因此，当中国人用到计算机时，就需要寻求一种编码方式来支持中文。于是，国人就定义了一套编码规则。加了7000多个汉字进去，当时叫做 GB2312，BIG5 后来又扩展了一下增加了繁体和更多汉字，作为一个扩展，这套字符编码叫做 GBK。双字节编码
+- **GBK编码** 由于ASCII编码不支持中文，因此，当中国人用到计算机时，就需要寻求一种编码方式来支持中文。于是，国人就定义了一套编码规则。加了7000多个汉字进去，当时叫做 GB2312，BIG5 后来又扩展了一下增加了繁体和更多汉字，作为一个扩展，这套字符编码叫做 GBK。双字节编码
 
-- **Unicode 字符集**是当时 ISO （国际标准化组织） 为了国际化，将世界上所有文字、字符整合起来，形成的这么一套编码集。
+- **Unicode 字符集** 是当时 ISO （国际标准化组织） 为了国际化，将世界上所有文字、字符整合起来，形成的这么一套编码集。
 
 - **UTF-8** 是因为 Unicode 传输起来太慢了，所以开发的这么一个编码规则，1~4字节。是目前互联网广泛使用的字符集。类似的还有 UTF-16。
 
@@ -3669,7 +3669,7 @@ CREATE DATABASE IF NOT EXISTS 数据库名;
 
 
 ```
-CREATE DATABASE 数据库名 CHARSET utf8mb4;
+CREATE DATABASE 数据库名 CHARSET UTF8MB4;
 ```
 
 > 创建 utf8mb4 字符集的数据库
@@ -3749,7 +3749,7 @@ CREATE TABLE user(
 	age TINYINT UNSIGNED NOT NULL);
 ```
 
->CHAR 固定长度，MD5 32位加密
+>密码字段 psw 使用 CHAR 固定长度，一般用 MD5 32位加密
 
 
 
@@ -3874,7 +3874,7 @@ https://www.cnblogs.com/ypha/p/14018470.html
 
 
 
-CHAR
+**CHAR**
 
 - 定长字符串，参数 n 在老版本（5.0 以下 MySQL）中，这个参数是字节数，一个汉字占3个字节。
 - 新版本的 MySQL 中， 参数 n 代表字符数，如果参数是 10 的话，代表可以存储10个字符（包括汉字）
@@ -3887,7 +3887,7 @@ CHAR
 
 
 
-VARCHAR
+**VARCHAR**
 
 - VARCHAR 后边必须跟参数
 
@@ -3896,7 +3896,7 @@ VARCHAR
 
 
 
-关于 varchar 最多能存多少值
+**关于 VARCHAR 最多能存多少值**
 
 - mysql 的记录行长度是有限制的，不是无限长的，这个长度是`64K`，即`65535`个字节，对所有的表都是一样的。
 - MySQL 对于变长类型的字段会有 1-2 个字节来保存字符长度。
@@ -3916,7 +3916,7 @@ https://www.cnblogs.com/mq0036/p/11647530.html
 
 
 
-补充字符占位：
+**补充字符占位：**
 
 - 字符类型若为gbk，每个字符最多占2个字节
 - 字符类型若为utf8，每个字符最多占3个字节
@@ -3926,7 +3926,7 @@ https://www.cnblogs.com/mq0036/p/11647530.html
 
 
 
-最后来看个练习题：
+**最后来看个练习题：**
 
 https://ruby-china.org/topics/24920
 
@@ -3960,11 +3960,11 @@ select length(name_en) from t1;
 
 
 
-CHAR 和 VARCHAR 到底用哪个？
+**CHAR 和 VARCHAR 到底用哪个？**
 
 对于MyISAM表，尽量使用Char，对于那些经常需要修改而容易形成碎片的myisam和isam数据表就更是如此，它的缺点就是占用磁盘空间；
 
-对于InnoDB表，因为它的数据行内部存储格式对固定长度的数据行和可变长度的数据行不加区分（所有数据行共用一个表头部分，这个标头部分存放着指向 各有关数据列的指针），所以使用char类型不见得会比使用varchar类型好。事实上，因为char类型通常要比varchar类型占用更多的空间， 所以从减少空间占用量和减少磁盘i/o的角度，使用varchar类型反而更有利。
+对于InnoDB表，因为它的数据行内部存储格式对固定长度的数据行和可变长度的数据行不加区分（所有数据行共用一个表头部分，这个表头部分存放着指向各有关数据列的指针），所以使用char类型不见得会比使用varchar类型好。事实上，因为char类型通常要比varchar类型占用更多的空间， 所以从减少空间占用量和减少磁盘i/o的角度，使用varchar类型反而更有利。
 
 
 
@@ -3980,16 +3980,15 @@ CHAR 和 VARCHAR 到底用哪个？
 
 
 
+**VARCHAR 和 TEXT 的区别：** 
 
-varchar和text： 
+- varchar可指定参数n，text不能指定，
+- 内部存储varchar是存入的实际字符数+1个字节（n<=255）或2个字节(n>255)，text是实际字符数+2个字节。 
 
-1.varchar可指定n，text不能指定，内部存储varchar是存入的实际字符数+1个字节（n<=255）或2个字节(n>255)，text是实际字符数+2个字
+- text类型不能有默认值。
 
-节。 
-
-2.text类型不能有默认值。 
-
-3.varchar可直接创建索引，text创建索引要指定前多少个字符。varchar查询速度快于text,在都创建索引的情况下，text的索引似乎不起作用。
+- varchar可直接创建索引，text创建索引要指定前多少个字符。
+- varchar查询速度快于text，在都创建索引的情况下，text的索引似乎不起作用。
 
 
 
@@ -4203,8 +4202,8 @@ ALTER TABLE t1 MODIFY id INT;
 **CHARSET** 
 
 ```
-CREATE TABLE user(id INT AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(30), NOT NULL)
+CREATE TABLE user(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(30) NOT NULL)
 	ENGINE=MYSISAM DEFAULT CHARSET=UTF8MB4;
 ```
 
@@ -4216,6 +4215,11 @@ CREATE TABLE user(id INT AUTO_INCREMENT PRIMARY KEY,
 
 - MYSISAM
 - INNODB
+
+```
+CREATE TABLE user(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(30) NOT NULL) ENGINE=MYSIAM DEFAULT CHARSET=UTF8MB4;
+```
 
 
 
@@ -4332,7 +4336,7 @@ DESC 表名;
 
 ### 8.1 插入记录
 
-1. 插入单条记录
+#### 8.1.1 插入单条记录
 
 ```
 INSERT INTO 表名(字段1 [, 字段2, 字段3, 字段4...]) VALUES(对应数值1 [, 对应数值2, 对应数值3...]);
@@ -4360,7 +4364,7 @@ INSERT INTO users VALUES(NULL, 'user1', '77889');
 
 
 
-2. 插入多条记录
+#### 8.1.2 插入多条记录
 
 ```
 INSERT users(id, username, password) VALUES
@@ -4380,27 +4384,190 @@ INSERT INTO users(`username`) VALUES('jojo');
 
 
 
+#### 8.1.3 查看警告
+
+当给表中插入部分字段时，如果非空数据，会提示警告没有设置默认值，查看警告命令如下：
+
+```
+SHOW WARNINGS;
+```
+
+
+
+
+
 ### 8.2 查询记录
 
-1. 查询所有记录
+##### 8.2.1 查询所有记录
 
-   ```
-   SELECT * FROM 表名;
-   SELECT * FROM users;
-   ```
+```
+SELECT * FROM 表名;
+SELECT * FROM users;
+```
 
-   > `*` 代表所有记录
+> `*` 代表所有记录
 
 
 
-2. 查询指定字段名的记录
+##### 8.2.2 查询字段记录
 
-   ```
-   SELECT 字段名1 [, 字段名2...] FROM 表名;
-   SELECT id, age FROM t1;
-   ```
+```
+SELECT 字段名1 [, 字段名2...] FROM 表名;
+SELECT id, age FROM t1;
+```
 
-   > 查询显示出来的字段顺序，是根据 SELECT 后边输入的字段顺序来显示的。
+> 查询显示出来的字段顺序，是根据 SELECT 后边输入的字段顺序来显示的。
+
+
+
+##### 8.2.3 条件查询 WHERE
+
+利用 WHERE 做条件查询，通过 MySQL 中的运算符加以条件，如：
+
+```
+SELECT * FROM users WHERE id=7;
+```
+
+
+
+##### 8.2.4 MySQL 运算符
+
+算数运算符
+
+```
++
+-
+*
+/ 或 DIV
+% 或 MOD
+```
+
+
+
+比较运算符：
+
+```
+=
+!= 或 <>
+<=> // 判断是否为 null，如 null <=> null， 返回 1
+<
+>
+<=
+>=
+BETWEEN  // BETWEEN 10 AND 20 (存在于指定范围，包含10和20)
+IN  // 存在于指定集合, 如：IN(1,3,4,5,6)
+IS NULL  // 空
+IS NOT NULL  // 非空
+LIKE  // 通配符匹配
+REGEXP  // 正则匹配
+```
+
+> 其中 = 在 WHERE 中使用，不是赋值运算符，多个条件之间可以使用 OR AND 等逻辑运算符。
+
+```
+SELECT * FROM t1 WHERE id>5;
+SELECT * FROM t1 WHERE id IN (1,3,4,5,6);
+SELECT * FROM t1 WHERE id NOT IN(2,4,6,8,10);
+SELECT * FROM t1 WHERE id BETWEEN 10 AND 20;
+SELECT * FROM t1 WHERE useranme REGEXP '^g$';  // 正则匹配 usersname 字段中以g结尾的字段记录
+SELECT * FROM t1 WHERE username like '%hei';  // %代表通配符，可匹配任意字符串
+SELECT * FROM t1 WHERE username like '_e%';  // 可匹配第二个字母为e的字符串，其中_匹配任意单一字符。
+```
+
+
+
+逻辑运算符
+
+```
+! 或 NOT
+&& 或 AND
+|| 或 OR
+XOR
+```
+
+```
+SELECT * FROM t1 where id=1 OR id=3;
+```
+
+
+
+位运算符
+
+```
+&
+|
+^
+~
+<<
+>>
+```
+
+
+
+##### 8.2.5 统计查询
+
+利用 COUNT 关键字可以查询表中有多少条记录，如：
+
+```
+SELECT COUNT(id) FROM t1;
+SELECT COUNT(*) FROM t1;
+```
+
+> 如果查询的是主键，可以用 * 来代替
+
+
+
+##### 8.2.6 去重查询
+
+利用 DISTINCT 查询不重复的记录，在字段中去除有重复 VALUE 的结果病返回查询结果，一般只选择一个字段进行查询。 
+
+```
+SELECT DISTINCT 字段1[, 字段2] FROM 表名;
+```
+
+> 多字段查询，字段1值相同，字段2值不同，不会被认为是重复的记录。
+
+
+
+##### 8.2.7 排序和限制
+
+利用 ORDER BY 做排序查询
+
+```
+SELECT * FROM 表名[WHERE 条件] ORDER BY 字段1 [DESC|ASC];
+SELECT * FROM t1 ORDER BY salary DESC;
+```
+
+
+
+多个字段条件排序
+
+```
+SELECT * FROM 表名[WHERE 条件] ORDER BY 字段1 [DESC|ASC] [,字段2 [DESC|ASC]...];
+```
+
+> 如果 字段1 排序中遇到 VALUE 值相同的元素，会根据 字段2中的排序进行排序。
+
+
+
+##### 8.2.8 LIMIT 限制
+
+用 LIMIT 限制显示查询结果的数量
+
+```
+SELECT * FROM t1 ORDER BY salary DESC LIMIT 1;
+```
+
+> 只显示1条查询结果
+
+
+
+LIMIT(从第几行开始, 取几条记录)
+
+```
+LIMIT(0, 1)  // 从第0条开始，取1条记录
+LIMIT(5, 10)  // 从第5条开始，取20条记录
+```
 
 
 
@@ -4440,187 +4607,15 @@ DELETE 表1 [, 表2, 表3...] FROM 表1 [, 表2, 表3...] [WHERE 条件];
 
 
 
-### 8.5 特殊查询
+### 8.5 查询进阶（多表查询）
 
-##### 8.5.1 去重查询
-
-利用 DISTINCT 查询不重复的记录，在字段中去除有重复 VALUE 的结果病返回查询结果，一般只选择一个字段进行查询。 
-
-```
-SELECT DISTINCT 字段1[, 字段2] FROM 表名;
-```
-
-> 多字段查询，字段1值相同，字段2值不同，不会被认为是重复的记录。
-
-
-
-##### 8.5.2 条件查询
-
-利用 WHERE 做条件查询
-
-
-
-比较运算符： =, <, >, <=, >=, !=
-
-> 其中 = 在 WHERE 中使用，不是赋值运算符，多个条件之间可以使用 OR AND 等逻辑运算符。
-
-```
-SELECT * FROM t1 WHERE id>5;
-SELECT * FROM t1 where id=1 OR id=3;
-```
-
-
-
-##### 8.5.3 排序和限制
-
-利用 ORDER BY 做排序查询
-
-```
-SELECT * FROM 表名[WHERE 条件] ORDER BY 字段1 [DESC|ASC];
-SELECT * FROM t1 ORDER BY salary DESC;
-```
-
-
-
-多个字段条件排序
-
-```
-SELECT * FROM 表名[WHERE 条件] ORDER BY 字段1 [DESC|ASC] [,字段2 [DESC|ASC]...];
-```
-
-> 如果 字段1 排序中遇到 VALUE 值相同的元素，会根据 字段2中的排序进行排序。
-
-
-
-##### 8.5.4 LIMIT 限制
-
-用 LIMIT 限制显示查询结果的数量
-
-```
-SELECT * FROM t1 ORDER BY salary DESC LIMIT 1;
-```
-
-> 只显示1条查询结果
-
-
-
-LIMIT(从第几行开始, 取几条记录)
-
-```
-LIMIT(0, 1)  // 从第0条开始，取1条记录
-LIMIT(5, 10)  // 从第5条开始，取20条记录
-```
-
-
-
-##### 8.5.5 聚合查询
-
-```
-SELECT [字段1, 字段2, 字段3...] 聚合函数 FROM 表名 [WHERE 条件] [GROUP BY 字段1, 字段2, 字段3...[ WITH ROLLUP]] [HAVING 条件];
-```
-
-
-
-1. 求和 SUM
-
-   ```
-   SLEECT SUM(salary) FROM t1;
-   ```
-
-   
-
-2. 统计记录数量 COUNT
-
-   ```
-   SELECT COUNT(id) FROM t1;
-   SELECT COUNT(*) FROM t1;
-   ```
-
-   > 如果查询的是主键，可以用 * 来代替
-
-
-
-3. MAX, MIN
-
-   ```
-   SELECT MAX(salary) FROM t1;
-   SELECT MIN(salary) FROM t1;
-   ```
-
-
-
-4. 分组查询
-
-   ```
-   SELECT department, SUM(salary) FROM t1 GROUP BY department;
-   ```
-
-   > 按部门统计，相同部门的员工工资总和
-
-
-
-5. 对分组查询结果再求和
-
-   ```
-   SELECT department SUM(salary) FROM t1 GROUP BY department with ROLLUP;
-   ```
-
-   > 最后总计不知道属于哪个 department，显示 null。如要总计，不建议填写字段名
-
-
-
-6. 对分类结果再进行过滤
-
-   ```
-   SELECT department， SUM(salary) FROM t1 GROUP BY department HAVING SUM(salary)>600;
-   ```
-
-   > 过滤出部门工资总数超过600的部门
-
-
-
-HAVING 和 WHERE 的区别：
-
-- HAVING 是对聚合后的结果进行过滤
-- WHERE 是对聚合前的结果进行过滤
-
-> 应尽量使用 WHERE 先过滤
-
-
-
-7. 对字段进行多种查询
-
-   ```
-   SELECT SUM(salary)， MAX(salary), MIN(salary), COUNT(*) FROM t1;
-   ```
-
-
-
-8. 表连接查询
-
-将多个表中的字段连接起来形成一个新表进行输出，但不对数据库进行实际操作，只是根据结果运算出来的一个新的表。表连接有内连接和外连接：
-
-- 内连接： 选取两张表相互匹配的记录
-- 外连接：选取两张表相互匹配的记录并选出不匹配的记录
-
-
-
-内连接
-
-```
-SELECT * FROM employee, record WHERE employee.id = record.id;
-```
-
-> 其中 `*` 可以写具体字段名，如 employee.name, record.record
-
-
-
-别名
+#### 8.5.1 别名
 
 可以给字段起别名，当有的字段太长，可以给字段起别名，可以用 as 关键字，也可以省略。
 
 ```
 SELECT employee.id id1 from t1;
+SELECT * FROM employee.id, employee.username, employee.password as psw FROM user WHERE id>6;
 ```
 
 
@@ -4634,7 +4629,102 @@ SELECT a.id, a.username, a.password FROM users as a;
 
 
 
-外连接
+#### 8.5.2 聚合查询
+
+```
+SELECT [字段1, 字段2, 字段3...] 聚合函数 FROM 表名 [WHERE 条件] [GROUP BY 字段1, 字段2, 字段3...[ WITH ROLLUP]] [HAVING 条件];
+```
+
+
+
+##### 1. 求和 SUM
+
+```
+SLEECT SUM(salary) FROM t1;
+```
+
+
+
+##### 2. MAX, MIN
+
+```
+SELECT MAX(salary) FROM t1;
+SELECT MIN(salary) FROM t1;
+```
+
+
+
+##### 3. 分组查询
+
+一般分组都是用来做统计用的
+
+```
+SELECT department, SUM(salary) FROM t1 GROUP BY department;
+```
+
+> 按部门统计，相同部门的员工工资总和
+
+
+
+##### 4. 对分组查询结果再求和
+
+```
+SELECT department SUM(salary) FROM t1 GROUP BY department with ROLLUP;
+```
+
+> 最后总计不知道属于哪个 department，显示 null。如要总计，不建议填写字段名
+
+
+
+##### 5. 对分类结果再进行过滤
+
+```
+SELECT department， SUM(salary) FROM t1 GROUP BY department HAVING SUM(salary)>600;
+```
+
+> 过滤出部门工资总数超过600的部门
+
+
+
+**HAVING 和 WHERE 的区别：**
+
+- HAVING 是对聚合后的结果进行过滤
+- WHERE 是对聚合前的结果进行过滤
+
+> 应尽量使用 WHERE 先过滤
+
+
+
+##### 6. 对字段进行多种查询
+
+```
+SELECT SUM(salary)， MAX(salary), MIN(salary), COUNT(*) FROM t1;
+```
+
+
+
+### 8.6 表连接
+
+将多个表中的字段连接起来形成一个新表进行输出，但不对数据库进行实际操作，只是根据结果运算出来的一个新的表。表连接有内连接和外连接：
+
+- 内连接： 选取两张表相互匹配的记录
+- 外连接：选取两张表相互匹配的记录并选出不匹配的记录
+
+
+
+#### 8.6.1 内连接
+
+```
+SELECT * FROM employee, record WHERE employee.id = record.id;
+```
+
+> 其中 `*` 可以写具体字段名，如 employee.name, record.record
+>
+> 一定要有一个匹配条件，比如两个表的 id 相匹配
+
+
+
+#### 8.6.2 外连接
 
 - 左连接
 - 右连接
@@ -4643,17 +4733,13 @@ SELECT a.id, a.username, a.password FROM users as a;
 SELECT * FROM employee LEFT JOIN ON record ON employee.id = record.id;
 ```
 
-左表信息都列出来，右表在右侧，仅显示匹配部分，后显示没有匹配的部分
+左表信息都列出来，右表在右侧，仅显示匹配部分，后显示没有匹配的部分，右连接与左连接相反
 
 
 
-右连接与左连接相反
+### 8.7 子查询
 
-
-
-9. 子查询
-
-   一个查询需要另一个查询结果参与的时候
+一个查询需要另一个查询结果参与的时候
 
 
 
@@ -4687,7 +4773,7 @@ SELECT * FROM employee WHERE EXISTS(SELECT * FROM employee_late WHERE employee_l
 
 
 
-10. 记录联合
+### 8.8 记录联合
 
 将两个或多个表按照一定条件查询的结果合并到一起显示
 
@@ -4722,9 +4808,11 @@ CREATE TABLE t1(name CHAR(10)) DEFAULT CHARSET=UTF8MB4;
 
 
 
-### 9.1 MYSQL 字符编码
+### 9.1 MYSQL 字符集和校对规则
 
-MySQL 支持字符集有很多，可以用下边任意一条语句查看当前版本的 MySQL 所支持的字符集：
+**MySQL 支持字符集**
+
+可以用下边任意一条语句查看当前版本的 MySQL 所支持的字符集：
 
 ```
 SHOW CHARACTER SET;  
@@ -4733,7 +4821,7 @@ SELECT * FROM information_schema.character_sets;
 
 
 
-校对规则
+**MySQL 校对规则**
 
 字符集用来定义 MySQL 存储字符串的方式，校对规则用于定义字符串比较方式。如：
 
@@ -4762,9 +4850,14 @@ SHOW COLLATION LIKE 'gb2312%';
 
 
 
-MySQL 内部字符集和校对规则设置：
+### 9.2 字符集和校对规则优先级
 
-4个级别默认设置：服务器级、数据库级、表、字段。
+字符集和校对规则有4个级别默认设置：
+
+- 服务器级
+- 数据库级
+- 表
+- 字段
 
 
 
@@ -4776,7 +4869,7 @@ MySQL 内部字符集和校对规则设置：
 
 
 
-服务器级别
+#### 9.2.1 服务器级别
 
 设置字符集和校对规则在 MySQL 配置文件 my.ini 文件当中：
 
@@ -4795,7 +4888,7 @@ mysqld --character-set-server=utf8
 
 
 
-数据库级别
+#### 9.2.2 数据库级别
 
 数据库级别字符集和校对规则可以在创建数据库时指定，也可以用 ALTER DATABASE 命令修改（但是数据库中不能有内容）如果已经有数据，则需要导出数据库，修改字符集后再导入。
 
@@ -4828,7 +4921,7 @@ SHOW VARIABLES LIKE 'collation_database';
 
 
 
-表级别
+#### 9.2.3 表级别
 
 ```
 CREATE TABLE tbl_name (column_list) [DEFAULT CHARACTER SET charset_name] [ COLLATE collation_name];
@@ -4844,61 +4937,9 @@ SHOW CREATE TABLE tbl_name\G;
 
 
 
-## 10. MySQL 运算符
+#### 9.2.4 字段级别
 
-算数运算符
-
-```
-+
--
-*
-/ 或 DIV
-% 或 MOD
-```
-
-
-
-比较运算符：
-
-```
-=
-!= 或 <>
-<=> // 判断是否为 null，如 null <=> null， 返回 1
-<
->
-<=
->=
-BETWEEN  // BETWEEN 10 AND 20 (存在于指定范围，包含10和20)
-IN  // 存在于指定集合, 如：IN(1,3,4,5,6)
-IS NULL  // 空
-IS NOT NULL  // 非空
-LIKE  // 通配符匹配
-REGEXP  // 正则匹配
-```
-
-
-
-逻辑运算符
-
-```
-! 或 NOT
-&& 或 AND
-|| 或 OR
-XOR
-```
-
-
-
-位运算符
-
-```
-&
-|
-^
-~
-<<
->>
-```
+一般不会给字段单独设置字符集和校对规则，字段级别一般都是默认为表的字符集和校对规则
 
 
 
@@ -4983,6 +5024,459 @@ MD5(STR)  // MD5 加密
 - 存储引擎
 - 用户权限
 - 导出导入
+
+
+
+# PHP 扩展 MySQLi
+
+## 1. 安装 MySQLi
+
+```
+phpinfo(); // 查看是否安装 MySQLi 扩展
+```
+
+
+
+如果没有 mysqli 扩展，需要到 php.ini 中查看是否开启了扩展：
+
+```
+extension=mysqli
+```
+
+
+
+如果还没有 mysqli 扩展，则需要下载 php_mysqli.dll 文件到 php/php7.4.0/ext/ 文件夹中，然后在 php.ini 中添加支持扩展语句。重启服务器即可。
+
+
+
+## 2. 利用 PHP 与 MySQL 交互
+
+- 连接数据库
+- 选择数据库
+- 设置字符集
+- 准备操作的 SQL 语句
+- 发送 SQL 语句
+- 判断并且处理结果
+- 关闭数据库
+
+
+
+## 3. 连接数据库
+
+### 3.1 mysqli_connect()
+
+```
+$link = mysqli_connect(host:'localhost', user:'root', password:'', database:'ewcms', port:'3306');
+```
+
+> 返回一个连接数据库的对象，之后可以对这个对象进行 MySQL 的操作
+
+
+
+也可以不用加对象键名，如：
+
+```
+$link = mysqli_connect('localhost', 'root', '', 'ewcms', '3306');
+```
+
+> 端口默认 3306，如果没有改端口，可以不用写
+
+
+
+如果连接数据库失败，会返回一个 false，为了避免报错，需要 @ 符屏蔽错误，并且对失败结果进行判断
+
+```
+$link = mysqli_connect(host:'localhost', user:'root', password:'', database:'ew_cms', port:'3306') or die('连接或选择数据库失败');
+```
+
+
+
+### 3.2 mysqli_select_db()
+
+如果在 mysqli_connect 中没有使用选择数据库参数 database 的话，可以使用：
+
+```
+ mysqli_select_db($link, $db_name);
+```
+
+> 或者使用该函数用来切换数据库
+
+
+
+### 3.3 mysql_connect_errno()
+
+当数据库连接失败的时候，可以使用 mysql_connect_errno() 来查看错误代码。正常连接代码为0，该函数会返回一个 INT 类型的变量。
+
+```
+vardump(mysqli_connect_errno());
+```
+
+
+
+### 3.4 mysql_connect_error()
+
+如果想知道是什么具体错误的话，可以使用 mysql_connect_error() 来显示具体错误信息，该函数当数据库连接失败的时候，会返回一个字符串。
+
+```
+if(mysqli_connect_errno()){
+	exit(mysqli_connect_error());
+}
+```
+
+
+
+## 4. 设置字符集
+
+```
+$r = mysqli_set_charset($link, charset:'utf8mb4');
+```
+
+> 如果成功返回true，失败返回 null
+
+
+
+## 5. 准备操作的SQL
+
+```
+$sql = "SELECT * FROM ew_user";
+```
+
+
+
+## 6. 发送 SQL 语句到 MySQL
+
+```
+$result = mysqli_query($link, $sql);  // 将返回的结果赋值给$result
+```
+
+> 当 SQL 语句是查询语句时，成功返回则一个OBJ对象，如果失败返回 false，在返回对象中有个属性叫做 num_rows => xxx ，代表着有几条数据执行成功。
+
+
+
+```
+mysqli_real_query($link, $sql); // 不会返回结果集，会返回布尔值代表命令是否执行成功。
+```
+
+> 执行 Query 后，服务器会产生结果集，虽然 mysqli_real_query() 没有拿到返回的结果集，但是 $result 还是存在于 MySQL 服务器上，可以用 mysqli_store_result($link) 取回结果集。
+
+
+
+## 7. 判断并处理结果
+
+```
+mysqli_num_rows($result)  // 取得结果集中行的数目。仅对 SELECT 有效。其他操作用 mysqli_afftected_rows()
+mysqli_affected_rows($result)  // 返回前一次 MySQL 操作所影响的记录行数。
+mysqli_insert_id($link)  // 返回最后一次操作自动生成并使用的id（添加数据时）
+mysqli_fetch_row($result)  // 以索引数组的方式获取一条记录，并将指针移动到下一条数据，直到最后一条数据输出完毕，返回 null
+mysqli_fetch_assoc($result)  // 以关联数组的方式获取一条数据，并将指针移动到下一条数据，直到最后一条数据输出完毕，返回 null
+mysqli_fetch_array($result, [$array_type]);  // 以索引或关联方式获取一条数据，MYSQL_ASSOC, MYSQL_NUM, MYSQL_BOTH(默认)
+mysqli_fetech_all($result, [$array_type]);  // 根据array_type参数决定索引或关联方式获取所有数据
+mysql_fetch_field(data,field_offset) // 函数从结果集中取得列信息并作为对象返回。
+mysqli_free_result($result)  // 释放结果集内存
+mysqli_errno($link)  // 查看 SQL 错误代码
+mysqli_error($link)  // 查看 SQL 错误信息
+```
+
+
+
+```
+mysqli_multi_query($link, $query1; $query2);  // 一次性执行多条 SQL 语句，SQL 命令用 ; 隔开
+```
+
+> 返回布尔型，但需要注意，结果只对第一条命令负责，后边命令没有执行成功的话，还是会返回 True
+
+
+
+如果想进行判断，则需要进行遍历，搭配函数
+
+```
+mysqli_more_result()
+mysqli_next_result()
+```
+
+
+
+### 7.1 查询数据
+
+```
+if($result && mysqli_num_rows($result) > 0 {
+	while($row=mysqli_fetch_assoc($result)){
+	echo '<tr>';
+	echo '<td>'.$row['id'].'</td>';
+	echo '<td>'.$row['username'].'</td>';
+	echo '<td>'.$row['name'].'</td>';
+	echo '<td>'.$row['sec'].'</td>';
+	echo '<td>'.$row['age'].'</td>';
+	echo '<td>'.$row['email'].'</td>';
+	echo '<td><a href="">删除</a><a href="">修改</a></td>';
+	echo '</tr>';
+	}
+})
+```
+
+
+
+### 7.2 添加数据
+
+```
+$username = '虎子';
+$pwd = '123';
+$name = '张三';
+$sex = 0;
+$age = 23;
+$email = '333555@qq.com';
+
+$sql = "INSERT INTO ew_user(username, pwd, name, sex, age, email) VALUES('{$username}', '{$pwd}', '{$name}', {$sex}, {age}, '{$email}' )"
+```
+
+> 字符串 VALUES 中需要加引号，由于是变量，所以使用 {} ，只有双引号才可以解析字符串中的 {} 变量。其中 $sex 和 $age 属于整型，不用加引号。
+
+
+
+发送 sql 语句
+
+```
+$result = mysqli_query($link, $sql);
+```
+
+> 如果是 INSERT INTO 语句，返回值为 true 或 false，
+
+
+
+判断并处理结果
+
+如果想知道有几条记录被插入，需要用到函数 mysqli_affected_rows($link)，如：
+
+```
+$affected = mysqli_affected_rows($link);
+```
+
+
+
+还可以用 mysqli_insert_id($link) 获取新插入数据的 id，如：
+
+```
+$id = mysqli_insert_id($link);
+```
+
+
+
+当 SQL 语句有数据被添加时，返回新数据的 id
+
+```
+if($result && mysqli_affected_rows($link)>0){
+	echo mysqli_insert_id($link);
+}
+```
+
+
+
+### 7.3 修改数据
+
+```
+$username = '虎子';
+$pwd = '123';
+$name = '张三';
+$email = '333555@qq.com';
+$sql = "UPDATE ew_user SET username='{$username}', password='{$pwd}', name='{$name}', email='{$email}' WHERE id=4";
+```
+
+
+
+发送 sql 语句
+
+```
+$result = mysqli_query($link, $sql);
+```
+
+> 返回值为 true 或 false
+
+
+
+判断结果
+
+```
+if($result && mysqli_affected_rows($link)>0){
+	echo '修改成功';
+}else
+	echo '修改失败';
+}
+```
+
+
+
+### 7.4 删除数据
+
+```
+$sql = "DELETE FROM ew_user WHERE id=10";
+```
+
+> 返回 ture 或 false
+
+
+
+```
+$result = mysqli_query($link, $sql);
+if($result && mysqli_afftect_rows($link)>0){
+	echo '<script>alert(\'删除成功\');location="./mysqli_func.php"</script>';
+}else{
+	echo '删除失败';
+}
+```
+
+
+
+## 8. 关闭数据库
+
+```
+mysqli_close($link);
+```
+
+
+
+## 9. 用 `$_GET` 或 `$_POST` 传参
+
+```
+// HTML $_GET 传参
+echo '<td><a href="./delete.php?id='.$row['id'].'">删除</a></td>';
+```
+
+
+
+```
+// PHP $_GET 接受参数
+$sql = "DELETE FROM ew_user WHERE id={$_GET['id']}";
+```
+
+
+
+## 封装 MySQL 函数
+
+因为每次做处理都要执行连接数据库、设置字符集、发送 SQL 语句，关闭数据库等类似的操作，所以我们可以将这一系列操作封装成一个函数。
+
+
+
+
+
+## 安全处理 MySQL
+
+### 实体
+
+转义 SQL 语句中的特殊符号
+
+```
+$str = mysqli_real_escape_string($link, $escapestr);
+```
+
+
+
+### 预处理
+
+预处理语句对于防止 MySQL 注入是非常有用的。预处理语句用于执行多个相同的 SQL 语句，并且执行效率更高。预处理语句的工作原理如下：
+
+- 预处理：创建 SQL 语句模板并发送到数据库。预留的值使用参数 "?" 标记 。
+- 数据库解析，编译，对SQL语句模板执行查询优化，并存储结果不输出。
+- 执行：最后，将应用绑定的值传递给参数（"?" 标记），数据库执行语句。应用可以多次执行语句，如果参数的值不一样。
+
+
+
+相比于直接执行SQL语句，预处理语句有两个主要优点：
+
+- 预处理语句大大减少了分析时间，只做了一次查询（虽然语句多次执行）。
+- 绑定参数减少了服务器带宽，你只需要发送查询的参数，而不是整个语句。
+- 预处理语句针对SQL注入是非常有用的，因为参数值发送后使用不同的协议，保证了数据的合法性。
+
+
+
+#### 1 设计SQL语句模板
+
+```
+$query = 'INSERT INTO t1(id, username) VALUES(?,?)';  // ? 是占位符，用来传递变量
+```
+
+
+
+#### 2 创建预处理对象
+
+```
+$obj = mysqli_prepare($link, $query);
+```
+
+
+
+#### 3 绑定参数
+
+```
+mysqli_stmt_bind_param($stmt, types:'ii', &var1:$user1, &var2:$password);
+```
+
+
+
+```
+$val1 = 18;
+$val2 = 'zhangsan'
+mysqli_stmt_bind_param($obj, 'is', $val1, $val2);
+```
+
+- $obj 为预处理对象
+- is 代表着变量类型，由变量首字母表示，如 INT, STRING 等等
+- $val1, $val2 代表着需要传递的变量
+
+
+
+#### 4 执行预处理SQL语句
+
+```
+mysqli_stmt_execute($obj);
+```
+
+- 当 Query 是 SELECT 语句时，返回结果集
+
+
+
+#### 5 查看报错信息
+
+```
+mysqli_stmt_errno()
+mysqli_stmt_error()
+```
+
+
+
+#### 6 获得字段相关信息
+
+```
+mysqli_stmt_insesrt_id($stmt); // 返回新插入数据的id（针对 INSERT INTO 使用）
+mysqli_stmt_affected_rows($stmt)  // 返回影响行（对 DELETE, MODIFY 使用）
+```
+
+
+
+```
+$resutl = mysqli_stmt_get_result()  // 获取 SELECT 查询信息结果集
+
+$result = mysqli_stmt_result_metadata($stmt);
+mysqli_fetch_field($result);
+mysqli_fetech_fields($result);  // 获取所有
+```
+
+
+
+7 取回结果集行数
+
+```
+mysqli_stmt_store_result($stmt);
+var_dump(mysqli_stmt_num_rows($stmt));
+```
+
+
+
+#### 8. 关闭预处理语句
+
+```
+mysqli_stmt_free_result($stmt);  // 释放结果集所占内存
+mysqli_stmt_close($stmt);  // 关闭预处理对象
+```
 
 
 

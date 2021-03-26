@@ -88,7 +88,9 @@
 
 ​	|		| ---- control  控制器目录（通过控制器调用需要显示的 view 中页面内容）
 
-​	| ---- index.php  前台入口文件
+​	|		| ---- index.php  前台入口文件
+
+​	| ---- index.php  主页入口文件
 
 ​	| ---- public  公共资源目录、图片上传、图片缩放
 
@@ -401,7 +403,7 @@ admin/controls/sysinfoController.php
 
 ### 2. 前台入口文件
 
-和后台一样，创建 index.php，然后利用 $method 和 $a 函数调用控制器
+和后台一样，在 home 中创建 index.php，然后利用 $method 和 $a 函数调用控制器
 
 ~~~php
 <?php
@@ -479,15 +481,147 @@ home/layout/header.html
 
 ## 3. MySQL 开发
 
+### 3.1 找实体
+
+通过实体，找属性，设计数据库，如用户模块
+
+
+
+![image-20210322194032650](images/cms/image-20210322194032650.png)
+
+
+
+### 3.2 列出数据库结构
+
+数据库设计表格：
+
+表名：user
+
+| 字段名    | 数据类型    | 属性                  | 约束条件                | 说明                          |
+| --------- | ----------- | --------------------- | ----------------------- | ----------------------------- |
+| id        | INT         | 自增                  | 主键                    | 用户编号                      |
+| username  | varchar(15) | 非空                  | 不能有重复用户名 Unique |                               |
+| psw       | char(32)    | 非空                  |                         |                               |
+| email     | varchar(60) | 非空                  |                         |                               |
+| avatar    | char(40)    | 非空，默认default.jpg |                         |                               |
+| sex       | tinyint     | 非空，默认1           |                         | 0代表女，1代表男              |
+| age       | tinyint     | 非空                  | 无符号                  |                               |
+| phone     | char(11)    | 非空，默认空字符串""  |                         |                               |
+| level     | tinyint     | 非空，默认1           |                         | 0超级管理员，1普通用户，2禁用 |
+| addtime   | int         | 非空                  | 无符号                  | 注册时间                      |
+| lastlogin | int         | 非空                  | 无符号                  | 上次登录时间                  |
+
+
+
+### 3.3 创数据库语句
+
+以用户表为例：
+
+```
+DROP TABLE IF EXISTS ew_user;
+CREATE TABLE ew_user(
+id SMALLINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+username VARCHAR(15) NOT NULL,
+psw CHAR(32) NOT NULL,
+email VARCHAR(60) NOT NULL,
+avatar CHAR(60) DEFAULT "default.jpg" NOT NULL,
+sex TINYINT DEFAULT 1 NOT NULL UNSIGNED,
+age TINYINT NOT NULL UNSINGED,
+phone CHAR(11) DEFAULT "" NOT NULL,
+level TINYINT DEFAULT 1 NOT NULL,
+addtime INT UNSIGNED NOT NULL,
+lastlogin INT UNSIGNED NOT NULL
+)ENGINE=MYSIAM DEFAULT CHARSET=UTF8MB4;
+```
+
+> 然后利用这些SQL语句进行分类、文章、评论、广告、公告、友情链接等表的创建
+
+
+
+### 3.4 数据库设计约定
+
+- 所用命名一定要具有描述性，杜绝一切拼音或者英文混杂的命名方式
+- 字符集采用 UTF8MB4，注意字符的转换
+- 所有数据表第一个字段都是系统内部使用，主键列，自增字段，不可空，名称为id，确保不把此字段暴露给最终用户
+- 除特别说明外，所有日期格式都采用 int 格式，无时间值
+- 除特别说明外，所有字段默认都设置不允许为空，需要设置默认值
+- 所有普通索引的命名都是表名加索引的字段组合，例如用户表 User 中 name 字段设置普通索引，则索引名称命名方式为 user_name。
+
+
+
+### 3.5 找关联
+
+![image-20210322195232282](images/cms/image-20210322195232282.png)
+
+### 3.6 综合E-R图
+
+确定对应关系（1对1，1对多，多对多）最后综合成为一个全局 E-R 图
+
+![image-20210322200040577](images/cms/image-20210322200040577.png)
 
 
 
 
 
+> 
+
+
+
+### 3.7 前端相关数据对应SQL
+
+通过关系，写出对应显示数据的 SQL 语言，如：
+
+```
+// 注册SQL
+
+// 登录SQL
+
+// 导航栏分类、子分类
+
+// 最新文章
+
+// 栏目文章
+
+// 广告位
+
+// 公告位
+```
 
 
 
 
+
+### 3.8 后端相关对应SQL
+
+```
+// 添加用户
+
+// 查询用户
+
+// 查询用户分页功能
+
+// 禁用用户
+
+// 恢复用户
+
+// 删除用户
+
+// 添加栏目
+
+// 添加子栏目
+
+// 修改栏目名称
+
+// 添加文章
+
+
+```
+
+
+
+## 4. 功能开发
+
+#### 4.1 
 
 
 
