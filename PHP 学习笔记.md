@@ -3449,9 +3449,82 @@ echo demo()[1]; // 直接用函数后边带中括号的方式调用已声明的�
 
 
 
-## 4. 数组函数isset()
+## 4. 数组函数
 
-isset() 可以判断数组是否存在
+### 4.1 isset()
+
+isset() 可以判断数组是否存在，如：
+
+~~~php
+$arr = array(1,2,3,4,5);
+	if (isset ($arr[0])) {
+		echo '存在';
+	}else{
+		echo '不存在';
+	}
+~~~
+
+
+
+### 4.2 unset()
+
+unset() 或者利用 null 可以清空数组中元素的值
+
+~~~php
+$arr = array(1,2,3,4,5);
+unset($arr[0]);
+$arr[1] = null;
+~~~
+
+> 使用 unset() 和 空 的区别是，unset 直接清除元素，而 null 只是将值清除，而索引下标还在。两种方法都不会造成数组重新索引，如果需要重新索引，需要用 array_values() 重新索引。
+
+
+
+## 5. 多维数组
+
+创建多维数组，可以将多个一维数组当做一个新的数组的元素进行创建，如：
+
+~~~php
+<?php
+$one = array("name"=>"zs","age"=>"20", "sex"=>"female", "email"=>"a@cc.com");
+$two= array("name"=>"ls","age"=>"22", "sex"=>"male", "email"=>"b@cc.com");
+$three= array("name"=>"ww","age"=>"25", "sex"=>"female", "email"=>"c@cc.com");
+
+$group = array($one,$two,$three);
+var_dump($group[1]);  // 查看 $two 数组
+
+$arr1 = $group[1];
+var_dump($arr1['email']);  // 查看 $two 关联数组中 email 的值
+
+?>
+~~~
+
+
+
+可以可以直接创建多维数组，如：
+
+~~~php
+<?php
+$group = array (
+array("name"=>"zs","age"=>"20", "sex"=>"female", "email"=>"a@cc.com"),
+array("name"=>"ls","age"=>"22", "sex"=>"male", "email"=>"b@cc.com"),
+array("name"=>"ww","age"=>"25", "sex"=>"female", "email"=>"c@cc.com")
+);
+
+var_dump($group[1]);
+echo $group[1]['email'];
+?>
+~~~
+
+
+
+还可以用中括号 [] 方式来创建多维数组，如：
+
+~~~php
+测试失败
+~~~
+
+
 
 
 

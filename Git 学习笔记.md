@@ -104,6 +104,7 @@
 
 ```
 git pull [远程地址别名][远程分支别名]
+git pull origin master
 ```
 
 

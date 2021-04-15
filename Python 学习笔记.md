@@ -4,7 +4,7 @@ Python是面向对象，解释型的计算机程序设计语言。是一种开�
 
 
 
-![img](python/06100633-c2ce8755002945df846b5dad1dc25cdd.jpg)
+![img](images/python/06100633-c2ce8755002945df846b5dad1dc25cdd.jpg)
 
 
 
@@ -43,7 +43,7 @@ Python之禅作为一个信息条款被录入Python增强建议（PEP）的第20
 
 
 
-![img](python/1152636-21318e0d8aa7a943)
+![img](images/python/1152636-21318e0d8aa7a943)
 
 
 
