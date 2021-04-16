@@ -287,7 +287,11 @@ _blank 在新窗口打开
 
 锚点链接：
 
-```
+```html
+// 回到顶部
+<a href="#top">回到顶部</a>
+
+// 使用 id 设置锚点
 <a href="#tag">第一课</a>
 <h3 id="tag">第一课</h3>
 ```
@@ -299,6 +303,19 @@ _blank 在新窗口打开
 ```
 <a href="mailto:xxx@xxx.com?subject=主题&内容&cc=抄送@xxx.com>给我留言</a>
 ```
+
+
+
+## 8. 预排版标签 `<pre></pre>`
+
+在 HTML 中，标签和一些字符会被浏览器解析转义，并且空格也不会被解析。可以使用 pre 标签，将代码中的内容原原本本的还原出来，
+
+~~~html
+<p>左          右</p>
+<pre>左        右</pre>
+~~~
+
+
 
 
 
@@ -354,10 +371,9 @@ HTML中的表格一般是用来显示数据的，最好不要用表格走框架�
 
 
 - `<table></table>` 是用于定义表格的标签
-
 - `<tr></tr>` 标签用于定义表格中的行，必须签到在 table 标签中
-
 - `<td></td>` 标签用于定义表格中的单元格，必须签到在 tr 标签中
+- `<caption></caption>` 表格标题标签
 
 
 
@@ -378,22 +394,25 @@ HTML中的表格一般是用来显示数据的，最好不要用表格走框架�
 
 
 
+
+
 ## 2. 表格相关属性
 标签属性一般不常用，基本都是使用 CSS 来设置
 
 ```
-align  // 水平对齐方式（left, center, right）
-valign // 垂直对齐方式（top, middle, bottom）
-border  // 规定表格单元是否拥有边框（1 或者 ""），默认没有边框
+align  // 水平对齐方式（left, center, right），可以在 table, tr, td 中使用。对包含元素全部生效
+valign // 垂直对齐方式（top, middle, bottom），table 没有该属性
+border  // 规定表格单元是否拥有边框（1 或者 ""），默认没有边框， td 没有 border 属性
 bordercolor  // 表格颜色
 cellpadding  // 规定单元边缘与内容之间的空白，默认1像素
 cellspacing  // 规定单元格之间的空白，默认2像素
 width  // 规定表格的宽度（像素值或百分比）
-height  // 表格的高度
-caption  // 定义标题（放在talble内部，tr标签之前）  
+height  // 表格的高度 
 ```
 
 
+
+例：
 
 ```
 <table align="center", border="1", cellpading="20", cellspacing="0", width="500", height="250">
@@ -434,15 +453,11 @@ caption  // 定义标题（放在talble内部，tr标签之前）
 ## 4. 合并单元格
 
 ```
-rowspan="合并单元格的个数"  // 跨行合并（上下行合并）
-colspan="合并单元格的个数"  // 跨列合并（左右列合并）
+rowspan="合并单元格的个数"  // 跨行合并（上下行合并），在上边的单元格添加属性
+colspan="合并单元格的个数"  // 跨列合并（左右列合并），在左侧的单元格添加属性
 ```
 
->先确认是跨行还是跨列
->
->找到需要合并的单元格，加入合并属性
->
->删除多余单元格
+> 记得删除多余的单元格
 
 
 
@@ -611,8 +626,7 @@ HTML 中，一个完整的表单通常由表单域、表单控件和提示信息
 
 `<input>` 表单元素
 
-input 是输入的意思，在表单元素中 input 标签用于收集用户信息。
-在 input 标签中，包含一个 type 属性，根据不同的 type 属性值，输入字段拥有多种形式（文本框、复选框、单选框、按钮、掩码后的文本控件等）
+input 是输入的意思，在表单元素中 input 标签用于收集用户信息。在 input 标签中，包含一个 type 属性，根据不同的 type 属性值，输入字段拥有多种形式（文本框、复选框、单选框、按钮、掩码后的文本控件等）
 
 ```
 <input type="属性值">
@@ -620,60 +634,188 @@ input 是输入的意思，在表单元素中 input 标签用于收集用户信�
 
 
 
-input 类型属性
+input 类型：
 
 ```
-button  定义可点击按钮（多数情况下，用于通过js启动脚本）
+text  		定义单行的输入字段，用户可以在其中输入文本，默认宽度为20个字符
+password  定义密码字段，该字段中的字符被掩码
+radio  定义单选按钮
 checkbox  复选框
 file  定义输入字段和“浏览”按钮，供文件上传
 hidden  定义隐藏的输入字段
 image  定义图像形式的提交按钮
-password  定义密码字段，该字段中的字符被掩码
-radio  定义单选按钮
-reset  定义重置按钮，重置按钮会清除表单中的所有数据
 submit  定义提交按钮，提交按钮会把表单数据发送到服务器
-text  定义单行的输入字段，用户可以在其中输入文本，默认宽度为20个字符
+button  定义可点击按钮（多数情况下，用于通过js启动脚本）
+reset  定义重置按钮，重置按钮会清除表单中的所有数据
 ```
 
 
 
-input 其他属性
+### 2.1. 文本框
+
+~~~html
+<input type="text" name="username" value="文本框默认内容" placeholder="占位">
+~~~
+
+
+
+其他属性：
+
+- name 
+  - 提交 GET 或 POST 的字段名
+- value
+  - 文本框默认内容
+- placeholder
+  - 占位符，当输入文字时，占位符消失。
+
+
+
+### 2.2. 密码框
+
+~~~html
+<input type="password">
+~~~
+
+
+
+
+
+### 2.3. 单选框
+
+radio 单选框必须 name 一致才可以实现单选效果
+
+```html
+<form>
+    性别：
+    男 <input type="radio" name="sex" value="0">
+    女 <input type="radio" name="sex" value="1">
+</form>
+```
+
+> 只有加了 value 才可以通过 name 字段将值提交给后台
+
+
+
+### 2.4. 复选框
+
+~~~html
+<form>
+  <input type="checkbox" name="furniture" id="" value="0">冰箱
+  <input type="checkbox" name="furniture" id="" value="1">电视
+  <input type="checkbox" name="furniture" id="" value="2">柜子
+  <input type="checkbox" name="furniture" id="" value="3">空调
+</form>
+~~~
+
+> 同组复选框，name 值需要统一，value 值用于提交数据
+
+
+
+### 2.5. 下拉框
+
+select 下拉表单元素
+
+在页面中，如果有多个选项，可以使用 select 标签控件定义下拉列表
+
+```html
+    <select name="location" id="location">
+        <option value="">BJ</option>
+        <option value="">TJ</option>
+        <option value="" selected="selected">SH</option>
+    </select>
+```
+
+> 默认选中可以用 selected 属性
+
+
+
+多选分组
+
+~~~html
+<form>
+  <select name="location">
+    <optgroup label="省份">
+      <option value="SD">山东省</option>
+      <option value="HB">河北省</option>
+      <option value="JL">吉林省</option>
+    </optgroup>
+    <optgroup label="行业">
+      <option>服务业</option>
+      <option>制造业</option>
+      <option>零售业</option>
+    </optgroup>
+  </select>
+  <input type="submit" value="提交">
+</form>
+~~~
+
+
+
+### 2.6. 文本域
+
+textarea 文本域标签
+
+当用户输入文字较多的情况下，可以使用 textarea 标签，在表单元素中， textaera 标签是用于定义多行文本输入的控件，textarea 标签没有 value 属性。
+
+```html
+<textarea name="" id="" cols="30" rows="10">文字</textarea>
+```
+
+
+
+### 2.7. 上传文件
+
+~~~html
+<input type="file" name="file" id="">
+~~~
+
+
+
+
+
+### 2.8. 按钮
+
+提交按钮
+
+将表单中内容通过 GET 方式 或 POST 提交到服务端，提交按钮可以用 input 标签，也可以使用 button 标签，实现的效果是一样的。
+
+~~~html
+<input type="submit">
+<button>按钮</button>
+~~~
+
+
+
+复位按钮
+
+将表单内容复位，如果有 value 值，则复位为 value 值。
+
+~~~html
+<input type="reset">
+~~~
+
+
+
+普通按钮
+
+无效果，一般用于绑定 js 事件实现特殊效果
+
+~~~html
+<input type="button" value="点击按钮">
+~~~
+
+
+
+
+
+## 3. input 其他属性
 
 ```
-name  定义 input 元素的名称
+name  定义 input 元素的名称，重要，GET 或 POST 的 key 值
 value 定义 input 元素的默认值
 checked 默认被选中
 maxlength  规定输入字段中字符的最大长度
 ```
-
-
-
-新增属性
-
-~~~
-email	限制邮箱
-date	日期
-week	星期
-month	月
-time	时间
-color	颜色
-range	范围
-number	数量
-~~~
-
-
-
-
-
-radio 单选框必须 name 一致才可以实现单选效果
-
-```
-<form>
-    性别：男 <input type="radio" name="sex"> 女 <input type="radio" name="sex">
-</form>
-```
-
-> 复选框也是一样，这样后端才可以知道这个复选框选了什么
 
 
 
@@ -685,15 +827,18 @@ value 是表单元素的默认值
 </form>
 ```
 
->name 和 value 是每个表单元素都有的属性值，主要是给后台人员使用
->
->name 表单元素的名字，要求单选按钮和复选框要有相同的 name 值
->
->checked 属性主要针对于单选按钮和复选框，可以设置默认勾选某个表单元素
+
+
+- name 和 value 是每个表单元素都有的属性值，主要是给后台人员使用
+
+- name 表单元素的名字，要求单选按钮和复选框要有相同的 name 值
+
+- checked 属性主要针对于单选按钮和复选框，可以设置默认勾选某个表单元素
 
 
 
-label 标签
+## 4. label 标签
+
 `<label>` 标签为 input  元素定义标注（标签）
 label 标签用于绑定一个表单元素，当点击 label 标签内的文本时，浏览器就会自动将焦点转移到或者选择对应的表单元素上，用来增加用户体验
 
@@ -706,33 +851,211 @@ label 标签用于绑定一个表单元素，当点击 label 标签内的文本�
 
 
 
-select 下拉表单元素
+# 九、框架
 
-在页面中，如果有多个选项，可以使用 select 标签控件定义下拉列表
-
-```
-    <select name="" id="location">
-        <option value="">BJ</option>
-        <option value="">TJ</option>
-        <option value="" selected="selected">SH</option>
-    </select>
-```
-
-> 默认选中可以用 selected 属性
+frameset 元素可定义一个框架集。它被用来组织多个窗口（框架）。每个框架存有独立的文档。在其最简单的应用中，frameset 元素仅仅会规定在框架集中存在多少列或多少行。您必须使用 cols 或 rows 属性。
 
 
 
-textarea 文本域标签
-
-当用户输入文字较多的情况下，可以使用 textaera 标签，在表单元素中， textaera 标签是用于定义多行文本输入的控件
-
-```
-<textarea name="" id="" cols="30" rows="10"></textarea>
-```
+**重要事项：**您不能与 `<frameset></frameset>` 标签一起使用 `<body></body>` 标签。如果您需要为不支持框架的浏览器添加一个 `<noframes>` 标签，请务必将此标签放置在 `<body></body>` 标签中！
 
 
 
-# 九、补充：字体标签
+将页面分为几个部分，分别调用不同的页面
+
+- 左右结构用 cols 属性分割
+- 上下结构用 rows 属性分割
+
+
+
+## 1. 框架
+
+~~~html
+<html>
+<frameset cols="25%,50%,25%">
+  <frame src="/example/html/frame_a.html">
+  <frame src="/example/html/frame_b.html">
+  <frame src="/example/html/frame_c.html">
+</frameset>
+</html>
+~~~
+
+
+
+## 2. 框架嵌套
+
+~~~html
+<html>
+
+<frameset rows="25%,75%">
+
+  <frame src="/example/html/frame_a.html">
+  <frameset cols="25%, 75%">
+  	<frame src="/example/html/frame_b.html">
+  	<frame src="/example/html/frame_c.html">
+    </frameset>
+</frameset>
+
+</html>
+
+~~~
+
+
+
+## 3. 框架内链接跳转
+
+~~~html
+<html>
+<frameset rows="25%,75%">
+  <frame src="/example/html/frame_a.html" name="top">
+  <frameset cols="25%, 75%">
+  	<frame src="/example/html/frame_b.html" name="left">
+  	<frame src="/example/html/frame_c.html" name="right">
+    </frameset>
+</frameset>
+</html>
+~~~
+
+
+
+~~~html
+<a href="power.html" target="right">链接</a>
+~~~
+
+> 当点击链接后，链接则会在右侧 frame 中打开。 
+
+
+
+## 4. 内嵌框架
+
+将框架放在一个元素内部，如 div 内部：
+
+~~~html
+<div>
+  <iframe src="a.html">
+    
+  </iframe>
+</div>
+~~~
+
+
+
+# 十、H5
+
+## 1. 语法简单
+
+头部声明更加简单，如 `<!doctype html>` ，以及字符集声明 `<meta charset="utf-8">`
+
+
+
+## 2. 语法更宽松
+
+可以省略结束标签
+
+li, dt, dd, p, optgroup, option, tr, td, th
+
+
+
+可以完全省略的标签
+
+html, head, body
+
+
+
+### 3. 标签语义化
+
+增加了很多标签，使标签更加有意义。
+
+- `<header>` 头部
+- `<nav>` 导航栏
+- `<article>` 文章内容
+- `<section>` 网页中的一块区域
+- `<aside>` 侧边栏
+- `<footer>` 底部
+
+
+
+## 4. 新增表单属性
+
+- placeholder 占位显示
+- required 必填
+- autofocus 自动获取焦点
+
+
+
+~~~html
+<form action="">
+  <input type="text" name="username" autofocus="autofocus" required="required" placeholder="请输入用户名">
+  <input type="submit">
+</form>
+~~~
+
+
+
+## 5. H5 新增 input 类型
+
+~~~
+email	限制邮箱
+date	日期
+week	星期
+month	月
+time	时间
+color	颜色
+range	滑块范围
+number	数量
+~~~
+
+
+
+## 6. H5 多媒体标签
+
+以前网页中嵌入多媒体文件，需要使用 `<embed></embed>` 标签进行引用：
+
+~~~html
+<embed src="video.mp4" type="">
+~~~
+
+
+
+embed 属性：
+
+- autostart = "true/false" 自动播放
+- loop = "正整数/true/false" 循环播放
+- hidden = "true" 设置多媒体控制面板是否隐藏
+
+
+
+在 H5 中有了新的标签：
+
+- `<audio>`
+- `<video>`
+
+
+
+~~~html
+<audio src="audio.mp3" controls autoplay></audio>
+~~~
+
+- controls 控制面板
+- autoplay 自动播放
+- loop 循环播放
+
+
+
+兼容性解决方案
+
+~~~html
+<video controls autoplay>
+	<source src="video1.mkv">
+  <source src="video1.mp4"
+</video>
+~~~
+
+
+
+
+
+# 补充：字体标签
 
 HTML 改变文字颜色和字体，建议用CSS改变任何样式
 
@@ -740,5 +1063,6 @@ HTML 改变文字颜色和字体，建议用CSS改变任何样式
 <font size="2" color="blue">This is some text!</font>
 <font face="verdana" color="green">This is some text!</font>
 <p style="color:#FF0000";>Red paragraph text</p>
+<table bgcolor="red"></table>
 ```
 

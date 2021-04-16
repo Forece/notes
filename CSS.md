@@ -775,6 +775,24 @@ input:focus {
 
 
 
+其他伪类选择器：
+
+- :first-line 首行
+- :first-letter 首字母
+
+~~~css
+p:first-line {
+  color: red;
+}
+p:first-letter {
+  font-size: 22px;
+}
+~~~
+
+
+
+
+
 # 九、元素的显示模式
 
 元素的显示模式就是元素（标签）以什么方式进行显示，比如 div 标签独占一行，比如 span 标签一行可以放多个。
