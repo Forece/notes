@@ -999,7 +999,7 @@ background: 背景颜色 背景图片地址 背景平铺 背景图像滚动 背�
 
 ## 6. 背景色半透明
 
-CSS3 为我们提供了背景颜色半透明效果。
+CSS3 为我们提供了背景颜色半透明效果，可以实现黑色遮罩效果
 
 ```
 background: rgba(0,0,0,0.3);
@@ -1382,6 +1382,23 @@ color		可选，阴影的颜色
 
 
 
+盒子透明
+
+给盒子设置透明和背景透明不同，盒子透明，连文字也跟着透明，opacity 值越小越透明，为0则消失。
+
+~~~css
+div {
+    background-color: black;
+    opacity:0.5
+}
+~~~
+
+
+
+
+
+
+
 # 十三、CSS 浮动
 
 CSS 提供三种传统布局方式：标准、浮动、定位
@@ -1595,7 +1612,7 @@ both	清除两侧浮动
 
 清除浮动的方法：
 
-1. 额外表前法（W3C 推荐做法）
+1. 额外标签法（W3C 推荐做法）
 2. 父级添加 overflow 属性
 3. 父级添加 after 伪元素
 4. 父级添加双伪元素
@@ -1966,12 +1983,18 @@ scroll	总是显示滚动条
 
 精灵图的技术主要针对于背景图片使用，就是把多个小背景图片整合到一张大图片中。移动背景图片位置使用 background-position，移动距离就是这个目标图片的 x 和 y 坐标。
 
+
+
+![image-20210418153914925](images/css/image-20210418153914925.png)
+
+
+
 ```
 /* 定义精灵图大小 */
 weight: 100px;
 height: 100px;
 background: url(images/sprites.png) no-repeat;
-background-position: -180px -100px;  /* 左移180个像素，下移100个像素 */
+background-position: -180px -100px;  /* 负数是因为需要将图片从0坐标左移180个像素，下移100个像素 */
 ```
 
 
@@ -1984,10 +2007,63 @@ background: url(images/sprites.png) no-repeat -180px -100px;
 
 
 
+坐标可以用 left right 代替
+
+- left 代表图片最左侧坐标，一般是 0px
+- right 代表图片最右侧坐标
+- top 图片最上方，一般也是 0px
+- bottom 图片最下方坐标
+
+
+
 精灵图缺点：
 1. 图片文件比较大
 2. 图片本身放大会失真
 3. 修改不方便
+
+
+
+精灵图滑动门
+
+左侧头部图片，右侧尾部图片，中间重复图片拉伸
+
+~~~css
+.box {
+    width: 500px;
+    height: 100px;
+    background-color: #999;
+}
+span {
+    float: left;
+    height: 33px;
+}
+.left,
+.right {
+    width: 25px;
+}
+
+.left {
+    background: url(images/li_bg.png) left -190px;
+}
+.right {
+    background: url(images/li_bg.png) right -190px;
+}
+.center{
+    background: url(images/li_bg.png) center -190px;
+}
+~~~
+
+
+
+~~~html
+<div class="box">
+    <span class="left"></span>
+    <span class="center">文字拉伸</span>
+    <span class="right"></span>
+</div>
+~~~
+
+
 
 
 
@@ -2131,7 +2207,7 @@ textarea {resize: none}
 
 ## 4. vertical-align 垂直对齐
 
-经常用 vertical-align 设置图片或者表单（行内块元素）和文字垂直对齐，如果是img则不用转换，如果是其他标签，需要用 display: inline-block 转换
+经常用 vertical-align 设置图片或者表单（行内块元素）和文字垂直对齐，如果是img则不用转换，如果是其他标签，需要用 display: inline-block 转换。
 
 ```
 vertical-align: baseline | top | middle | bottom
@@ -2320,6 +2396,69 @@ https://gitee.com/xiaoqiang001/html_css_material/blob/master/%E7%AC%AC%E4%B9%9D%
 
 
 
+## 11. 分栏显示
+
+当盒子内一般是 p 标签，文字过多时，可以分栏显示
+
+- column-count 分栏
+- column-rule 隔断框
+- column-width 分栏宽度
+
+
+
+~~~css
+p {
+    column-width: 50px;
+    comlumn-count:3;
+    column-rule: 5px solid red;
+}
+~~~
+
+
+
+## 12. 放大缩小
+
+使用 zoom 可以让盒子放大或缩小
+
+~~~css
+div {
+    width: 200px;
+    height: 200px;
+    background-color: pink;
+    zoom: 2;
+~~~
+
+
+
+## 13. 版心
+
+![image-20210418160314511](images/css/image-20210418160314511.png)
+
+~~~html
+<div class="w">
+    <div class="header"></div>
+</div>
+~~~
+
+
+
+~~~css
+.w {
+    width: 100%;
+    background-color: skyblue;
+}
+.header {
+    margin: 0 auto;
+    width: 1200px;
+    height: 50px;
+    background-color: slateblue;
+}
+~~~
+
+
+
+
+
 # 二十、HTML5 和 CSS3 新特性
 
 ## 1. HTML5 新增语义话标签
@@ -2461,6 +2600,12 @@ input[value] {
 
 
 
+| 选择符           | 简介                                   |
+| ---------------- | -------------------------------------- |
+| nth-last-child() | 从后选择，倒数第二个 nth-last-child(2) |
+
+
+
 nth-child(1) 可以选择第几个元素，也可以加公式如 2*n ， n从0开始循环
 
 ```
@@ -2520,6 +2665,8 @@ nth-of-type 是将盒子内指定元素先排列序号，这时候就可以用 n
     }
 </style>
 ```
+
+
 
 
 
@@ -2943,6 +3090,13 @@ transform: scale(2) 宽高都变为原来的两倍
 
 
 
+用 transform 缩放和 zoom 缩放的区别是：
+
+- scale 以中心点放大
+- zoom 以左上角坐标放大
+
+
+
 鼠标经过图片放大效果：
 
 ```
@@ -3271,3 +3425,1379 @@ keywords
 <meta name="keywords" content="">
 ```
 
+
+
+# 移动端布局
+
+## 1. 布局方案
+
+- 百分比流式布局
+- flex 弹性布局
+- rem + less 媒体查询布局
+- 混合布局
+- vw / vh 布局
+- 响应式布局
+
+
+
+## 2. 常见移动端尺寸🔥
+
+https://material.io/devices
+
+
+
+## 3. 单位尺寸
+
+- px
+- dp
+- dpi
+- pt
+- ppi
+
+
+
+## 4. 视口
+
+在 meta 标签中有这么一句话：
+
+~~~html
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+~~~
+
+
+
+viewport 就是视口的意思，浏览器显示页面内容的屏幕区域，视口可以分为布局视口、视觉视口和理想视口
+
+
+
+### 4.1. 布局视口 layout viewport
+
+一般移动设备的浏览器的浏览器都设置了一个布局视口，用于解决早期的PC端页面在手机上显示的问题。iOS、Android 基本都将这个视口的分辨率设置为 980px ，所以 PC 端网页大多都可以在手机上呈现，只不过看上去很小，可以通过手势缩放网页。
+
+
+
+### 4.2. 视觉视口 visual viewport
+
+视觉视口是用户正在看到的网页的区域，可以通过缩放去操作视觉视口，但不会影响布局视口，布局视口仍保持原来的宽度
+
+
+
+### 4.3. 理想视口 ideal viewport
+
+由于智能手机的发布，Jobs 发明了理想视口。 为了使网站在移动端有最理想的浏览和阅读宽度而设定，理想视口，对设备来讲，是最理想的视口尺寸。需要手动添加 meta 视口标签通知浏览器操作。 meta 视口标签的主要目的是让布局视口的宽度和理想视口的宽度一致，简单理解就是设备有多宽，我们的布局视口就有多宽。
+
+
+
+### 4.4. meta 视口标签
+
+~~~html
+<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+~~~
+
+
+
+| 属性          | 解释说明                                                 |
+| ------------- | -------------------------------------------------------- |
+| width         | 宽度设置的是 viewport 宽度，可以设置 device-width 特殊值 |
+| intial-scale  | 初始缩放比例， 大于0的数字                               |
+| maximum-scale | 最大缩放比                                               |
+| minimum-scale | 最小缩放比                                               |
+| user-scalable | 用户是否可以缩放，yes 或 no                              |
+
+
+
+## 5. 二倍图
+
+### 5.1 物理像素和物理像素比
+
+物理像素点指的是屏幕显示的最小颗粒，是物理真实存在的，这是厂商在出厂时就设置好了，比如苹果6/7/8 是 750 * 1334 就是手机的像素。
+
+
+
+而我们开发时候书写的 1px 不一定等于1个物理像素。一个 px 能显示物理像素点的个数，称为物理像素比或屏幕像素比。
+
+- PC 段页面，1个px等于1个物理像素
+- 移动端不尽相同。如 iphone，1个px等于2px物理像素。
+
+
+
+所以在开发中，我们又称这个 1px 为开发像素，而真正显示在屏幕上的像素我们称为物理像素。
+
+
+
+PC 端和早期的手机屏幕像素比是 1:1 的，1px 开发像素 = 1 手机物理像素。
+
+Retina（视网膜屏幕）是一种显示技术，可以将更多的物理像素点压缩到一块屏幕里，从而达到更高的分辨率，提高屏幕显示的细腻程度。 2 x 2 开发像素，在视网膜技术中可以显示 4 x 4 像素，从而更加清晰。所以同样的图片，在手机里显示会被放大倍数。造成图片模糊。这种情况一般就会使用二倍图来处理，有些手机还存在3倍图和4倍图的情况。
+
+
+
+二倍图原理就是准备一个比原来图片大1倍的图片，然后经过缩放处理针对桌面用户，而手机用户会自动按比例放大一倍，就不会出现图片模糊的情况。
+
+
+
+### 5.2. 普通图片二倍图
+
+~~~html
+<style>
+  // 手动缩小1倍，在手机中会自动放大1倍原始比例
+  img {
+    width: 50px;
+    height: 50px;
+  }  
+</style>
+<img src="100x100.jpg"/>
+~~~
+
+
+
+### 5.3. 背景图2倍图
+
+~~~html
+<style>
+// 背景图缩放1倍
+  .b1 {
+    background: url(100x100.jpg);
+    background-size: 50px 50px;
+  }
+</style>
+<div class="b1"></div>
+~~~
+
+语法： `background-size: px | % | cover | contain`
+
+- px 只写一个值是宽度，高度会自动等比例缩放
+- % 相对于父盒子比例（背景所在盒子）
+- cover 高宽完全覆盖，直到图片宽高都触及盒子边缘。
+- contain 一方达到边缘就停止
+
+> 一般背景二倍图写法：`background-size: 50%;`
+
+
+
+### 5.4. 精灵图2倍图
+
+精灵图在手机端也需要二倍图，使用原版（无缩放）精灵图。
+
+- 在 Fireworks 中将精灵图等比例缩放为原来的一半
+- 根据大小测量坐标
+- 在 background-size 中改为原来宽度的一半，高度 auto 自适应
+
+
+
+### 5.5. 二倍图工具
+
+- PS 插件 cutterman，选中图片，导出2倍图
+
+- 慕客
+
+
+
+## 6. 移动端开发方案
+
+- 单独制作（m.jd.com）
+  - 桌面端与手机端不同
+  - 手机用户直接转向到手机端页面
+- 响应式布局
+  - 同页面，根据宽度自适应不同设备
+
+
+
+## 7. 移动端样式
+
+### 7.1. 移动端特殊样式
+
+由于移动端是后出现的技术，所以对 H5 与 CSS3 完美适配，可以放心使用，不用担心兼容性问题。除此之外移动端还可以使用一些特殊样式。
+
+
+
+~~~css
+// 盒子模型
+box-sizing: border-box;
+-webkit-box-sizing: border-box;
+
+// 手机中点击a链接，取消背景高亮
+-webkit-tap-highlight-color: transparent;
+
+// 移动端浏览器默认的外观在 iOS 加上这个属性才能给按钮和输入框自定义样式
+-webkit-apperance: none;
+
+// 禁用长按页面时弹出菜单
+img, a { -webkit-touch-callout: none; }
+~~~
+
+
+
+### 7.2. 移动端样式初始化
+
+Normalize.css 初始化样式
+
+https://necolas.github.io/normalize.css
+
+- 保护了有价值的默认值
+- 修复浏览器 BUG
+- 模块化
+- 拥有详细文档
+
+
+
+## 8. 流式布局（百分比布局）
+
+非固定像素，通过百分比进行缩放，也称作非固定像素布局。通过合资的宽度设置百分比来根据屏幕的宽度来进行伸缩，不受固定像素的限制，内容向两侧填充，流式布局方式是移动web开发使用的比较常见的布局方式。
+
+~~~css
+section {
+  width: 100%;
+  /* 设置最大、最小宽度，达到宽度限额不再缩放 */
+  max-width: 980px
+  min-width: 320px;
+}
+
+section div {
+  float: left;
+  width: 50%;
+  height: 400px;
+}
+
+section div:nth-child(1) {
+  background-color: pink;
+}
+
+section div:nth-child(2) {
+  background-color: green;
+}
+~~~
+
+
+
+~~~html
+<section>
+  <div></div>
+  <div></div>
+</section>
+~~~
+
+
+
+京东移动端案例：
+
+https://gitee.com/xiaoqiang001/mobile/tree/master
+
+
+
+## 9. Flex 布局
+
+### 9.1. 传统布局与flex布局
+
+| 传统布局                       | flex 布局                          |
+| ------------------------------ | ---------------------------------- |
+| 兼容性好                       | 操作方便，布局简单，移动端应用广泛 |
+| 布局繁琐                       | PC 端兼容性较差                    |
+| 局限性，不能再移动端很好的布局 | IE11或更低版本不支持               |
+
+
+
+### 9.2. flex 布局原理
+
+可以给任何一个容器都可以使用 flex 布局。如：
+
+~~~css
+div {
+  display: flex
+}
+~~~
+
+
+
+当父盒子设置为 flex 布局后，子元素中的 float，clear 和 vertical-align 属性都失效
+
+
+
+将父盒子设置成 flex 属性后，该盒子就变成了 flex 容器，其中的子元素称为 flex item，默认横向排列。并且子元素自动变为 inline-block 类型。也就是说可以设置宽高。
+
+
+
+### 9.3. 常见父盒子属性
+
+- flex-direction 设置主轴方向
+- justify-content 设置主轴上子元素的排列方式
+- flex-wrap 设置子元素是否换行
+- align-content 设置侧轴上的子元素的排列方式（多行）
+- align-item 设置侧轴上的子元素排列方式（单行）
+- flex-flow 复合属性，相当于同时设置了 flex-direction 和 flex-wrap
+
+
+
+在 flex 布局中，分为主轴和侧轴，设置主轴后，可以让子元素按照主轴的方向排列
+
+- 主轴方向是 x 轴方向，水平向右
+- 侧轴方向是 y 轴方向，水平向下
+
+
+
+| 属性值         | 说明             |
+| -------------- | ---------------- |
+| row            | 默认值：从左到右 |
+| row-reverse    | 从右到左         |
+| column         | 从上到下         |
+| column-reverse | 从下到上         |
+
+
+
+
+
+justify-content 可以设置主轴上子元素的排列方式，类似 WORD 中的靠左，靠右，居中，平分空间
+
+注意：使用这个属性之前一定要确定好主轴是哪个，之后
+
+| 属性值        | 说明                                                      |
+| ------------- | --------------------------------------------------------- |
+| flex-start    | 默认值，从头部开始，如果主轴是x轴，则从左到右（整体靠左） |
+| flex-end      | 从尾部开始排列（整体靠右）                                |
+| center        | 在主轴居中对齐（如果主轴是x轴，水平居中）                 |
+| space-around  | 平分剩余空间                                              |
+| space-between | 先两边贴边再平分剩余空间                                  |
+| space-evently | 等距离对齐                                                |
+
+![image-20210417222055897](images/css/image-20210417222055897.png)
+
+
+
+flex-wrap
+
+在 flex 布局中，默认是不换行的，如果没有设置 flex-wrap 属性的话，那么子元素会一直在主轴内一直增加，自动缩小宽度（即使设置了盒子宽度），如果需要换行的话，需要给盒子加上 flex-wrap 属性。
+
+| 属性         | 说明                 |
+| ------------ | -------------------- |
+| nowrap       | 默认值，不换行       |
+| wrap         | 换行                 |
+| wrap-reverse | 换行，但第一行在下方 |
+
+
+
+align-items 设置侧轴上子元素排列方式（单行）
+
+justify-content 是在主轴上的排列方式（将子元素居左、居右、居中排列），而 align-items 是设置在侧轴上的排列方式。如果需要将一个盒子中的所有子元素水平、垂直居中在屏幕中心，则需要同时设置主轴和侧轴居中。需要给父元素盒子设置高度。
+
+| 属性       | 说明                                                   |
+| ---------- | ------------------------------------------------------ |
+| flex-start | 从上到下                                               |
+| flex-end   | 从下到上                                               |
+| center     | 垂直居中                                               |
+| baseline   | 基线对齐                                               |
+| stretch    | 拉伸（不能给子元素设置高度）会将子元素拉伸至父元素高度 |
+
+![image-20210417221956046](images/css/image-20210417221956046.png)
+
+
+
+align-contents 设置侧轴上子元素排列方式（多行）
+
+在单行下没有效果，一般应用于多行，类似上下贴边，中间自由分割的情况。
+
+| 属性值        | 说明                                                      |
+| ------------- | --------------------------------------------------------- |
+| flex-start    | 默认值，从头部开始，如果主轴是x轴，则从左到右（整体靠左） |
+| flex-end      | 从尾部开始排列（整体靠右）                                |
+| center        | 在主轴居中对齐（如果主轴是x轴，水平居中）                 |
+| space-around  | 平分剩余空间                                              |
+| space-between | 先两边贴边再平分剩余空间                                  |
+| space-evently | 等距离对齐                                                |
+| stretch       | 设置子项元素高度平分父元素高度                            |
+
+![image-20210417222528833](images/css/image-20210417222528833.png)
+
+
+
+flex-flow
+
+该属性是 flex-direction 和 flex-wrap 属性的复合属性，可以写成一行，如：
+
+~~~css
+div {
+    display:flex
+    flex-flow: row wrap;
+~~~
+
+
+
+
+
+### 9.4. 常见子元素属性
+
+- flex 定义子项目分配剩余空间，用 flex 来表示占用多少份
+- align-self 子项目单独排列方式
+- order 子项目排序，类似 z-index
+
+
+
+flex 属性，自由分配没被占用宽度的剩余空间（其他子元素有宽度），使用 flex 属性的不能有宽度。
+
+~~~html
+<style>
+    section {
+        height: 500px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        background-color: tan;
+    }
+    div {
+        height: 50px;
+        background-color: pink;
+    }
+
+    div:nth-child(1) {
+        width: 150px;
+        background-color: skyblue;
+    }
+
+    div:nth-child(2) {
+        flex: 1;
+        background-color: pink;
+    }
+
+    div:nth-child(3) {
+        width: 150px;
+        background-color: blue;
+    }
+</style>
+
+~~~
+
+
+
+~~~html
+<section>
+    <div></div>
+    <div></div>
+    <div></div>
+</section>
+~~~
+
+
+
+左右盒子固定大小，中间自由分配1份剩余空间
+
+![](images/css/image-20210417223854610.png)
+
+
+
+如果想平均分配，就给每个子元素设置flex:1，如果想让中间的占的多一些，那么就用比例的分配1:2:1 这样分配 flex 份数。
+
+
+
+align-items 可以设置所有元素在侧轴的对齐方式，如果只想要一个单独子元素居下对齐，那么可以使用 align-self 属性。align-self 是给单独子元素设置对齐方式。
+
+~~~css
+div:nth-child(3) {
+    align-self: flex-end;
+}
+~~~
+
+
+
+order 属性可以设置盒子的位置，比如三个盒子，编号1,2,3，如果给2号盒子设置 order 属性 -1，那么显示的顺序则是 2,1,3。默认为0，越小越靠前。
+
+~~~css
+div:nth-child(2) {
+    order: -1;
+}
+~~~
+
+
+
+## 10. rem 适配布局
+
+rem布局类似于等比例缩放，设置一个基数，然后所有元素根据屏幕比例进行缩放。页面布局文字可以随着屏幕大小变化而变化
+
+
+
+### 10.1. rem 单位
+
+rem( root em ) 是一个相对单位，类似于 em，em 基准是相对于父元素字体大小。而 rem 的基准是相对于 html 元素的字体大小。
+
+
+
+比如：根元素 html 设置 font-size: 12px; 非根元素设置 width: 2rem，则实际大小换成 px 就是 24px。
+
+
+
+rem 的优势就是可以通过修改 html 里边的文字大小来改变页面中元素的大小，从而达到整体控制。
+
+
+
+### 10.2. 媒体查询 CSS3
+
+因为 rem 单位可以根据 html 字体大小改变而改变，针对不同尺寸的屏幕，我们需要将 html 的字体大小设置不同的值。就需要使用到 CSS3 的新特性，媒体查询。
+
+
+
+使用媒体查询可以：
+
+- 以针对不同的媒体类型定义不同的样式
+- 可以针对不同的屏幕尺寸设置不同的样式
+- 当浏览器大小发生改变，页面会根据浏览器宽度高度重新渲染页面
+- 支持 iOS， Android
+
+
+
+语法规范：
+
+~~~css
+@media mediatype and|not|only (media feature) {
+    CSS-Code;
+}
+~~~
+
+| 参数          | 说明                 |
+| ------------- | -------------------- |
+| mediatype     | 媒体类型             |
+| and not only  | 逻辑判断             |
+| media feature | 媒体特性，需带小括号 |
+
+
+
+mediatype 查询类型
+
+在不同的终端设备划分成不同的类型，称为媒体类型。
+
+| 值     | 说明                             |
+| ------ | -------------------------------- |
+| all    | 用于所有设备                     |
+| print  | 用于打印机和打印预览             |
+| screen | 用于电脑屏幕，平板电脑，只能手机 |
+
+
+
+媒体特性
+
+| 值        | 说明                             |
+| --------- | -------------------------------- |
+| width     | 定义输出设备中页面可见区域的宽度 |
+| min-width | 最小可见区域宽度                 |
+| max-width | 最大可见区域宽度                 |
+
+
+
+例：设置在所有小于 800px 屏幕上显示的样式
+
+~~~css
+@media screen and (max-width:800px){
+    body {
+        font-size: 12px;
+    }
+}
+~~~
+
+> 当宽度大于800px时，样式失效
+
+
+
+如果再次细分，宽度小于 600px，再显示另外一个样式。
+
+~~~css
+@media screen and (max-width:600px){
+    body {
+        font-size: 14px;
+    }
+}
+~~~
+
+> 当两个媒体查询同时生效时，屏幕小于600px会显示一个样式，600px-800px显示另外一个样式，800px以上则样式消失。
+
+
+
+一般按照从小到大（使用 min-width）的顺序定义。
+
+
+
+### 10.3. 媒体查询 + rem
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      @media screen and (min-width: 320px) {
+        html {
+          font-size: 50px;
+        }
+      }
+      @media screen and (min-width: 640px) {
+        html {
+          font-size: 100px;
+        }
+      }
+      @media screen and (min-width: 980px) {
+        html {
+          font-size: 150px;
+        }
+      }
+
+      .top {
+        height: 1rem;
+        background-color: pink;
+        color: white;
+        text-align: center;
+        font-size: 0.5rem;
+        line-height: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top">购物车</div>
+  </body>
+</html>
+
+~~~
+
+
+
+### 10.4. 引入资源
+
+当样式比较繁多的时候，我们可以针对不同屏幕引入不同的 css 文件。
+
+
+
+~~~html
+<link rel="stylesheet" href="css/style320.css" media="screen and (min-width:320px)">
+<link rel="stylesheet" href="css/style640.css" media="screen and (min-width:640px)">
+<link rel="stylesheet" href="css/style980.css" media="screen and (min-width:980px)">
+~~~
+
+
+
+## 11. less
+
+CSS 并非是一种语言，没有变量、函数、作用域等概念。针对于这些缺点，LESS 可以帮助我们解决这些问题。
+
+
+
+Less（Leaner Style Sheets） 是一个 CSS 预处理工具，它只是在 CSS 的基础上，为 CSS 加入了程序语言的特性。
+
+
+
+Less 中文网址： http://lesscss.cn
+
+
+
+类似 LESS 这样的工具还有 SASS, Stylus 等。
+
+
+
+### 11.1. Less 的使用
+
+首先需要新建一个扩展名为 less 的文件，在这个 less 文件里书写 less 语句
+
+- less 变量
+- less 编译
+- less 嵌套
+- less 运算
+
+
+
+### 11.2 Less 变量
+
+可以在 less 中定义变量，语法：
+
+~~~less
+@变量名: 值;
+~~~
+
+
+
+变量名命名规范和其他语言类似：
+
+- 必须以@开头
+- 不能以数字开头
+- 大小写敏感
+- 不能有特殊符号
+
+
+
+使用变量：
+
+~~~less
+@color： pink;
+@font14: 14px;
+body {
+    background-color: @color;
+}
+div {
+    font-size: @font14;
+}
+~~~
+
+
+
+### 11.3. less 编译
+
+html 不能直接解析 less 文件，需要将 less 文件转成 css 文件才可以。
+
+
+
+使用 vscode 插件 easy LESS 可以轻松将 less 文件转为 css 文件。
+
+
+
+安装插件完毕后，只要保存一下 less 文件，就会自动生成 css 文件。
+
+
+
+### 11.4. less 嵌套
+
+在 less 中可以使用嵌套写法（在父元素中定义子元素的样式）
+
+
+
+普通 css 写法：
+
+~~~css
+.header {
+    width: 200px;
+    height: 200px;
+    background-color: pink;
+}
+
+.header a {
+    color: blue;
+}
+~~~
+
+
+
+在 less 中可以这样写：
+
+~~~less
+.header {
+    width: 200px;
+    height: 200px;
+    background-color: pink;
+    a {
+    	color: blue;
+    }
+} 
+~~~
+
+> 自动生成的 css 会自动按照css语法书写。
+
+
+
+伪元素 less 嵌套
+
+~~~less
+a {
+    color: red;
+    &:hover {
+        color: blue;
+    }
+}
+
+nav {
+    .logo {
+        color: green;
+    }
+    &::before {
+        content: "";
+    }       
+}
+~~~
+
+
+
+### 11.5. less 运算
+
+~~~less
+@border: 5px + 5;
+div {
+    width: 200px;
+    height: 200px;
+    border: @border solid @red;
+}
+~~~
+
+
+
+less 运算规则
+
+- 运算符左右需要有空格
+- 如果只有一个单位，则使用该单位
+- 如果有两个单位，以第一个值得单位为准
+- 颜色也可以进行运算
+
+
+
+### 11.6 less 导入
+
+~~~less
+@import "style";      // 导入 style.less
+@import "style.less";  // 导入style.less
+@import "style.php";   //  style.php 作为LESS文件被导入
+@import "style.css";   // 文件内容被原样输出
+~~~
+
+
+
+
+
+## 12. rem 适配方案
+
+- less + 媒体查询 + rem 适配方案
+- flexible.js + rem 适配方案（推荐）
+
+
+
+### 12.1. less + 媒体查询 + rem
+
+市面上屏幕尺寸各种各样，一般情况下以1到2套效果适应大部分屏幕。现在基本以750px为界限。
+
+
+
+**动态设置 html 标签 font-size 大小**
+
+假设设计稿是 750px，我们可以把屏幕划分为15等份（标准不一，也可以是20或10等份）用屏幕分辨率除以份数得出的结果就是 html 中 font-size 的大小。
+
+
+
+font-size = 屏幕像素数 / 划分的份数
+
+
+
+**元素大小取值方法**
+
+得到了 html 根元素的 font-size，那么页面中其它元素定义大小呢？
+
+
+
+rem值 = 页面元素值 / （屏幕宽度 / 划分的份数）
+
+rem值 = 页面元素值 / font-size 字体大小
+
+
+
+比如一个div我们想让它是 100px，那么就用 100 / font-size 大小，得到的值就是 rem 值。
+
+
+
+另外也可以使用 vscode 中的插件 cssrem 来自动转换。注意需要转换 html 字体基准值
+
+- 打开设置（快捷键 ctrl + ，）
+
+
+
+**less 预处理**
+
+~~~less
+// 定义默认 PC 端 font-size
+html {
+    font-size: 50px;
+}
+
+// 我们此次定义的划分的份数 为 15
+@no: 15;
+
+// 320
+@media screen and (min-width: 320px) {
+    html {
+        font-size: 320px / @no;
+    }
+}
+
+// 750
+@media screen and (min-width: 750px) {
+    html {
+        font-size: 750px / @no;
+    }
+}
+~~~
+
+
+
+### 12.2. flexible.js + rem
+
+flexible 是淘宝团队出的简洁高效移动端适配库，不需要在写不同屏幕的媒体查询，因为这些都在 js 文件中做了处理，它的原理是把当前设备划分为10等份，我们需要做的就是确认 html 文字大小就可以了。比如 750px 屏幕，font-size 就是 75px（750px / 10）
+
+
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/index.css">
+  <script src="js/flexible.js"></script>
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>
+~~~
+
+
+
+~~~css
+body {
+    /* 设置页面 body 最小宽度和最大宽度 */
+    min-width: 320px;
+    max-width: 750px;
+    /* flexible 给我们划分了 10 等份 */
+    width: 10rem;
+    margin: 0 auto;
+    line-height: 1.5;
+    font-family: Arial, Helvetica;
+    background: #f2f2f2;
+}
+
+/* 如果我们的屏幕超过了 750px  那么我们就按照 750设计稿来走 不会让我们页面超过750px */
+
+@media screen and (min-width: 750px) {
+    html {
+        font-size: 75px!important;
+    }
+}
+~~~
+
+
+
+# Bootstrap 响应式布局
+
+https://gitee.com/xiaoqiang001/bootstrap
+
+
+
+- bootcss.com
+- getbootstrap.com
+- bootstrap.css88.com
+
+
+
+## 1. 开发原理
+
+就是使用媒体查询针对不同宽度的设备进行布局和样式的设置，从而适配不同设备的目的
+
+| 设备           | 分辨率         |
+| -------------- | -------------- |
+| 手机           | < 768px        |
+| 平板           | 768px ~ 992px  |
+| 桌面显示器     | 992px ~ 1200px |
+| 大型桌面显示器 | >=1200px       |
+
+
+
+## 2. 响应式布局容器
+
+响应式需要一个父级作为布局容器，来配合子集元素来实现变化效果，原理就是在不同屏幕下，通过媒体查询来改变这个布局容器的大小，再改变里边子元素的排列方式和大小，从而实现不同屏幕下，看到不同的页面布局和样式变化。
+
+
+
+| 设备           | 分辨率         | 布局容器宽度 |
+| -------------- | -------------- | ------------ |
+| 手机           | < 768px        | 100%         |
+| 平板           | 768px ~ 992px  | 750px        |
+| 桌面显示器     | 992px ~ 1200px | 970px        |
+| 大型桌面显示器 | >=1200px       | 1170px       |
+
+> 布局容器要比屏幕分辨率小的原因是为了美观，给浏览器两边留出空白
+
+
+
+## 3. 利用媒体查询做响应式布局
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        ul {
+            list-style: none;
+        }
+        
+        .container {
+            width: 750px;
+            margin: 0 auto;
+        }
+        
+        .container ul li {
+            float: left;
+            width: 93.75px;
+            height: 30px;
+            background-color: green;
+        }
+        
+        @media screen and (max-width: 767px) {
+            .container {
+                width: 100%;
+            }
+            .container ul li {
+                width: 33.33%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <ul>
+            <li>导航栏</li>
+            <li>导航栏</li>
+            <li>导航栏</li>
+            <li>导航栏</li>
+            <li>导航栏</li>
+            <li>导航栏</li>
+            <li>导航栏</li>
+            <li>导航栏</li>
+        </ul>
+    </div>
+</body>
+
+</html>
+~~~
+
+
+
+## 4. Bootstrap 简介
+
+Bootstrap 来自 twitter，是目前最受欢迎的前端框架，Bootstrap 是基于 HTML, CSS 和 JS 的。它整合了很多样式，不用用户自己编写，可以直接调用，从而使得 Web 开发更加快捷。
+
+
+
+优点：
+
+- 标准化 html+css 编码规范
+- 提供一套简介、直观、强悍的组件
+- 有自己的生态圈，不断的更新迭代
+- 让开发更加简单，提高开发效率
+
+
+
+## 5. Bootstrap 的使用
+
+- 创建文件夹结构
+- 创建 html 骨架结构
+- 引入相关样式文件
+- 书写内容
+
+
+
+### 5.1. 文件夹结构
+
+- index.html
+- css
+- images
+- js
+- bootstrap
+  - css
+  - font
+  - js
+
+
+
+### 5.2. html 结构
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap 101 Template</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="http://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
+~~~
+
+
+
+是让浏览器以 IE 最高版本内核运行
+
+~~~html
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+~~~
+
+
+
+解决IE9对html5标签不识别，导致css不起作用问题
+
+~~~html
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+ <![endif]-->
+~~~
+
+
+
+解决浏览器对 css3 无法进行媒体查询问题
+
+~~~html
+<!--[if lt IE 9]>
+<script
+src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+ <![endif]-->
+~~~
+
+
+
+引入 bootstrap css 文件
+
+~~~html
+<link href="css/bootstrap.min.css" rel="stylesheet">
+~~~
+
+
+
+引入 bootstrap js 文件
+
+~~~html
+<script src="js/bootstrap.min.js"></script>
+~~~
+
+
+
+使用 bootstrap，可以不用使用 normalize.css 初始化，已经集成在 bootstrap 里边了。
+
+
+
+### 5.3. 书写内容
+
+- 直接拿 bootstrap 预定义好的样式来使用
+- 修改 Bootstrap 原来的样式，注意权重问题
+
+
+
+https://bootstrap.css88.com/getting-started/#examples
+
+
+
+## 6. Bootstrap 布局容器
+
+Bootstrap 需要为页面内容和栅格系统包裹一个 .container 容器， Bootstrap 预先定义好了这个类。和我们之前手写响应式布局一样。
+
+
+
+container 类
+
+| 设备           | 分辨率         | 布局容器宽度 |
+| -------------- | -------------- | ------------ |
+| 手机           | < 768px        | 100%         |
+| 平板           | 768px ~ 992px  | 750px        |
+| 桌面显示器     | 992px ~ 1200px | 970px        |
+| 大型桌面显示器 | >=1200px       | 1170px       |
+
+
+
+container-fluid 类
+
+- 流式布局容器百分百宽度
+- 占据全部视口的容器
+- 适合单独做移动端开发
+
+
+
+## 7. 栅格系统
+
+栅格系统是指将页面布局划分为等宽列，然后通过列数定义来模块化页面布局。Bootstrap 随着屏幕尺寸增加，系统最多划分为12列。
+
+
+
+只有在里边有多个内容，需要平分布局的情况下，才需要使用到 container 容器。
+
+
+
+### 7.1. 栅格系统参数
+
+栅格系统用于通过行（row）与列（column）组合来创建页面布局。
+
+|                      | 手机     | 平板     | 中等屏幕 | 宽屏     |
+| -------------------- | -------- | -------- | -------- | -------- |
+| .container  最大宽度 | 100%     | 750px    | 970px    | 1170px   |
+| 类前缀               | .col-xs- | .col-sm- | .col-md- | .col-lg- |
+| 列数                 | 12       | 12       | 12       | 12       |
+
+- 行（row）必须放到 container 布局容器里边
+- 行内容器列比例进行布局，如4个图片，每个图片分3列。class="col-lg-4"
+- 每一列默认有左右15px的padding
+- 可以为同一列指定多个设备类名，如： class="col-md-4 col-sm-6"
+
+
+
+~~~html
+    <style>
+      .w {
+        width: 100%;
+        margin: 0 auto;
+        background-color: pink;
+      }
+    </style>
+~~~
+
+
+
+~~~html
+<div class="w">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">1</div>
+            <div class="col-lg-3">2</div>
+            <div class="col-lg-3">3</div>
+            <div class="col-lg-3">4</div>
+        </div>
+    </div>
+</div>
+~~~
+
+
+
+- 如果元素列数分配小于12份，则会出现空白
+- 大于12份，会另起一行
+
+
+
+### 7.2 设置多尺寸自适应
+
+中等屏幕3等分，小屏幕2等分
+
+~~~html
+<div class="w">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3">1</div>
+            <div class="col-lg-3">2</div>
+            <div class="col-lg-3">3</div>
+            <div class="col-lg-3">4</div>
+        </div>
+    </div>
+</div>
+~~~
+
+
+
+### 7.3. 列嵌套
+
+可以在元素中再次使用栅格系统
+
+![image-20210418135726560](images/css/image-20210418135726560.png)
+
+
+
+~~~html
+<div class="w">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <!-- 列嵌套最好加上1行row，可以取消父元素的 padding 值，并且高度和父元素一样高 -->
+                <div class="row">
+                    <div class="col-md-6">a</div>
+                    <div class="col-md-6">b</div>
+                </div>
+            </div>
+            <div class="col-lg-4">2</div>
+            <div class="col-lg-4">3</div>
+        </div>
+    </div>
+</div>
+~~~
+
+
+
+### 7.4 列偏移
+
+使用 .col-md-offset-* 类可以将列向右侧偏移，这些类实际是通过使用 * 选择器为当前元素增加了左侧的边距 margin 
+
+![image-20210418140444100](images/css/image-20210418140444100.png)
+
+~~~html
+<div class="container">
+    // 左右两侧盒子偏移
+    <div class="row">
+        <div class="col-lg-4">1</div>
+        <div class="col-lg-4 col-lg-offset-4">2</div>
+    </div>
+    // 中间盒子居中
+        <div class="row">
+        <div class="col-lg-8 col-lg-offset-2">1</div>
+    </div>
+</div>
+~~~
+
+
+
+### 7.5 列排序
+
+通过使用 .col-md-push-* 和 .col-md-pull-* 类可以很容易的改变列的顺序
+
+![image-20210418141045365](images/css/image-20210418141045365.png)
+
+~~~html
+<div class="container">
+    // 左右两侧盒子偏移
+    <div class="row">
+        <div class="col-lg-4 col-lg-push-8">1</div>
+        <div class="col-lg-8 col-lg-pull-4">2</div>
+    </div>
+</div>
+~~~
+
+
+
+### 7.6 响应式工具
+
+有时候对手机用户或平板用户，不需要显示某些页面元素，可以使用以下类进行控制
+
+- .hidden-xs
+- .hidden-sm
+- .hidden-md
+- .hidden-lg
+
+
+
+
+
+
+
+
+
+# swiper 轮播图
+
+https://www.swiper.com.cn/

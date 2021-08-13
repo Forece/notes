@@ -66,6 +66,8 @@
 
 ## 2. 同步本地到远程
 
+### 2.1 Master 主分支
+
 1. 将文件拷贝到Git目录
 
 2. 添加文件到暂存区
@@ -88,9 +90,12 @@
 
    
 
-4. 提交到远程仓库（先从远程拉取，然后再push）
+4. 提交到远程仓库
 
    ```
+   git push
+   
+   # 或使用带参数的 push
    git push origin master
    ```
 
@@ -98,14 +103,69 @@
 
 
 
+### 2.2 Dev 分支
+
+1. 本地创建分支
+
+~~~
+git brunch dev
+~~~
+
+
+
+2. 切换分支
+
+```
+git checkout dev
+```
+
+
+
+3. 添加/编辑分支文件
+
+4. 推送到远程
+
+~~~
+git push --set-upstream origin dev
+~~~
+
+> 第一次创建分支需要使用 --set-upstream 参数，远程仓库有分支后才可以直接 push
+
+
+
+删除分支
+
+~~~
+git brunch -d dev
+~~~
+
+
+
+
+
 ## 3. 更新本地仓库到最新版
 
-要更新你的本地仓库至最新改动，执行：
+第一次拿到项目，一般是直接 clone 项目到本地
+
+~~~
+git clone 
+~~~
+
+> 克隆操作前提：本地没有任何项目文件
+
+
+
+每日检查项目进程，将本地仓库更新到最新，执行：
 
 ```
-git pull [远程地址别名][远程分支别名]
+git pull
+
+# 或使用带参数 pull， 拉取指定分支
+
 git pull origin master
 ```
+
+> 拉取操作：更新本地项目
 
 
 
@@ -113,7 +173,73 @@ git pull origin master
 
 当 push 文件的时候，Git 会提示有它人已经推送了同样的文件，需要解决冲突才可以进行 Push
 
-这时候，需要先用 pull 命令拉去最新版文件，然后 Git 会自动进入 Merge 模式，用 Vi 编辑器修改文件，修改冲突。git add 添加到暂存区、重新 Commit，然后再次进行 push 即可。
+~~~
+$ git push
+To git@github.com:myrepo.git
+ ! [rejected]        development -> development (non-fast-forward)
+error: failed to push some refs to 'git@github.com:myrepo.git'
+To prevent you from losing history, non-fast-forward updates were rejected
+Merge the remote changes (e.g. 'git pull') before pushing again.  See the
+'Note about fast-forwards' section of 'git push --help' for details.
+~~~
+
+
+
+这时候，需要先用 pull 命令拉去最新版文件，然后 Git 会自动进入 Merge 模式，用 Vi 编辑器修改文件，和同事讨论，修改冲突。将文件修改为最终需要的形式。
+
+git add 添加到暂存区、重新 Commit，然后再次进行 push 即可。
+
+
+
+冲突解决：
+
+步骤1：提交前先git pull获取冲突（获取远程仓库的更新内容）
+步骤2：查看提示，修改冲突文件，保留需要留的内容，重新提交即可
+
+
+
+项目流程：
+
+每日提交前先 git pull 
+有问题：先解决问题 再 git push
+没问题：直接 git push
+
+
+
+## 5. 版本回退
+
+查看日志（务必在之前每次提交的时候写上注释）：退出查看日志按 q 键
+
+~~~
+git log 					   	# 查看提交的历史
+git log --pretty=oneline		# 查看提交的历史（格式化）
+~~~
+
+> 一般用于查看 commit id
+
+
+
+版本回退
+
+~~~
+git reset --hard HEAD^         回退到上个版本
+git reset --hard HEAD~3        回退到前3次提交之前，以此类推，回退到n次提交之前
+git reset --hard commit_id     回退到指定版本（主要使用）
+~~~
+
+
+
+操作步骤：
+①创建临时分支（目的在于防止影响当前正在使用的分支）
+②临时分支中回滚
+	a. 查看日志确定需要回滚的版本id
+	b. 回滚
+③拷贝出需代码，删除临时分支（有问题问百度）
+	$ git branch -d 需要删除的分支名
+
+注意事项：
+	a. 临时分支只是为了找回历史文件或代码，用完即删，因此不需要提交临时分支到线上仓库；
+	b. 删除临时分支时，需要先切换出临时分支（退出临时分支，确保当前没有被占用），然后才能删除；
 
 
 
@@ -125,9 +251,19 @@ git pull origin master
 ssh-keygen -t rsa -C "your_email@youremail.com"
 ```
 
+> 填写 github 邮箱地址
 
 
-然后复制到 Github 中 https://github.com/settings/keys
+
+之后会生成私钥和公钥，私钥自己留着，公钥内容复制到 Github 中 https://github.com/settings/keys
+
+
+
+此时如果再连接 github，比如说克隆文件，就不用输入密码了，但是需要使用 SSH 的 Clone 连接
+
+~~~
+git clone sshgitlink
+~~~
 
 
 
@@ -139,15 +275,43 @@ ssh -T git@github.com
 
 
 
+## 5. Github 密码修改
+
+在 .git/config 文件中，修改 github 配置，其中 [remote "origiin"] 区域可以填写 github 用户登录信息
+
+~~~shell
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+[remote "origin"]
+	url = https://github.com/Forece/notes.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+
+~~~
 
 
 
+如果想默认直接登录，可以将 url 写成这样的格式
+
+~~~
+url = https://用户名:密码@github.com/用户名/仓库名.git
+~~~
 
 
 
 # 二、为什么要用 Git
 
+在实际工作中，通常是一个团队一起开发一个项目，不同的人开发不同的功能模块（分模块开发），会有一个公共的地方存放项目代码。Git 相当于这么一个公共空间，有点类似于 Google Docs 可以多人协作的这样一种工具。
+
+
+
 ## 1. 版本控制的优势
+
+版本控制指的是在多人协作软件开发过程中，对各种程序代码、配置文件及说明文档等文件迭代变更的一种管理。
 
 - 协同修改
 
@@ -261,7 +425,7 @@ rm -rf .git
 
 **重置配置信息**
 
-删除配置信息
+初始化过程中如果输入错误，可以重新用 config 命令进行修改，会覆盖之前的命令，或者使用 --unset 参数删除配置信息
 
 ```
 git config --global --unset user.name git config --global --unset user.email
@@ -271,11 +435,11 @@ git config --global --unset user.name git config --global --unset user.email
 
 **参数说明：**
 
-整个系统：system
+- 整个系统：system
 
-当前用户：global
+- 当前用户：global
 
-当前项目：留空,不需要参数
+- 当前项目：留空,不需要参数
 
 
 
@@ -689,6 +853,22 @@ git log --online --decorate --graph --all
 使用分支意味着不影响主程序的稳定性，再重新复制一份出来，然后在这个复制版本中进行开发。Git 分支模型极其的高效轻量。
 
 Master 为默认主分支，其他分支都是从Master中分离出来的。分支就是指向最新提交对象的指针。
+
+
+
+在工作中，Master 作为主分支一般只有项目经理（总监）可以操作，其他所有操作都在分支上进行：
+
+~~~
+Master				 # 完整的项目
+	- Dev 分支		# 开发操作，测试分支（需要测试的完整项目），其下方还分为各个模块分支
+		- User		  
+		- Article
+		- Comment
+			- fix-comment-avatar	# 热修复分支
+		
+~~~
+
+
 
 
 
@@ -1207,7 +1387,24 @@ git checkout v1.0
 
 
 
-十六、GitLab 安装与配置
+
+
+接触项目
+
+- 从远程克隆到本地
+
+每日任务
+
+- 将远程项目更新到本地（pull）
+- 编写自己所分配代码
+- 提交到本地仓库
+- 提交到远程仓库（push）
+
+
+
+
+
+# 十六、GitLab 安装与配置
 
 https://about.gitlab.com/install/
 
