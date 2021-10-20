@@ -407,12 +407,6 @@ if(is_front_page() || is_home()) { bloginfo('name');
 
 
 
-
-
-
-
-
-
 - `is_home()`：当前页面为主页时返回true
 - `is_category()`：当前页面为分类页时返回true
 - `is_single()`：当前页面为单文章页时返回true

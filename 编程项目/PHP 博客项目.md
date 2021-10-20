@@ -2696,8 +2696,6 @@ public function index() {
 
 
 
-
-
 # 用户登出
 
 退出链接
@@ -3660,7 +3658,7 @@ final class CategoryModel extends BaseModel {
         foreach ($arrs as $arr) {
             // 判断当前层级 pid 是否一致
             if ($arr['pid'] == $pid) {
-                $arr['level'] - $level;
+                $arr['level'] = $level;
                 // 按顺序添加入新的数组
                 $catgories[] = $arr;
                 // 递归调用

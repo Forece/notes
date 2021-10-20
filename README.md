@@ -16,7 +16,7 @@
 - HTML
 - CSS
 - Javascript
-- Jquery
+- jQuery
 - React 框架
 - Vue 框架
 - Bootstrap 框架

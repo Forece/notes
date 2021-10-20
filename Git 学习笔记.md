@@ -108,7 +108,7 @@
 1. 本地创建分支
 
 ~~~
-git brunch dev
+git branch dev
 ~~~
 
 
@@ -136,7 +136,7 @@ git push --set-upstream origin dev
 删除分支
 
 ~~~
-git brunch -d dev
+git b -d dev
 ~~~
 
 
