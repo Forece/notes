@@ -4,6 +4,12 @@ https://poco-chinese.readthedocs.io/zh_CN/latest/source/README.html#working-with
 
 
 
+https://blog.51cto.com/u_13661275/3223607
+
+https://developer.aliyun.com/article/919001
+
+
+
 ## 1. 选择对象
 
 ~~~python
@@ -21,7 +27,21 @@ poco(textMatches='^据点.*$', type='Button', enable=True)
 
 # 通过层级关系选取对象
 poco('main_node').child('list_item').offspring('item')
+poco('选中').parent()
+poco('文字').sibling()
 ~~~
+
+
+
+常用模糊搜索
+
+~~~
+poco(textMatches=".*15.*").click()
+~~~
+
+> 需要匹配全部文字
+
+
 
 
 
@@ -99,8 +119,6 @@ poco('bg_mission').wait(5).exists()  # wait 5 seconds at most，return Exists or
 
 
 
-
-
 ### 2.7 截图
 
 ~~~python
@@ -110,3 +128,21 @@ b64img, fmt = poco.snapshot(width=720)
 open('screen.{}'.format(fmt), 'wb').write(b64decode(b64img))
 ~~~
 
+
+
+### 输入字符
+
+~~~
+pocoObj.setattr("text",name)
+pocoObj.set_text("string")
+~~~
+
+
+
+https://www.cnblogs.com/wutaotaosin/articles/11396827.html
+
+https://blog.csdn.net/weixin_42550871/article/details/110150740
+
+
+
+多设备连接：https://www.cnblogs.com/ShineLeem/p/11326180.html

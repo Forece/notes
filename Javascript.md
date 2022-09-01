@@ -4421,6 +4421,163 @@ clearInterval(定时器名字);
 
 
 
+### 1.6 防抖
+
+防抖表示用户触发事件比较频繁，只取最后一次结果，如：
+
+~~~html
+<input type="text" />
+<script>
+    inp = document.querySelector('input')
+    inp.addEventListener('input', function () {
+        console.log(this.value)
+    })
+~~~
+
+
+
+一个简单的 input 框，当我们输入 “前端” 时，事件被触发了9次，即
+
+~~~
+q
+test.html:15 qi
+test.html:15 qia
+test.html:15 qian
+test.html:15 qiand
+test.html:15 qiandu
+test.html:15 qiandua
+test.html:15 qianduan
+test.html:15 前端
+~~~
+
+
+
+搜索框往往会显示模糊搜索，用户输入关键词，会对后端进行数据请求，然后拿到数据，如果不开启防抖，那么就会对后端造成很多无用请求，我们可以开启一个定时器，当用户输入完毕1秒后，开始进行请求
+
+~~~js
+inp = document.querySelector('input')
+let timer = null
+inp.addEventListener('input', function () {
+    // 判断之前是否有定时器，如果有，那么就清空计时器
+    if (timer != null) {
+        clearTimeout(timer)
+    }
+    // 设定定时器，1秒后执行
+    timer = setTimeout(() => {
+        console.log(this.value)
+    }, 1000)
+})
+~~~
+
+
+
+封装为 debounce 函数
+
+~~~js
+inp = document.querySelector('input')
+
+function debounce(fn, delay) {
+    let timer = null
+    return function () {
+        if (timer != null) {
+            clearTimeout(timer)
+        }
+        timer = setTimeout(() => {
+            // 执行函数并改变 this 指向
+            fn.call(this)
+        }, delay)
+    }
+}
+
+inp.addEventListener(
+    'input',
+    debounce(function () {
+        console.log(this.value)
+    }, 1000)
+)
+~~~
+
+
+
+### 1.7 节流
+
+节流为了控制高频事件执行次数，比如滚动条事件，当用户滑动滚动条时，事件会不断触发，如：
+
+~~~js
+window.addEventListener('scroll', function () {
+    console.log(1)
+})
+~~~
+
+
+
+只触发一次
+
+~~~js
+let flag = true
+window.addEventListener('scroll', function () {
+    if (flag) {
+        // 开启定时器，500毫秒后执行
+        setTimeout(() => {
+            console.log(1)
+        }, 500)
+    }
+    // flag 为 true 执行完定时器后关闭 flag
+    // 事件再次触发后只会执行 flag = false
+    flag = false
+})
+~~~
+
+
+
+控制次数
+
+~~~js
+let flag = true
+window.addEventListener('scroll', function () {
+    if (flag) {
+        // 开启定时器，500毫秒后把 flag 打开
+        setTimeout(() => {
+            console.log(1)
+            flag = true
+        }, 500)
+    }
+    flag = false
+})
+~~~
+
+
+
+封装
+
+~~~js
+function throttle(fn, delay) {
+    let flag = true
+    return function () {
+        if (flag) {
+            setTimeout(() => {
+                console.log(1)
+                flag = true
+            }, delay)
+        }
+        flag = false
+    }
+}
+
+window.addEventListener(
+    'scroll',
+    throttle(function () {
+        console.log(1)
+    }, 500)
+)
+~~~
+
+
+
+
+
+
+
 ## 2. JS 执行队列
 
 JS 是单线程，同一时间只能执行一件事情，为了解决这个问题，新版 HTML5 中允许 Javascript 脚本创建多个线程。于是 JS 中出现了同步和异步。
@@ -5095,6 +5252,8 @@ https://gitee.com/xiaoqiang001/jsapis_material/tree/master/%E7%AC%AC%E4%B8%83%E5
 
 
 
+相关 API
+
 ~~~js
 sessionStorage.setItem(key, value)
 sessionStorage.getItem(key)
@@ -5115,8 +5274,12 @@ https://gitee.com/xiaoqiang001/jsapis_material/blob/master/%E7%AC%AC%E4%B8%83%E5
 2. 多窗口都可以使用
 3. 以键值对形式使用
 
+
+
+相关 API
+
 ~~~
-localStorage.setItem(key, value)
+localStorage.setItem(key, value)  // 如果键名存在会更新值
 localStorage.getItem(key)
 localStorage.removeItem(key)
 localStorage.clear()
@@ -5127,6 +5290,52 @@ localStorage.clear()
 localStorage 案例
 
 https://gitee.com/xiaoqiang001/jsapis_material/blob/master/%E7%AC%AC%E4%B8%83%E5%A4%A9/09-%E6%9C%AC%E5%9C%B0%E5%AD%98%E5%82%A8%E4%B9%8BlocalStorage.html              
+
+
+
+setItem 方法会将数据转换为字符串类型
+
+~~~js
+localStorage.setItem('num',666)
+~~~
+
+> 存放在浏览器缓存中的数据是字符串而不是整型
+
+
+
+对象也是一样
+
+~~~js
+p = {name:'zs', age:'18'}
+localStorage.setItem('person', p)
+~~~
+
+> 存放结果是 [object Object]，相当于将 p.toString() 存储在浏览器缓存中
+
+
+
+如果想将对象数据存放在 localStorage 中，则需要使用 JSON.stringify() 先将数据转换成字符串
+
+~~~js
+localStroage.setItem('person', JSON.stringify(p))
+~~~
+
+
+
+读取数据时还需要将数据转换回原来的模式
+
+~~~js
+const p = localStorage.getItem('person')
+p = JSON.parse(p)
+~~~
+
+
+
+读取一个不存在的数据返回 null
+
+~~~js
+console.log(localStroage.getItem('lol'))
+~~~
 
 
 

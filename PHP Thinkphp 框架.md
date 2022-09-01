@@ -1866,7 +1866,8 @@ page()分页方法，优化了limit()方法，无须计算分页条数；
 //第一页
 Db::name('user')->page(1, 5)->select();
 //第二页
-Db::name('user')->page(2, 5)->select();
+Db::na
+me('user')->page(2, 5)->select();
 ```
 
 
@@ -5883,6 +5884,8 @@ Request::param('id/d');
 dump(input());  // 获取传参
 dump(input('?get.id')); //判断get 下的id 是否存在
 dump(input('?post.name')); //判断post 下的name 是否存在
+dump(input('get.'));  // 获取所有 get 参数
+dump(input('post.'));  // 获取所有 post 参数
 dump(input('param.name')); //获取param 下的name 值
 dump(input('param.name', 'nodata')); //默认值
 dump(input('param.name', '', 'htmlspecialchars')); //过滤器

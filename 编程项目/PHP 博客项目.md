@@ -1,6 +1,6 @@
 # 项目说明
 
-- 原生程序
+- 原生手写各种模块
   - MVC 自定义框架
   - 自定义 GD 库验证码
   - 自定义 mysqli 数据库类
@@ -52,6 +52,7 @@ CREATE DATABSE `blog` IF NOT EXISTS CHARACTER SET 'utf8mb4'
 创建表
 
 ~~~
+
 ~~~
 
 

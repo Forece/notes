@@ -1356,3 +1356,124 @@ https://v4.bootcss.com/docs/utilities/flex/
 
 
 
+# Bootstrap 5
+
+屏幕尺寸
+
+| Breakpoint        | Class infix | Dimensions |
+| ----------------- | ----------- | ---------- |
+| Extra small       | *None*      | <576px     |
+| Small             | `sm`        | ≥576px     |
+| Medium            | `md`        | ≥768px     |
+| Large             | `lg`        | ≥992px     |
+| Extra large       | `xl`        | ≥1200px    |
+| Extra extra large | `xxl`       | ≥1400px    |
+
+
+
+显示/隐藏元素
+
+expand-lg ，当屏幕尺寸超过 992px 时，展开元素
+
+
+
+## 外边距
+
+外边距 margin 相对于 Bootstrap 4 来说，命名有些改变
+
+ms: margin start 相当于 margin-left
+
+me: margin end 相当于 margin-right
+
+mt: margin-top
+
+mb: margin-bottom
+
+my: margin-top & margin-bottom
+
+mx: margin-left & margin-right
+
+ms-auto
+
+me-auto
+
+
+
+## Navbar 导航栏
+
+- `.navbar-brand` for your company, product, or project name.
+- `.navbar-nav` for a full-height and lightweight navigation (including support for dropdowns).
+- `.navbar-toggler` for use with our collapse plugin and other [navigation toggling](https://getbootstrap.com/docs/5.2/components/navbar/#responsive-behaviors) behaviors.
+- Flex and spacing utilities for any form controls and actions.
+- `.navbar-text` for adding vertically centered strings of text.
+- `.collapse.navbar-collapse` for grouping and hiding navbar contents by a parent breakpoint.
+- Add an optional `.navbar-scroll` to set a `max-height` and [scroll expanded navbar content](https://getbootstrap.com/docs/5.2/components/navbar/#scrolling).
+
+
+
+创建基本结构
+
+~~~html
+<!-- navbar-expand-lg 当屏幕尺寸大于 992 时，显示 collapse 内容 -->
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <!-- 标题内容 -->
+    <a href="#" class="navbar-brand">Bootstrap Demo</a>
+<!-- 未达到屏幕尺寸自动隐藏内容 -->
+    <div class="collapse navbar-collapse">
+        <!-- 导航项目，且靠右对齐 -->
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><div class="nav-link">前端知识</div></li>
+            <li class="nav-item"><div class="nav-link">后端知识</div></li>
+            <li class="nav-item"><div class="nav-link">数据库知识</div></li>
+        </ul>
+    </div>
+</nav>
+~~~
+
+
+
+创建汉堡包图标按钮，展开导航
+
+~~~html
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <a href="#" class="navbar-brand">Bootstrap Demo</a>
+    <!-- 创建汉堡按钮控制隐藏项，并绑定id -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <!-- 添加id -->
+    <div class="collapse navbar-collapse" id="navmenu">
+        <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><div class="nav-link">前端知识</div></li>
+            <li class="nav-item"><div class="nav-link">后端知识</div></li>
+            <li class="nav-item"><div class="nav-link">数据库知识</div></li>
+        </ul>
+    </div>
+</nav>
+~~~
+
+
+
+将导航居中
+
+~~~html
+<nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+     <!-- 套入 container -->
+    <div class="container">
+        <a href="#" class="navbar-brand">Bootstrap Demo</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navmenu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><div class="nav-link">前端知识</div></li>
+                <li class="nav-item"><div class="nav-link">后端知识</div></li>
+                <li class="nav-item"><div class="nav-link">数据库知识</div></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+~~~
+
+
+

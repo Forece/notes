@@ -26,7 +26,7 @@ SHIFT + 左右 选中一个字符
 
 CTRL + SHIFT + 右 选中单词（不论长度）
 
-CTRL + D 选中单词
+CTRL + D 选中单词，多按一次就多选中一个相同单词
 
 ALT + 上下  移动换行
 
@@ -50,11 +50,44 @@ ALT + 上下  移动换行
 
 
 
-快速生成内容
+# EMMET 语法
+
+快速创建 class
 
 ~~~
-ul>li{这是第 $ 个 li}*6
+.classname
+a.classname
+nav.navbar.navbar-expand-lg.bg-dark.navbar-dark		// 创建多个 class 标签
 ~~~
+
+
+
+快速创建 id
+
+~~~
+#idname
+a#idname
+~~~
+
+
+
+快速生成嵌套结构
+
+~~~
+ul>li{这是第 $ 个 li}*6>a
+~~~
+
+
+
+生成 fake message
+
+~~~
+lorem
+lorem*3
+lorem3
+~~~
+
+
 
 
 

@@ -4802,10 +4802,288 @@ https://www.swiper.com.cn/
 
 
 
-# 总结：
+# 总结
+
+## 1. HTML 中默认样式
+
+body 标签默认样式
+
+~~~css
+display: block;
+margin: 8px;
+~~~
+
+
+
+ul 默认样式
+
+~~~css
+display: block;
+list-style-type: disc;
+margin-block-start: 1em;
+margin-block-end: 1em;
+margin-inline-start: 0px;
+margin-inline-end: 0px;
+padding-inline-start: 40px;
+~~~
+
+
+
+a 和 a:hover 默认样式
+
+~~~css
+a:-webkit-any-link {
+    color: -webkit-link;
+    cursor: pointer;
+    text-decoration: underline;
+}
+~~~
+
+
+
+盒子模型：
+
+
+
+
 
 - 默认样式
 - 所有文本样式会被继承，不要在结构标签中写文本样式，文本样式只写在文本标签中（如p、a等等），span 看语义，一般是文本
   - 先写结构再写样式，避免样式污染
 - 样式顺序
 - vertical-align 针对图片对齐
+- 图片间距使用 `display: block`
+
+
+
+## 2. CSS 垂直居中的集中方法
+
+
+
+### 1. 盒子水平居中
+
+水平居中很简单，一般使用 `margin:0 auto` 即可
+
+
+
+HTML 结构
+
+~~~html
+<style>
+.parent {
+    width: 800px;
+    height: 800px;
+    background-color: pink;
+}
+
+.child {
+    width: 100px;
+    height: 100px;
+    background-color: skyblue;
+    margin: 0 auto;
+}
+</style>
+
+<div class="parent">
+    <div class="child">      
+    </div>
+</div>
+~~~
+
+
+
+### 2. 版心
+
+版心，相对于 body 水平居中
+
+~~~html
+<style>
+.wrap {
+  width: 1600px;
+  height: 500px;
+  background-color: pink;
+  margin: 0 auto;
+}
+</style>
+
+<body>
+  <div class="wrap"></div>
+  </div>
+</body>
+~~~
+
+
+
+### 3. 垂直居中
+
+使用绝对定位来垂直居中
+
+~~~html
+.parent {
+  width: 600px;
+  height: 600px;
+  background-color: pink;
+  position: relative;
+}
+
+.child {
+  width: 50px;
+  height: 50px;
+  background-color: skyblue;
+  position: absolute;
+  top:50%;
+  left:50%;
+  /* 移动自身元素的一半 */
+  /* 使用 margin 移动 */
+  margin-left:-25px;
+  margin-top: -25px; 	
+}
+
+</style>
+<body>
+  <div class="parent">        
+    <div class="child"></div>
+    </div>
+  </div>
+</body>
+~~~
+
+
+
+也可以使用 `transform: translate()` 移动
+
+~~~css
+/* 使用 transform 移动 */
+transform: translate(-50%, -50%);
+~~~
+
+
+
+父元素无宽高，如 Body 垂直居中
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    body {
+      position: relative;
+    }
+
+    .box {
+      width: 100px;
+      height: 100px;
+      background-color: skyblue;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      
+    }
+  </style>
+  <body>
+    <div class="box"></div>
+  </body>
+</html>
+
+~~~
+
+
+
+
+
+### 4. Flex
+
+基于父盒子垂直居中
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<style>
+
+.parent {
+  width: 600px;
+  height: 600px;
+  background-color: pink;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.child {
+  width: 50px;
+  height: 50px;
+  background-color: skyblue;
+}
+
+</style>
+<body>
+  <div class="parent">        
+    <div class="child"></div>
+    </div>
+  </div>
+</body>
+</html>
+~~~
+
+
+
+基于 Body 垂直居中
+
+~~~html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: skyblue;
+
+        }
+    </style>
+    <body>
+        <div class="box"></div>
+    </body>
+</html>
+
+~~~
+
+
+
+# 设计规范
+
+尺寸系统
+
+![image-20220728223616410](images/css/image-20220728223616410.png)
+
+
+
+颜色系统
+
+![image-20220728223631315](images/css/image-20220728223631315.png)
+
+
+

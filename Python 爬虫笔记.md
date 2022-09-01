@@ -175,9 +175,9 @@ Linux：
 ".." -- 代表上一层目录
 ```
 
->Windows 习惯用 "\" 作为目录分隔符
+>Windows 习惯用 "`\`" 作为目录分隔符
 >
->Linux 习惯用 "/" 作为目录分隔符
+>Linux 习惯用 "`/`" 作为目录分隔符
 
 
 
@@ -212,6 +212,8 @@ Linux：
 
 
 ![img](images/crawler/clipboard-1595022053722.png)
+
+
 
 ### 2.2 HTTP 请求方式
 
@@ -2252,7 +2254,7 @@ import multiprocessing
 
 **使用多进程实现多任务**
 
-```
+```python
 import multiprocessing
 import time
 
@@ -2315,10 +2317,9 @@ sing_process = multiprocessing.Process(target=sing, kwargs={"num":3})
 
 
 
-```
+```python
 import multiprocessing
 import time
-import os
 
 def work():
     for i in range(10):
@@ -2374,7 +2375,7 @@ work_process = multiprocessing.Process(target=work, daemon=True)
 
 ### 2.5 案例 - 多进程拷贝文件
 
-```
+```python
 import os
 import multiprocessing
 
@@ -2468,53 +2469,34 @@ import threading
 
 
 
-> 线程的创建方法和进程的创建方法几乎一样。传入参数方法也一样
+**基本多线程示例**
 
-
-
-**使用多线程执行程序**
-
-```
-print('主线程执行代码') 
-
-# 从 threading 库中导入Thread类
+~~~php
 from threading import Thread
-from time import sleep
-
-# 定义一个函数，作为新线程执行的入口函数（这个函数就是我们希望多线程执行的函数）
-def threadFunc(arg1,arg2):
-    print('子线程 开始')
-    print(f'线程函数参数是：{arg1}, {arg2}')
-    sleep(5)
-    print('子线程 结束')
 
 
-# 创建 Thread 类的实例对象， 并且指定新线程的入口函数
-# 传入两个参数：第一个参数是需要执行的函数名，第二个参数是我们需要给执行函数传入的实参（如果之前定义了的话）
-thread = Thread(target=threadFunc,
-                args=('参数1', '参数2')
-                )
+# 定义子线程函数
+def func():
+    for i in range(100):
+        print('func', i)
 
-# 执行start 方法，就会创建新线程，
-# 并且新线程会去执行入口函数里面的代码。
-# 这时候 这个进程 有两个线程了。
-thread.start()
 
-# 主线程的代码执行 子线程对象的join方法
-# 就会等待子线程结束，才继续执行下面的代码
-thread.join()
-print('主线程结束')
-```
+# 主线程
+if __name__ == '__main__':
+    t = Thread(target=func)  # 创建子线程对象
+    t.start()  # 开启子线程
+
+    # 主线程执行代码
+    for i in range(100):
+        print('main', i)
+
+~~~
 
 
 
 ### 3.2 给线程传入参数
 
-线程和进程的传入方式是完全一样的。
-
-
-
-以元组方式传入参数，单参数需要补上逗号
+线程和进程的传入方式是完全一样的。以**元组**方式传入参数，单参数需要补上逗号
 
 ```
 sing_thread = threading.Thread(target=sing, args=(3,))
@@ -2530,6 +2512,31 @@ sing_thread = threading.Thread(target=sing, kwargs={"num":3})
 
 
 
+示例
+
+~~~python
+from threading import Thread
+
+
+# 定义带参数的函数
+def func(name):
+    for i in range(100):
+        print(name, i)
+
+
+# 主线程
+if __name__ == '__main__':
+    t = Thread(target=func,args=('子线程',))  # 创建线程对象，传入参数
+    t.start()  # 开启线程
+
+    # 主线程执行代码
+    for i in range(100):
+        print('主线程', i)
+
+~~~
+
+
+
 ### 3.3 阻塞线程 join
 
 因为很多时候，我们希望等待所有子线程执行完毕后，再继续执行多线程任务 start() 后边的代码，比如说：爬虫多线程爬取所有页面后，再来处理爬取回来的内容。如果主线程比子线程结束快的话，那么我们的数据就没有爬取完整就进行了数据处理。就好像一个领导把任务分给几个员工，等几个员工完成工作后，他需要收集他们的提高报告，进行后续处理。
@@ -2540,7 +2547,44 @@ sing_thread = threading.Thread(target=sing, kwargs={"num":3})
 
 
 
-从上边的代码来看，thread.join() 是在主线程中运行的，我们在主线程中创建了新的线程 thread.start() ，所以是主线程运行了子线程的join方法。因此主线程要等待子线程。
+从下边的代码来看，thread.join() 是在主线程中运行的，我们在主线程中创建了新的线程 thread.start() ，所以是主线程运行了子线程的join方法。因此主线程要等待子线程。
+
+
+
+**使用多线程执行程序**
+
+```python
+# 从 threading 库中导入Thread类
+from threading import Thread
+from time import sleep
+
+
+# 定义一个函数，作为新线程执行的入口函数（这个函数就是我们希望多线程执行的函数）
+def threadFunc(arg1, arg2):
+    print('子线程 开始')
+    print(f'线程函数参数是：{arg1}, {arg2}')
+    sleep(5)
+    print('子线程 结束')
+
+
+if __name__ == '__main__':
+    print('主线程执行代码')
+
+    # 创建 Thread 类的实例对象， 并且指定新线程的入口函数
+    # 传入两个参数：第一个参数是需要执行的函数名，第二个参数是我们需要给执行函数传入的实参（如果之前定义了的话）
+    thread = Thread(target=threadFunc, args=('参数1', '参数2'))
+
+    # 执行start 方法，就会创建新线程，
+    # 并且新线程会去执行入口函数里面的代码。
+    # 这时候 这个进程 有两个线程了。
+    thread.start()
+
+    # 主线程的代码执行 子线程对象的join方法
+    # 就会等待子线程结束，才继续执行下面的代码
+    thread.join()
+    print('主线程结束')
+
+```
 
 
 
@@ -2548,7 +2592,7 @@ sing_thread = threading.Thread(target=sing, kwargs={"num":3})
 
 查看线程信息
 
-```
+```python
 current_thread = threading.current_thread()
 print(current_thread)
 ```
@@ -2557,11 +2601,9 @@ print(current_thread)
 
 线程的执行顺序是无序的
 
-```
-import multiprocessing
+```python
 import threading
 import time
-import os
 
 def task():
     time.sleep(1)
@@ -2579,8 +2621,11 @@ if __name__ == "__main__":
 输出结果：
 
 ```
-<Thread(Thread-1, started 19036)>
-<Thread(Thread-5, started 9260)><Thread(Thread-3, started 14872)><Thread(Thread-4, started 9584)><Thread(Thread-2, started 4532)>
+<Thread(Thread-3, started 13040)>
+<Thread(Thread-2, started 5460)>
+<Thread(Thread-4, started 13868)>
+<Thread(Thread-1, started 12076)>
+<Thread(Thread-5, started 15608)>
 ```
 
 > 可以看出线程是根据CPU分配的无序状态
@@ -2591,14 +2636,12 @@ if __name__ == "__main__":
 
 同样试验了一下多进程的执行顺序
 
-```
+```python
 import multiprocessing
-import threading
 import time
-import os
 
 def task():
-    time.sleep(9)
+    time.sleep(2)
     process = multiprocessing.current_process()
     print(process)
 
@@ -2608,17 +2651,59 @@ if __name__ == "__main__":
         sub_process.start()
 ```
 
-> 发现多进程是按照顺序执行的
+
+
+多进程也是无序的
+
+输出结果：
+
+```
+<Process name='Process-2' parent=18044 started>
+<Process name='Process-1' parent=18044 started>
+<Process name='Process-4' parent=18044 started>
+<Process name='Process-3' parent=18044 started>
+<Process name='Process-5' parent=18044 started>
+```
+
+
+
+### 通过子类创建多子线程对象
+
+~~~python
+from threading import Thread
+
+# 创建自定义类（继承 Thread 父类）
+class MyThread(Thread):
+    # 通过 init 初始化方法传递参数
+    def __init__(self, name):
+        Thread.__init__(self)
+        self.name = name
+    # 当线程执行时，自动运行 run 方法
+    def run(self):
+        for i in range(100):
+            print(self.name, i)
+
+if __name__ == '__main__':
+    t1 = MyThread('t1')
+    t2 = MyThread('t2')
+    t1.start()
+    t2.start()
+
+
+~~~
 
 
 
 ### 3.5 线程的返回值
 
-```
+需要重写 Thread 类，通过 get_result() 获得返回值
+
+```python
 from threading import Thread
+import time
 
 def foo(number):
-    time.sleep(20)
+    # time.sleep(2)
     return number
 
 class MyThread(Thread):
@@ -2638,14 +2723,13 @@ thd1 = MyThread(3)
 thd2 = MyThread(5)
 thd1.start()
 thd2.start()
+# 必须阻塞，否则可能会报错
 thd1.join()
 thd2.join()
 
-print thd1.get_result()
-print thd2.get_result()
+print(thd1.get_result())
+print(thd2.get_result())
 ```
-
-
 
 
 
@@ -2682,21 +2766,24 @@ print thd2.get_result()
 
 ## 5. 进程池和线程池
 
+进程池和线程池都是用来一次性开辟一些进程或线程，用户直接将任务提交给线程池，线程任务调度交给线程池来完成
+
+
+
 ### 5.1 进程池
 
 为了不浪费资源，我们一般不会有一个任务就创建一个进程，这样的话就会造成进程的浪费。进程池的作用是限制进程数量，让已经创建的进程不断的接任务，当完成已经分配的任务时，进程不会结束，继续接着完成下一个任务。进程池是循环进程完成任务的一种方法。
 
-1.进程池需要导入 multiprocessing 中的Pool
- 2.创建进程池时Pool()中的参数表示同时启动的进程数
- 如果不写则表示本机的逻辑核心数
- 3.进程池中进程启动不用写 start 语句
- 4.进程池必须先关闭才能join
- 5.进程池join后，父进程会等待池内所有进程执行完毕再向下执行
- 6.进程池内的进程启动顺序由操作系统来决定
+1. 进程池需要导入 multiprocessing 中的Pool
+2. 创建进程池时Pool()中的参数表示同时启动的进程数， 如果不写则表示本机的逻辑核心数
+3. 进程池中进程启动不用写 start 语句
+4. 进程池必须先关闭才能join
+5. 进程池join后，父进程会等待池内所有进程执行完毕再向下执行
+6. 进程池内的进程启动顺序由操作系统来决定
 
 
 
-```
+```python
 from multiprocessing import Pool
 import time, random
 
@@ -2738,7 +2825,7 @@ if __name__ == '__main__':
 
 pool.map 启动进程池
 
-```
+```python
 from multiprocessing import Pool
 import time
 
@@ -2765,129 +2852,177 @@ if __name__ == '__main__':
 
 
 
-### 5.2 线程池
+使用 ProcessPoolExecutor 创建进程池
 
-简单代码
-
-```
-from threading import Thread
-import time
-
-
-def threadFunc():
-    print('子线程 开始')
-    print('子线程 结束')
-    time.sleep(5)
-
-
-thread_list = []
-
-for i in range(5):
-    thread = Thread(target=threadFunc)
-    thread.start()
-    thread_list.append(thread)
-
-for j in thread_list:
-    j.join()
-
-print("主线程结束")
-
-```
-
-
-
-创建10个线程
-
-```
-from threading import Thread
-from time import sleep
-
-# 带两个参数
-def threadFunc(num,):
-    print("新线程%s" % str(num))
-    sleep(1)
-
-
-threadlist = []
-
-for i in range(10):
-	# 以元组方式传入参数
-    thread = Thread(target=threadFunc, args=(i,))
-    thread.start()
-    # 将所有线程对象加入列表中
-    threadlist.append(thread)
-
-# 阻塞所有子线程，等待所有子线程结束再继续往下执行
-for thread in threadlist:
-    thread.join()
-
-print("主线程结束")
-
-```
-
-
-
-```
-import requests
-# from multiprocessing import Process
-from threading import Thread
+~~~python
+from concurrent.futures import ProcessPoolExecutor
 import time
 
 
 def work(n):
-    print(f'开始任务{n}')
+    print(f'开始任务url {n}')
     time.sleep(3)
-    print(f'完成任务{n}')
+    print(f'完成任务url {n}')
 
-
-task_list = ['1', '2', '3']
-
-# 单进程工作
-# for item in task_list:
-#     work(item)
 
 if __name__ == '__main__':
-    plist = []
-    for item in task_list:
-        # 创建进程
-        p = Thread(target=work, args=(item,))
-        # 启动进程
-        p.start()
-        # 把创建的进程加入列表
-        plist.append(p)
+    urls = ['a', 'b', 'c', 'd', 'e', 'f']
+    print('主进程开始')
+    with ProcessPoolExecutor(max_workers=3) as pool:
+        for url in urls:
+            pool.submit(work, url)
+    print('主进程结束')
 
-    for i in plist:
-        i.join()
+~~~
+
+
+
+
+
+### 5.2 线程池
+
+通过列表，将线程对象添加到列表当中，如：
+
+```python
+from threading import Thread
+import time
+
+
+def threadFunc(num):
+    print(f'子线程 {num} 开始')
+    time.sleep(5)
+    print(f'子线程 {num} 结束')
+
+
+if __name__ == '__main__':
+    thread_list = []  # 用列表创建线程池
+    print("主线程开始")
+    # 创建 10 个线程
+    for i in range(10):
+        thread = Thread(target=threadFunc, args=(i,))
+        thread.start()
+        thread_list.append(thread) # 将所有线程对象加入列表中
+
+    for j in thread_list:
+        # 阻塞所有子线程，等待所有子线程结束再继续往下执行
+        j.join()
+
+    print("主线程结束")
+
 ```
 
 
 
-另外一种方法创建线程池
+使用 ThreadPoolExecutor 创建线程池
 
-```
+```python
 from concurrent.futures import ThreadPoolExecutor
 import time
 import threading
 
 
 def work(n):
-    print(f'开始任务{n}:线程号：{threading.current_thread()}')
+    print(f'开始任务url {n}:线程号：{threading.current_thread()}')
     time.sleep(3)
-    print(f'完成任务{n}:线程号：{threading.current_thread()}')
+    print(f'完成任务url {n}:线程号：{threading.current_thread()}')
 
-
-task_list = ['1', '2', '3']
-
-# 创建进程池
+    
 if __name__ == '__main__':
+    urls = ['a', 'b', 'c', 'd', 'e', 'f']
+    print('主线程开始')
     pool = ThreadPoolExecutor(max_workers=3)
-    for item in task_list:
-        pool.submit(work, item)
-
+    for url in urls:
+        pool.submit(work, url)
+    # 关闭线程池
     pool.shutdown(True)
+    print('主线程结束')
+
 ```
 
 
+
+和 with open 一样，线程池也可以自动关闭
+
+~~~python
+from concurrent.futures import ThreadPoolExecutor
+import time
+import threading
+
+
+def work(n):
+    print(f'开始任务url {n}:线程号：{threading.current_thread()}')
+    time.sleep(3)
+    print(f'完成任务url {n}:线程号：{threading.current_thread()}')
+
+if __name__ == '__main__':
+    urls = ['a', 'b', 'c', 'd', 'e', 'f']
+    print('主线程开始')
+    # 使用 with 创建线程池
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        for url in urls:
+            pool.submit(work, url)
+    # 等待线程池任务全部执行完毕，才继续执行（守护）
+    print('主线程结束')
+
+~~~
+
+
+
+## 多线程抓取实例：
+
+使用线程池，多线程爬取北京新发地蔬菜价格，并保存到 CSV 文件中
+
+- 实现单页面爬取
+- 保存到文件
+- 多线程爬取
+
+~~~python
+from concurrent.futures import ThreadPoolExecutor
+import requests
+import csv
+import time
+
+# newline 禁止每条记录后有空行出现
+f = open('vege_price.csv',mode="w", newline='')
+csvwriter = csv.writer(f)
+
+def get_one_page(page):
+    post_url = "http://www.xinfadi.com.cn/getPriceData.html"
+    data = {
+        "limit": 20,
+        "current": page
+    }
+    res = requests.get(post_url, data=data)
+    content = res.json()
+    # 遍历 json 数据中的 list 字段
+    for i in content['list']:
+        # 提取字典中的 value 值，并转换成列表
+        txt = list(i.values())
+        # 替换列表中包含 \ 或 / 字符
+        txt = (str(item).replace("\\", "").replace("/", "") for item in txt)
+        csvwriter.writerow(list(txt))
+    print(f"第{page}提取完毕")
+
+# 多线程爬取数据
+if __name__ == '__main__':
+    t1 = time.time()
+    with ThreadPoolExecutor(3) as pool:
+        for i in range(1,10):
+            pool.submit(get_one_page, i)
+    duration = time.time() - t1
+    print(f"任务完成，用时{duration}秒")
+
+# 单线程爬取数据
+# if __name__ == '__main__':
+#     t1 = time.time()
+#     for i in range(1,10):
+#         get_one_page(i)
+#     duration = time.time() - t1
+#     print(f"任务完成，用时{duration}秒")
+
+~~~
+
+> 通过对比，多线程 0.9秒爬取完毕，而单线程 2.72 秒
 
 
 
@@ -2901,7 +3036,7 @@ if __name__ == '__main__':
 
 
 
-```
+```python
 import threading
 
 data = 0
@@ -2941,7 +3076,7 @@ if __name__ == "__main__":
 
 可以用更简单的卖票问题来演示一下：
 
-```
+```python
 import threading
 import time
 
@@ -2974,7 +3109,7 @@ t2.start()
 
 只需要在数据写入前，放上一把锁，然后写入完毕后，将锁解开。
 
-```
+```python
 lock = threading.Lock()
 
 def task_add():
@@ -2996,7 +3131,7 @@ def task_sub():
 
 和 with open 一样，锁也可以使用 with 关键字，with lock
 
-```
+```python
 import threading
 
 lock = threading.Lock()
@@ -3009,7 +3144,7 @@ with lock:
 
 
 
-```
+```python
 import threading
 import time
 
@@ -3038,7 +3173,7 @@ t2.start()
 
 
 
-```
+```python
 from threading import Thread,Lock
 from time import sleep
 
@@ -3086,7 +3221,7 @@ print(f'最后我们的账号余额为 {bank["byhy"]}')
 
 如果还是按照常规的做法，会造成死锁的。比如，下面这段代码，你可以试着运行一下。会发现并没有输出结果。
 
-```
+```python
 import threading
 
 def main():
@@ -3108,7 +3243,7 @@ t1.start()
 
 
 
-```
+```python
 import threading
 
 def main():
@@ -3244,7 +3379,7 @@ print(q.full())
 
 原理都明白，但是还是不知道为什么使用队列是不是？简单举例，这里是我们设置循环20次处理公共变量list
 
-```
+```python
 import threading
 import time
 num = []
@@ -3275,7 +3410,7 @@ print(num)
 
 有时候我们不知道具体数目，而且多线程是一边生产，一边处理。有时候生产的速度与处理的速度不一致，这就会造成异常。所以需要让多线程之间有数据之间的通信。就需要用到 queue。
 
-```
+```python
 import threading
 import time
 import queue
@@ -3314,151 +3449,11 @@ print(q.qsize())
 
 
 
-# Asyncio 多任务异步处理
+# 协程异步处理
 
-## 协程
+## 协程概念
 
-协程就是让一个线程实现代码块相互切换运行，最大优化程序运行效率。
-
-
-
-实现协程的几种方法：
-
-- greenlet
-- yield 关键字
-- asyncio 装饰器
-- async、await 关键字
-
-
-
-通过 greenlet 实现协程
-
-```
-from greenlet import greenlet
-
-
-def func1():
-    print(1)  # 第二步：打印1
-    gr2.switch()  # 第三步：切换到 func2
-    print(2)  # 第六步：继续从上次暂停的地方执行
-    gr2.switch()  # 切换到 func2
-
-def func2():
-    print(3)  # 第四步：打印3
-    gr1.switch()  # 第五步：切换到 func1
-    print(4)
-    
-gr1 = greenlet(func1)
-gr2 = greenlet(func2)
-
-gr1.switch()  # 第一步，执行 func1
-```
-
-
-
-通过生成器 yield 实现协程
-
-```
-def study():
-    for i in range(5):
-        print('学习中------>', i)
-        yield
-
-def listen():
-    for i in range(5):
-        print('音乐中------>', i)
-        yield
-
-def wechat():
-    for i in range(5):
-        print('聊天中------>', i)
-        yield
-
-
-c1 = study()
-c2 = listen()
-c3 = wechat()
-
-
-while True:
-    c1.__next__()
-    c2.__next__()
-    c3.__next__()
-```
-
-> 运行函数的时候碰到 yield 就会暂停函数，然后返回给赋值对象。然后一直调用 next 就可以简单实现协程效果。切换运行的代码块。
-
-
-
-```
-def func1():
-    yield 1
-    yield from func2()
-    yield 2
-
-def func2():
-    yield 3
-    yield 4
-
-f1 = func1()
-for item in f1:
-    print(item)
-```
-
-
-
-asyncio 协程（3.4老版本使用）
-
-```
-import asyncio
-
-@asyncio.coroutine
-def func1():
-    print(1)
-    yield from asyncio.sleep(2)
-    print(2)
-
-@asyncio.coroutine
-def func2():
-    print(3)
-    yield from asyncio.sleep(2)
-    print(4)
-
-tasks = [
-    asyncio.ensure_future(func1()),
-    asyncio.ensure_future(func2())
-]
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(asyncio.wait(tasks))
-```
-
-
-
-async, await 关键字协程（3.8以后使用）
-
-```
-import asyncio
-
-async def func1():
-    print(1)
-    await asyncio.sleep(2)
-    print(2)
-
-
-async def func2():
-    print(3)
-    await asyncio.sleep(2)
-    print(4)
-
-tasks = [
-    asyncio.ensure_future(func1()),
-    asyncio.ensure_future(func2())
-]
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(asyncio.wait(tasks))
-```
+协程就是让一个线程实现代码块相互切换运行，最大优化程序运行效率。如果把说多线程看做多人同时工作的话，那么协程可以看做单人工作但是效率最大化。
 
 
 
@@ -3468,87 +3463,73 @@ loop.run_until_complete(asyncio.wait(tasks))
 
 
 
-普通下载：
+**多线程运行**
 
-```
-import requests
+可以看做多人共同服务，如去做 SPA
 
+- 线程1：按摩背
+- 线程2：按摩脚
+- 线程3：按摩头
 
-def download_image(url):
-    print('开始下载', url)
-    res = requests.get(url)
-    print('下载完成')
-    file_name = url.rsplit('_')[-1]
-    with open(file_name, 'wb') as file_obj:
-        file_obj.write(res.content)
+> 多个线程同时工作
 
-if __name__ == '__main__':
-    url_list = [
-        'https://www.autoimg.cn/120x120_1.jpg',
-        'https://www.autoimg.cn/120x120_2.jpg',
-        'https://www.autoimg.cn/120x120_3.jpg'
-    ]
-
-    for item in url_list:
-        download_image(item)
-```
+![image-20220319204924227](images/cycms/image-20220319204924227.png)
 
 
 
-协程下载
+**协程运行**
 
-```
-import aiohttp
-import asyncio
+单人服务，但是效率最大化：
 
-
-def fetch(session, url):
-    print('发送请求', url)
-    async with session.get(url, verify_ssl=False) as response:
-        content = await response.content.read()
-        file_name = url.rsplit('_')[-1]
-        with open(file_name, 'wb') as file_obj:
-            file_obj.write(content)
-
-
-async def main():
-    async with aiohttp.ClientSession() as session:
-        url_list = [
-            'https://www.autoimg.cn/120x120_1.jpg',
-            'https://www.autoimg.cn/120x120_2.jpg',
-            'https://www.autoimg.cn/120x120_3.jpg'
-        ]
-        tasks = [asyncio.create_task(fetch(session, url)) for url in url_list]
-        await asyncio.wait(tasks)
-
-
-if __name__ == '__main__':
-    asyncio.run(main())
-
-```
+- 当做足浴等待时间，技师给你按摩
+- 当足浴完成，切换到足疗
 
 
 
-## 安装 asyncio
-
-```
-pip install asyncio
-```
+![image-20220319210758397](images/cycms/image-20220319210758397.png)
 
 
 
-## 协程对象
+了解协程，先要了解什么是阻塞。简单来说，阻塞就是让 CPU 停止该任务的执行，如：
 
-如果一个函数的定义被 async 关键词修饰，则该函数就变成了一个特殊的函数。我们称为协程函数，协程函数的返回值我们称作协程对象。
+~~~python
+time.sleep(10)
+input()
+requests.get()
+~~~
 
-```
+> 这些代码都会让程序产生阻塞，一般情况下，当程序处于 I/O 操作时，线程都会处于阻塞状态
+
+
+
+当代码被阻塞后，CPU 会等待任务结果，从而停止工作，而协程则是让 CPU 切换到其他任务，当阻塞的代码返回结果时，CPU 再去处理结果。
+
+- 从微观上来看，协程是一个任务一个任务执行
+- 从宏观上来看，协程可以看做是多任务一起执行
+
+
+
+## Asyncio 协程运行流程
+
+- 定义协程函数
+- 创建协程对象
+- 创建任务对象
+- 将任务对象放入事件循环
+- 执行循环事件
+
+
+
+## 定义协程函数
+
+如果一个函数的定义被 async 关键词修饰，则该函数就变成了一个特殊的函数。我们称为协程函数。
+
+
+
+```python
 # 创建协程函数
-async def my_fun():
-	print("Test Code")
+async def func():
+	print("创建协程函数")
 
-# 创建协程对象
-c = my_fun()
-print(c)
 ```
 
 > 特殊之处：
@@ -3558,91 +3539,154 @@ print(c)
 
 
 
+## 创建协程对象
 
-
-## 事件循环
-
-事件循环也是一个对象，可以看做是一个容器，可以将多个任务对象存放在事件循环中。如果事件循环启动后，则事件循环对象可以异步的将每一个任务对象进行执行。
+我们运行 func() 这个函数，并不会立即执行，这是因为经过 async 关键字重新将 func() 封装后，这个函数变成了一个协程类。而 `c = func()` 相当于创建一个实例对象。我们称这个对象为协程对象。
 
 
 
-事件循环会循环判断任务列表中的任务是否需要执行，如果需要执行，那么就运行代码块，执行完毕后将任务放到已完成任务列表中。如果所有任务都执行完毕，则终止循环。
+~~~python
+# 创建协程函数
+async def func():
+	print("创建协程函数")
+
+# 创建协程对象
+c = func()
+print(c)
+# <coroutine object func at 0x0000014E933663C0>
+~~~
 
 
+
+## 运行协程函数
+
+协程函数不能直接运行，需要借助 asyncio 模块运行协程对象，如：
+
+
+
+安装 asyncio
 
 ```
-# 创建事件循环对象
-loop = asyncio.get_event_loop()
-
-# 将 task 存储到事件循环对象中
-loop.run_until_complete(task)
+pip install asyncio
 ```
 
 
 
-将协程对象放入到事件循环当中
+通过 asyncio.run() 来执行协程函数
 
-```
+~~~python
 import asyncio
 
-async def task():
-    print('task')
-
-c = task()
-
-# 创建事件循环对象
-loop = asyncio.get_event_loop()
-
-# 将 task 存储到事件循环对象中
-loop.run_until_complete(c)
-```
+async def func():
+    print("Test Code")
+c = func()
+asyncio.run(c)  # 协程任务运行需要 asyncio 模块支持
+~~~
 
 
 
-3.7 版本之后，可以直接使用 `asyncio.run()` 直接运行循环
+## await 等待对象
 
-```
-asyncio.run(task)
-```
+如果只有一个任务，那么和单线程任务没有任何区别，协程任务的出现就是为了避免 I/O 等待时间，异步执行多任务的，我们可以用 await 关键词，告诉程序什么时候将等待任务挂起，并切换到其他任务。
 
 
 
-## 等待对象
-
-await 关键字后边需要加上可等待的对象（协程对象、Future、Task对象）
+await 关键字后边需要加上可等待的对象（协程对象、Future、Task对象），当出现 I/O 等待时，我们需要让需要等待的任务挂起，让程序切换执行其他任务，当之前的任务有返回结果时，再回来处理结果。
 
 
 
-```
+需要注意的是 await 后边必须跟上一个异步操作，否则会程序会中断
+
+~~~python
 import asyncio
+import time
+
 
 async def func1():
-    print('start task1')
+    print("协程任务1开始")
+    # time.sleep(3)  # 当程序出现同步操作时，会中断异步
+    await asyncio.sleep(3)  # 使用异步等待函数，当出现等待时，使用 await 关键字让该任务挂起，等待结果
+    print("协程任务1结束")
+
+    
+async def func2():
+    print("协程任务2开始")
     await asyncio.sleep(2)
-    print('task1 end')
-    return '返回值'
+    print("协程任务2结束")
+
+
+async def func3():
+    print("协程任务3开始")
+    await asyncio.sleep(5)
+    print("协程任务3结束")
+
+
+if __name__ == '__main__':
+    t1 = time.time()
+    f1 = func1()
+    f2 = func2()
+    f3 = func3()
+    tasks = [f1, f2, f3]  # 创建任务列表，将3个协程对象放入列表中    
+    asyncio.run(asyncio.wait(tasks))  # asyncio.wait 并发运行所有的协程对象，并进行阻塞等待。（等所有异步都执行完毕）
+    duration = time.time() - t1
+    print(f"任务完成，用时{duration}秒")
+
+~~~
+
+
+
+官方建议不要把协程对象列表直接放入 asyncio.wait() 中，而是需要将协程对象封装成任务对象再放入列表中
+
+~~~python
+asyncio.create_task(协程对象)
+~~~
+
+
+
+并且将流程控制放入 main() 函数中，在主线程中只运行 asyncio.run(main()) 即可，如：
+
+~~~python
+import asyncio
+import time
+
+
+async def func1():
+    print("协程任务1开始")
+    await asyncio.sleep(3)
+    print("协程任务1结束")
+
 
 async def func2():
-    print('start task2')
-    res = await func1()
-    print('task2 end')
-    print(res)
-
-asyncio.run(func2())
-```
+    print("协程任务2开始")
+    await asyncio.sleep(2)
+    print("协程任务2结束")
 
 
+async def func3():
+    print("协程任务3开始")
+    await asyncio.sleep(5)
+    print("协程任务3结束")
 
-执行顺序：
+async def main():    
+    tasks = [
+        asyncio.create_task(func1()),
+        asyncio.create_task(func2()),
+        asyncio.create_task(func3())]
+    await asyncio.wait(tasks)
 
-- 执行 func2
-- 在输出 start task2
-- 暂停协程函数
-- 开始等待 func1 运行结果
-- 将 func1 的返回值给 res
-- 然后继续运行 func2 后边的代码
+if __name__ == '__main__':
+    t1 = time.time()
+    asyncio.run(main())
+    duration = time.time() - t1
+    print(f"任务完成，用时{duration}秒")
+
+~~~
 
 
+
+## 协程任务耗时
+
+![image-20220319213529159](images/cycms/image-20220319213529159.png)
 
 
 
@@ -3666,7 +3710,7 @@ asyncio.create_task(协程对象)
 
 
 
-```
+```python
 import asyncio
 
 async def func():
@@ -3697,7 +3741,7 @@ asyncio.run(main())
 
 一般会将任务对象放入列表当中
 
-```
+```python
 import asyncio
 
 async def func():
@@ -3728,189 +3772,620 @@ asyncio.run(main())
 
 
 
-## Future 对象
+## 事件循环
 
-Future 对象是比较底层的一个对象，一般不经常使用。任务对象继承 Future 对象，任务对象内部 await 结果的处理基于 Future 对象。
+事件循环也是一个对象，可以看做是一个容器，可以将多个任务对象存放在事件循环中。如果事件循环启动后，则事件循环对象可以异步的将每一个任务对象进行执行。
 
 
 
+事件循环会循环判断任务列表中的任务是否需要执行，如果需要执行，那么就运行代码块，执行完毕后将任务放到已完成任务列表中。如果所有任务都执行完毕，则终止循环。
+
+
+
+```python
+# 创建事件循环对象
+loop = asyncio.get_event_loop()
+
+# 将 task 存储到事件循环对象中
+loop.run_until_complete(task)
 ```
+
+
+
+将协程对象放入到事件循环当中
+
+```python
 import asyncio
 
+async def task():
+    print('task')
 
-async def set_after(fut):
-    await asyncio.sleep(2)
-    fut.set_result('666')
+c = task()
 
+# 创建事件循环对象
+loop = asyncio.get_event_loop()
 
-async def main():
-    
-    # 获取当前事件循环
-    loop = asyncio.get_running_loop()
-    
-    # 创建一个 Future 对象
-    fut = loop.create_future()
-    
-    # 创建一个任务对象
-    await loop.create_task(set_after(fut))
-
-    # 等待 Future 对象获取最终结果
-    data = await fut
-    print(data)
-
-
-asyncio.run(main())
-
+# 将 task 存储到事件循环对象中
+loop.run_until_complete(c)
 ```
 
 
 
-## concurrent.futures.Future 对象
-
-和普通 Future 对象不同，这个对象是使用线程池、进程池实现异步操作时用到的对象
-
-
+3.7 版本之后，可以直接使用 `asyncio.run()` 直接运行循环
 
 ```
-import time
-from concurrent.futures import Future
-from concurrent.futures.thread import ThreadPoolExecutor
-from concurrent.futures.process import ProcessPoolExecutor
-
-def func(value):
-    time.sleep(1)
-    print(value)
-    return value
-
-# 创建线程池
-pool = ThreadPoolExecutor(max_workers=5)
-
-# 创建进程池
-# pool = ProcessPoolExecutor(max_workers=5)
-
-for i in range(10):
-    fut = pool.submit(func,1)
-    print(fut)
-```
-
-> 不经常使用，但是如果在异步编程时，碰到第三方库不支持异步的时候，需要进行线程、进程协调的情况下，则需要用到。
-
-
-
-示例：
-
-```
-import asyncio
-import requests
-
-
-async def download_image(url):
-    print('开始下载：', url)
-
-    loop = asyncio.get_event_loop()
-
-    future = loop.run_in_executor(None, requests.get, url)
-
-    response = await future
-    print('下载完成')
-
-
-if __name__ == '__main__':
-    url_list = [
-        'url1',
-        'url2',
-        'url3'
-    ]
-
-    tasks = [download_image(url) for url in url_list]
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(asyncio.wait(tasks))
+asyncio.run(task)
 ```
 
 
 
 
 
-# Aiohttp
+## Aiohttp
 
-urllib 和 requests 模块都不支持异步，所以这里引入另外一个库 aiohttp，用法和 requests 类似
+由于 urllib 和 requests 模块都不支持异步，他们是一个同步任务，和 sleep 一样，在协程任务中会中断异步操作，这里引入另外一个库 aiohttp，用法和 requests 类似
 
-```
-# 实例化一个请求对象
+```python
+# 实例化一个带 Session 状态的请求对象
 with aiohttp.ClientSession() as sess:
-	with sess.get(url, headers, params, proxy)
-	with sess.get(url, headers, data, proxy)
+	with sess.get(url, headers, params, proxy)  # 发送 get 请求
+	with sess.post(url, headers, data, proxy)  # 发送 post 请求
 ```
+
+> 类似 request.session()
 
 
 
 只有 proxy 参数与 requests 不一样
 
-```
+```python
 proxy = "http://ip:port"
 ```
 
-> requests 中代理是用字典，aiohttp是用字符串
+> requests 中代理是用字典，aiohttp 是用字符串
 
 
 
 获取返回值
 
-```
+```python
 # 返回文本
 res = sess.text()
 
 # 返回bytes
 res = sess.read()
+
+# 返回json
+res = sess.json()
 ```
 
 
 
-# JS 混淆、逆向
+## 普通下载与协程下载对比
 
-利用 execjs 执行网页上的 js
+普通下载：
 
-```
-# 利用当前页面JS文件，对需要POST的DATA进行加密
-import execjs
+```python
 import requests
 
-node = execjs.get()
 
-# 定义参数
-method = 'GETCITYWEATHER'
-city = '北京'
-type = 'HOUR'
-start_time = ''
-end_time = ''
+def download_image(url):
+    print('开始下载', url)
+    res = requests.get(url)    
+    file_name = url.rsplit('_')[-1]
+    with open(file_name, 'wb') as file_obj:
+        file_obj.write(res.content)
+    print('下载完成')
 
-# Compile javascript
-# 加密解密 function 所在的 js
-file = 'jsCode.js'
-ctx = node.compile(open(file, encoding='utf-8').read())
+if __name__ == '__main__':
+    url_list = [
+        'https://www.autoimg.cn/120x120_1.jpg',
+        'https://www.autoimg.cn/120x120_2.jpg',
+        'https://www.autoimg.cn/120x120_3.jpg'
+    ]
 
-# 拿到最终混淆加密过的data
-js = 'getPostParamcode("{0}","{1}","{2}", "{3}", "{4}")'.format(method, city, type, start_time, end_time)
-params = ctx.eval(js)
-
-# 发起post请求
-url = 'https://www.aqistudy.cn/apinew/aqistudyapi.php'
-response_text = requests.post(url, data={'d':params}).text
-
-# 这里获取的是混淆后的响应体结果
-print(response_text)
-
-# 解密
-js = 'decodeData("{0}")'.format(response_text)
-decrypted_data = ctx.eval(js)
-print(decrypted_data)
+    for item in url_list:
+        download_image(item)
 ```
 
-> getPostParamcode 和 decodeData 都是通过分析页面中 js 文件拿到的 function
+
+
+协程下载
+
+```python
+import aiohttp
+import asyncio
+
+
+async def fetch(url):
+    print('发送请求', url)
+    async with aiohttp.ClientSession() as sess:
+        async with sess.get(url, verify_ssl=False) as res:
+            content = await res.content.read()
+            file_name = url.rsplit('_')[-1]
+            with open(file_name, 'wb') as file_obj:
+                file_obj.write(content)
+
+
+async def main():
+    url_list = [
+        'https://www.autoimg.cn/120x120_1.jpg',
+        'https://www.autoimg.cn/120x120_2.jpg',
+        'https://www.autoimg.cn/120x120_3.jpg'
+    ]
+    tasks = [asyncio.create_task(fetch(url)) for url in url_list]
+    await asyncio.wait(tasks)
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+
+```
+
+在 Aiohttp 中使用 asyncio.run() 一直报错 `RuntimeError: Event loop is closed` 
+
+> 原因：aiohttp 内部使用了 _ProactorBasePipeTransport ，程序退出释放内存时自动调用其 `__del__` 方法导致二次关闭事件循环。一般的协程程序是不会使用_ProactorBasePipeTransport 的，所以asyncio.run() 还是可以正常运行。而且这种情况仅在Windows上发生。
 
 
 
-PS： 可以使用 Chrome 或 Firefox 的 Event listener 获取元素绑定 JS，然后依次分析。
+协程爬取图片
+
+~~~python
+import asyncio
+import aiohttp
+import time
+
+
+async def aiodownload(url):
+    name = url.split("/")[-1]
+    async with aiohttp.ClientSession() as sess:
+        async with sess.get(url) as res:
+            # 写入文件
+            with open(name, mode='wb') as f:
+                f.write(await res.content.read())
+
+async def main():
+    urls = [
+        'https://tenfei02.cfp.cn/creative/vcg/veer/612/veer-153631716.jpg',
+        'https://alifei05.cfp.cn/creative/vcg/veer/612/veer-108048194.jpg',
+        'https://tenfei05.cfp.cn/creative/vcg/veer/612/veer-410607219.jpg'
+    ]
+    tasks = []
+    # 对需要处理的 url 遍历，将参数传入到协程函数中，并创建协程对象
+    for url in urls:
+        d = asyncio.create_task(aiodownload(url))  # 将协程对象包装成协程任务
+        tasks.append(d)  # 将所有的协程任务加入到任务列表中
+    await asyncio.wait(tasks)
+
+
+if __name__ == '__main__':
+    t1 = time.time()
+    # 不使用 asyncio.run(main()) ，会报错
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+    duration = time.time() - t1
+    print(f"任务完成，用时{duration}秒")
+
+~~~
+
+
+
+# JS 逆向
+
+随着爬虫的大批量使用，给网站造成大批量访问，为了保护自己的数据，各种防爬虫方法也接踵而出，最常见的就是在表单中加入 sign 签名，时间戳。如果没有在表单中提交正确的验证字段，则返回不了数据。
+
+
+
+## 加密方式
+
+一般这些签名都是通过 js 进行加密的，那么我们来了解一下都有哪些加密方式
+
+- MD5 加密
+- AES/DES 对称加密
+- RSA 非对称加密
+- Base64 伪加密
+
+
+
+### 1. MD5 加密
+
+MD5是一种被广泛使用的线性散列算法，可以产生出一个128位(16字节)的散列值（hash value)，用于确保信息传输完整的一致性。且MD5加密之后产生的是一个固定长度（32位或16位）的数据。
+
+- 解密：
+
+常规讲MD5是不存在解密的。但是理论上MD5是可以进行反向暴力破解的。暴力破解的大致原理就是用很多不同的数据进行加密后跟已有的加密数据进行对比，由此来寻找规律。理论上只要数据量足够庞大MD5是可以被破解的。但是要注意，破解MD5是需要考虑破解的成本（时间和机器性能）。假设破解当前的MD5密码需要目前计算能力最优秀的计算机工作100年才能破解完成。那么当前的MD5密码就是安全的。
+
+- 增加破解成本的方法（加盐 + 多次加密 ）
+  - 使用一段无意义且随机的私匙（盐）进行MD5加密会生成一个加密串，我们暂且称之为串1
+  - 将要加密的的数据跟串1拼接，再进行一次MD5，这时会生成串2。
+  - 将串2再次进行MD5加密，这时生成的串3就是我们加密后的数据
+
+
+
+MD5 加密示例：
+
+~~~html
+  <script src="https://cdn.bootcdn.net/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
+  <script>
+      var hashCode = md5('signature')
+      alert(hashCode);
+  </script>
+~~~
+
+
+
+### 2. AES/DES 对称加密
+
+DES全称为 Data Encryption Standard，即数据加密标准，是一种使用密钥加密的算法。该加密算法是一种对称加密方式，其加密运算、解密运算需要使用的是同样的密钥（一组字符串）即可。
+
+
+
+现在用AES这个标准来替代原先的DES
+
+- AES和DES的区别：
+  - 加密后密文长度的不同
+    - DES加密后密文长度是8的整数倍
+    - AES加密后密文长度是16的整数倍
+  - 应用场景的不同：
+    - 企业级开发使用 DES 足够安全
+    - 如果要求高使用 AES
+  - DES和AES切换只需要修改 CryptoJS.AES<=>CryptoJS.DES
+- 使用 DES/AES 进行数据交互时要求双方都拥有相同的私匙
+
+
+
+破解方法：
+
+- 暴力破解
+- DES 如果使用 56 位的秘钥，则可能的秘钥数量是 2 的 56 次方，只要计算足够强大是可以破解的
+
+
+
+DES算法的入口参数有三个：
+
+- Key, Data, Mode, Padding
+  - Key 为 7 个字节共 56位，是DES算法的工作密钥
+  - Data为 8 个字节 64 位，是要被加密或被解密的数据
+  - Mode为 DES 的工作方式
+  - Padding为填充模式，如果加密后密文长度如果达不到指定整数倍（8个字节、16个字节），填充对应字符
+    - Padding 的赋值一般用 CryptoJS.pad.Pkcs7 即可
+
+
+
+JS 加密 DES/AES 示例
+
+~~~html
+<!DOCTYPE html>
+<script src="https://cdn.bootcdn.net/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    var aesKey = '12345678'  // 定制秘钥，长度必须为：8/16/32位
+    var message = "signature"  // 需要加密字段
+    
+    // AES加密
+    var encrypt = CryptoJS.AES.encrypt(message, CryptoJS.enc.Utf8.parse(aesKey), {
+      mode: CryptoJS.mode.ECB,
+      padding: CryptoJS.pad.Pkcs7
+    }).toString();
+
+    // 显示加密后数据
+    alert(encrypt)
+
+    // AES解密
+    var decrypt = CryptoJS.AES.decrypt(encrypt, CryptoJS.enc.Utf8.parse(aesKey),{
+      mode: CryptoJS.mode.ECB,
+      padding: CryptoJS.pad.Pkcs7
+    }).toString(CryptoJS.enc.Utf8);
+    
+    // 显示解密后数据
+    alert(decrypt);
+  </script>
+</html>
+~~~
+
+
+
+### 3. RSA 非对称加密
+
+RSA 加密算法是一种非对称加密算法。在公开密钥加密和电子商业中RSA被广泛使用。
+
+非对称加密算法：
+
+- 非对称加密算法需要两个密钥：
+  - 公开密钥（publickey：简称公钥）
+  - 私有密钥（privatekey：简称私钥）
+  - 公钥与私钥是一对，如果用公钥对数据进行加密，只有用对应的私钥才能解密。因为加密和解密使用的是两个不同的密钥，所以这种算法叫作非对称加密算法。
+- 注意：
+  - 使用时都是使用公匙加密使用私匙解密。公匙可以公开，私匙自己保留。
+  - 算法强度复杂、安全性依赖于算法与密钥但是由于其算法复杂，而使得加密解密速度没有对称加密解密的速度快。
+- 使用流程和场景介绍
+  - 通过公匙加密，使用私匙解密。私匙是通过公匙计算生成的。假设ABC三方之间相互要进行加密通信。大家相互之间使用公匙进行信息加密，信息读取时使用各自对应的私匙进行信息解密
+  - 用户输入的支付密码会通过RSA加密
+
+
+
+在线生成 RSA 公钥私钥
+
+- http://web.chacuo.net/netrsakeypair
+
+
+
+公钥
+
+~~~
+-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6qBWnlDXEt6ROsDkrC38Dp8/M
+JDIIPv5nuodROiUD3fpzHXvjOHhGPwCddpIvWNAuSZeYNt1CJPEk5EZ2QKisYMxG
+qDqNkJ0lssZE7Qqzk1DCRKJfcxLmWkgST2v2NguGjyZPuYsD2boQ+tvs7M7zYwAQ
+yTCM8Sae07h/SdyIowIDAQAB
+-----END PUBLIC KEY-----
+
+~~~
+
+
+
+私钥
+
+~~~
+-----BEGIN PRIVATE KEY-----
+MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALqoFaeUNcS3pE6w
+OSsLfwOnz8wkMgg+/me6h1E6JQPd+nMde+M4eEY/AJ12ki9Y0C5Jl5g23UIk8STk
+RnZAqKxgzEaoOo2QnSWyxkTtCrOTUMJEol9zEuZaSBJPa/Y2C4aPJk+5iwPZuhD6
+2+zszvNjABDJMIzxJp7TuH9J3IijAgMBAAECgYAYNvIIOWv4RzKjmqzv7p/do4mL
+nC55b2KlpkcjvH1M0SFKicqmoY7I3ieARf+U8NqhBp8J+iQeDpjSBmM1uBGpglgb
+ZCfNKQiMw/YkKxL6Pt7mfz4klBrYHVM/dP5fQWrlMBmutjDkwAMdbnSOVlekClhq
+AQvdaYwdy3a4vI+tcQJBAOkBhwkXOld1QSEwxIBABgfL5ilkj05pQbb5zlEGLxy3
+J8slpZLhtVnGDtL2pN/3rEQt8gr1Afb9UgzN8ipYAE0CQQDNE5/Buq5u4b3FWMt7
+7tTA5o63zA+McOiAhGF+rHhGnH8x4UPW0e100Pn6jKwcUYPiSO0ERhFZJOxvlH0/
+D6SvAkEA5U0ihdi9CnqS2MX0az4WcS/A1rVmrkS5bgdSebw7OugoGix3UCAdZzaZ
+OhWN1fcYKZSJoSzSfS14xK8cBX3K9QJAD2BzUCFhRusiQZPg3hAQX85p0Ro56Dvn
+EwvaC5d/BTxixSiw34CqH2Iz/DdkCFOMYgE51GI0lsyP9eXaZkoT/QJAZTpklVvd
+LBy6/lHvsuM9v2+J4H+gdmv6ZeXkZZktlvfg9vGdtpB6nF+TuqvNbzvOHlcYaklg
+XIpiQvjT00XtLA==
+-----END PRIVATE KEY-----
+
+~~~
+
+
+
+JS RSA 加密示例
+
+~~~html
+<!DOCTYPE html>
+<script src="https://cdn.bootcdn.net/ajax/libs/jsencrypt/3.2.1/jsencrypt.min.js"></script>
+  <script>
+    var PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC6qBWnlDXEt6ROsDkrC38Dp8/M
+JDIIPv5nuodROiUD3fpzHXvjOHhGPwCddpIvWNAuSZeYNt1CJPEk5EZ2QKisYMxG
+qDqNkJ0lssZE7Qqzk1DCRKJfcxLmWkgST2v2NguGjyZPuYsD2boQ+tvs7M7zYwAQ
+yTCM8Sae07h/SdyIowIDAQAB
+-----END PUBLIC KEY-----`
+    var PRIVATE_KEY = `-----BEGIN PRIVATE KEY-----
+MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALqoFaeUNcS3pE6w
+OSsLfwOnz8wkMgg+/me6h1E6JQPd+nMde+M4eEY/AJ12ki9Y0C5Jl5g23UIk8STk
+RnZAqKxgzEaoOo2QnSWyxkTtCrOTUMJEol9zEuZaSBJPa/Y2C4aPJk+5iwPZuhD6
+2+zszvNjABDJMIzxJp7TuH9J3IijAgMBAAECgYAYNvIIOWv4RzKjmqzv7p/do4mL
+nC55b2KlpkcjvH1M0SFKicqmoY7I3ieARf+U8NqhBp8J+iQeDpjSBmM1uBGpglgb
+ZCfNKQiMw/YkKxL6Pt7mfz4klBrYHVM/dP5fQWrlMBmutjDkwAMdbnSOVlekClhq
+AQvdaYwdy3a4vI+tcQJBAOkBhwkXOld1QSEwxIBABgfL5ilkj05pQbb5zlEGLxy3
+J8slpZLhtVnGDtL2pN/3rEQt8gr1Afb9UgzN8ipYAE0CQQDNE5/Buq5u4b3FWMt7
+7tTA5o63zA+McOiAhGF+rHhGnH8x4UPW0e100Pn6jKwcUYPiSO0ERhFZJOxvlH0/
+D6SvAkEA5U0ihdi9CnqS2MX0az4WcS/A1rVmrkS5bgdSebw7OugoGix3UCAdZzaZ
+OhWN1fcYKZSJoSzSfS14xK8cBX3K9QJAD2BzUCFhRusiQZPg3hAQX85p0Ro56Dvn
+EwvaC5d/BTxixSiw34CqH2Iz/DdkCFOMYgE51GI0lsyP9eXaZkoT/QJAZTpklVvd
+LBy6/lHvsuM9v2+J4H+gdmv6ZeXkZZktlvfg9vGdtpB6nF+TuqvNbzvOHlcYaklg
+XIpiQvjT00XtLA==
+-----END PRIVATE KEY-----`
+    
+    // 使用公钥加密
+    var encrypt = new JSEncrypt()  // 实例化加密对象
+    encrypt.setPublicKey(PUBLIC_KEY)  // 设置公钥
+    var encrypted = encrypt.encrypt('signature')  // 对指定数据进行加密
+
+    // 显示加密后数据
+    alert(encrypted)
+
+    // 使用私钥解密
+    var decrypt = new JSEncrypt()
+    decrypt.setPrivateKey(PRIVATE_KEY)  // 设置私钥
+    decrypted = decrypt.decrypt(encrypted)  // 解密
+    
+    // 显示解密后数据
+    alert(decrypted);
+  </script>
+</html>
+~~~
+
+
+
+### 4.  Base64 伪加密
+
+- Base64 是一种用64个字符来表示任意二进制数据的方法。base64是一种编码方式而不是加密算法。只是看上去像是加密而已。
+
+- Base64使用A-Z,a-z,0-9,+,/这64个字符实现对数据进行加密。
+
+
+
+~~~html
+<!DOCTYPE html>
+<script src="https://cdn.bootcdn.net/ajax/libs/jsencrypt/3.2.1/jsencrypt.min.js"></script>
+  <script>
+　　var Base64 = {
+        _keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+        encode : function(e) {
+            var t = "";
+            var n, r, i, s, o, u, a;
+            var f = 0;
+            e = Base64._utf8_encode(e);
+            while (f < e.length) {
+                n = e.charCodeAt(f++);
+                r = e.charCodeAt(f++);
+                i = e.charCodeAt(f++);
+                s = n >> 2;
+                o = (n & 3) << 4 | r >> 4;
+                u = (r & 15) << 2 | i >> 6;
+                a = i & 63;
+                if (isNaN(r)) {
+                    u = a = 64
+                } else if (isNaN(i)) {
+                    a = 64
+                }
+                t = t + this._keyStr.charAt(s) + this._keyStr.charAt(o)
+                        + this._keyStr.charAt(u) + this._keyStr.charAt(a)
+            }
+            return t
+        },
+        decode : function(e) {
+            var t = "";
+            var n, r, i;
+            var s, o, u, a;
+            var f = 0;
+            e = e.replace(/[^A-Za-z0-9+/=]/g, "");
+            while (f < e.length) {
+                s = this._keyStr.indexOf(e.charAt(f++));
+                o = this._keyStr.indexOf(e.charAt(f++));
+                u = this._keyStr.indexOf(e.charAt(f++));
+                a = this._keyStr.indexOf(e.charAt(f++));
+                n = s << 2 | o >> 4;
+                r = (o & 15) << 4 | u >> 2;
+                i = (u & 3) << 6 | a;
+                t = t + String.fromCharCode(n);
+                if (u != 64) {
+                    t = t + String.fromCharCode(r)
+                }
+                if (a != 64) {
+                    t = t + String.fromCharCode(i)
+                }
+            }
+            t = Base64._utf8_decode(t);
+            return t
+        },
+        _utf8_encode : function(e) {
+            e = e.replace(/rn/g, "n");
+            var t = "";
+            for (var n = 0; n < e.length; n++) {
+                var r = e.charCodeAt(n);
+                if (r < 128) {
+                    t += String.fromCharCode(r)
+                } else if (r > 127 && r < 2048) {
+                    t += String.fromCharCode(r >> 6 | 192);
+                    t += String.fromCharCode(r & 63 | 128)
+                } else {
+                    t += String.fromCharCode(r >> 12 | 224);
+                    t += String.fromCharCode(r >> 6 & 63 | 128);
+                    t += String.fromCharCode(r & 63 | 128)
+                }
+            }
+            return t
+        },
+        _utf8_decode : function(e) {
+            var t = "";
+            var n = 0;
+            var r = c1 = c2 = 0;
+            while (n < e.length) {
+                r = e.charCodeAt(n);
+                if (r < 128) {
+                    t += String.fromCharCode(r);
+                    n++
+                } else if (r > 191 && r < 224) {
+                    c2 = e.charCodeAt(n + 1);
+                    t += String.fromCharCode((r & 31) << 6 | c2 & 63);
+                    n += 2
+                } else {
+                    c2 = e.charCodeAt(n + 1);
+                    c3 = e.charCodeAt(n + 2);
+                    t += String.fromCharCode((r & 15) << 12 | (c2 & 63) << 6 | c3
+                            & 63);
+                    n += 3
+                }
+            }
+            return t
+        }
+    }  
+
+    var encrypt = "signature"  // 加密数据
+    var encrypted = Base64.encode(encrypt)  // Base64 加密
+    alert(encrypted)
+    var decrypted = Base64.decode(encrypted)  // Base64 解密
+    alert(decrypted)
+  </script>
+</html>
+~~~
+
+
+
+## 关于 HTTPS 的衍变
+
+### 1. 明文传输
+
+http 协议是不安全的，在 https 诞生之前，所有网站都是使用 http 协议，而 http 协议在数据传输过程中都是明文，当浏览器发送数据给服务器时，如果中途被恶意拦截（嗅探），会造成数据泄露和篡改
+
+
+
+### 2. 对称秘钥加密传输
+
+使用对称秘钥对数据加密
+
+- 为了防止数据泄露，我们可以对数据进行加密，使用一个秘钥分别交给浏览器和服务器，他们之间传送的数据都使用这个秘钥进行加密和解密
+- 请求和响应流程如下：
+  - 客户端使用对称秘钥对请求进行加密，发送给服务器
+  - 服务端接受加密后的请求，使用秘钥进行解密，处理请求，然后使用秘钥对响应进行加密，返回给客户端
+  - 客户端收到加密后的响应，使用秘钥解密，获得响应内容
+
+
+
+对称秘钥加密缺陷：
+
+- 当浏览器加密请求时，我们如何让浏览器使用的秘钥与指定服务器的秘钥一致？
+- 每个用户客户端的秘钥都和服务端秘钥相同，那么浏览器能拿到秘钥，黑客也可以拿到，所以数据加密也没有了意义
+
+
+
+### 3. 动态对称秘钥
+
+先解决第一个问题，就是如何让浏览器使用的秘钥与指定服务器的秘钥一致，解决方法也很简单，就是让浏览器多请求一次。
+
+请求和响应流程如下：
+
+- 服务器先创建生成秘钥
+- 客户端向服务端发送请求，获取秘钥
+
+> 然后双方就都有了相同的秘钥，也就可以进行数据加密的传输了。
+
+
+
+### 4. 非对称秘钥的引入
+
+![image-20220320204509976](images/cycms/image-20220320204509976.png)
+
+
+
+> *4. 客户端获取公钥
+>
+> *7. 使用私钥解密
+>
+> *10. 使用对称秘钥解密
+
+
+
+如此一来，解决了动态对称秘钥和数据加密的问题，因为每个用户的对称秘钥都是随机生成且传输的过程中都使用公钥加密（公钥加密的数据只有私钥能解密），所有黑客无法截获对称秘钥。而数据传输是通过对称秘钥加密过的，所以黑客即使能获取数据也无法去解密看到真实的内容。看似无懈可击，但是，这么干还是又bug.
+
+如果黑客在上图[步骤2]劫持，黑客把自己的公钥返回给客客户端，那么客户端会使用黑客的公钥来加密对称秘钥，黑客在[步骤6]截获请求，使用自己的私钥获取对称秘钥，后面过程全都会完蛋。…
+
+
+
+### 5. 证书引入
+
+网站开发完毕后，先去证书机构申请证书
+
+- 机构会给申请者私钥、证书（包含公钥和企业信息）
+
+
+
+![image-20220320205615988](images/cycms/image-20220320205615988.png)
+
+
+
+
 
 
 
@@ -5301,7 +5776,7 @@ r.get('name')
 
 
 
-```
+```python
 import 库文件
 chaojiying = Chaojiying_Client('username', 'password', '96001')  # 平台用户信息
 im = open('img_file', 'rb').read()  # 打开下载的验证码

@@ -6,9 +6,9 @@
 
 ## 1. 同步远程到本地
 
-### 1.1 本地空仓库连接远程
+### 1.1 克隆远程仓库到本地
 
-此方法一般适用于本地文件为空，需要将远程项目下载到本地，进行本地操作。
+此方法一般适用于本地没有仓库（文件为空），需要将远程项目下载到本地，进行本地操作。
 
 
 
@@ -29,7 +29,29 @@
 
 
 
-### 1.2 本地仓库连接 Github
+### 1.2 更新本地仓库到最新版
+
+本地仓库与远程仓库不同步，远程仓库比本地仓库版本新的情况下，需要使用 pull 命令拉取远程仓库到本地
+
+
+
+每日检查项目进程，将本地仓库更新到最新，执行：
+
+```
+# 拉取默认分支
+git pull
+
+# 或使用带参数 pull， 拉取指定分支
+git pull origin master
+```
+
+> 拉取操作：更新本地项目
+
+
+
+## 2. 同步本地到远程
+
+### 2.1 初始化远程仓库
 
 一般适用于项目在本机创建，初始化 Github 项目时的操作。即项目文件在本地已经创建完毕，Github 为空仓库的时候，需要将项目推送到 Github 进行远程仓库初始化。
 
@@ -41,20 +63,35 @@
    git init
    ```
 
-2. 设置用户名和密码
+   
+
+2. 添加文件到本地仓库
+
+   ~~~
+   git add .
+   git commit "init project"
+   ~~~
+
+   
+
+3. 设置用户名和密码
 
    ```
    git config --global user.name "用户名"
    git config --global user.email "用户邮箱"
    ```
 
-3. 连接 Github
+   
+
+4. 连接 Github
 
    ```
    git remote add origin githublink
    ```
 
-4. 查看是否连接
+   
+
+5. 查看是否连接
 
    ```
    git remote -v
@@ -64,9 +101,17 @@
 
 
 
-## 2. 同步本地到远程
+6. 将本地文件同步到远程
 
-### 2.1 Master 主分支
+   ~~~
+   git push -u origin master
+   ~~~
+
+   
+
+## 3. 更新到远程仓库
+
+### 3.1 Master 主分支
 
 1. 将文件拷贝到Git目录
 
@@ -103,7 +148,7 @@
 
 
 
-### 2.2 Dev 分支
+### 3.2 Dev 分支
 
 1. 本地创建分支
 
@@ -119,9 +164,18 @@ git branch dev
 git checkout dev
 ```
 
+> 也可以直接使用 `git checkout -b dev` 直接创建并切换到该分支
+
 
 
 3. 添加/编辑分支文件
+
+~~~
+git add .
+git commit -m "update"
+~~~
+
+
 
 4. 推送到远程
 
@@ -130,6 +184,10 @@ git push --set-upstream origin dev
 ~~~
 
 > 第一次创建分支需要使用 --set-upstream 参数，远程仓库有分支后才可以直接 push
+>
+> 带上`-u` 参数其实就相当于记录了push到远端分支的默认值，这样当下次我们还想要继续push的这个远端分支的时候推送命令就可以简写成`git push`即可。
+
+> 参数简写 -u
 
 
 
@@ -141,35 +199,53 @@ git b -d dev
 
 
 
+## 4. 合并分支
 
+### 4.1 合并分支
 
-## 3. 更新本地仓库到最新版
-
-第一次拿到项目，一般是直接 clone 项目到本地
+在分支上开发完毕后，添加到本地仓库
 
 ~~~
-git clone 
+git add .
+git commit -m "完成了 dev 的开发"
 ~~~
 
-> 克隆操作前提：本地没有任何项目文件
+
+
+将本地的 dev 分支推送到远程
+
+~~~
+git push -u origin dev
+~~~
 
 
 
-每日检查项目进程，将本地仓库更新到最新，执行：
+将本地的 dev 分支合并到本地的 master 分支
 
-```
-git pull
-
-# 或使用带参数 pull， 拉取指定分支
-
-git pull origin master
-```
-
-> 拉取操作：更新本地项目
+~~~
+git checkout master
+git merge dev
+~~~
 
 
 
-## 4. 解决冲突
+再将 master 分支推送到远程
+
+~~~
+git push
+~~~
+
+
+
+删除本地 dev 分支
+
+~~~
+git branch -d dev
+~~~
+
+
+
+### 4.2 解决冲突
 
 当 push 文件的时候，Git 会提示有它人已经推送了同样的文件，需要解决冲突才可以进行 Push
 
@@ -193,20 +269,40 @@ git add 添加到暂存区、重新 Commit，然后再次进行 push 即可。
 
 冲突解决：
 
-步骤1：提交前先git pull获取冲突（获取远程仓库的更新内容）
-步骤2：查看提示，修改冲突文件，保留需要留的内容，重新提交即可
+- 步骤1：提交前先git pull获取冲突（获取远程仓库的更新内容）
+- 步骤2：查看提示，修改冲突文件，保留需要留的内容，重新提交即可
 
 
 
 项目流程：
 
-每日提交前先 git pull 
-有问题：先解决问题 再 git push
-没问题：直接 git push
+- 每日提交前先 git pull 
+- 有问题：先解决问题 再 git push
+- 没问题：直接 git push
 
 
 
 ## 5. 版本回退
+
+本地：已提交，没有 push
+
+~~~git
+git reset --soft # 撤销 commit
+git reset --mixed # 撤销 commit 和 add 两个动作
+~~~
+
+
+
+远程：已提交，已 push
+
+~~~git
+git reset --hard  # 撤销并舍弃版本号之后的记录，使用需要谨慎
+git revert  # 撤销，但是保留提交记录
+
+git push -f 强制推送覆盖远程
+~~~
+
+
 
 查看日志（务必在之前每次提交的时候写上注释）：退出查看日志按 q 键
 
@@ -248,14 +344,29 @@ git reset --hard commit_id     回退到指定版本（主要使用）
 本地生成 rsa 文件
 
 ```
-ssh-keygen -t rsa -C "your_email@youremail.com"
+ssh-keygen -t -b 4096 rsa -C "your_email@youremail.com"
+ssh-keygen -t ed25519 -C "your_email@youremail.com"
 ```
 
-> 填写 github 邮箱地址
+> ```bash
+> # -t rsa : t是type的缩写，指定密钥的类型，一种是RSA，一种是DSA，GitHub目前已经不支持DSA了。ssh-keygen默认使用RSA密钥
+> # -t ed25519: 另一种秘钥类型，Ed25519 的安全性在 RSA 2048 与 RSA 4096 之间，且性能在数十倍以上
+> # -b 4096 ：b是bit的缩写，指定的密钥长度。对于RSA密钥，最小要求768位，默认是2048位。命令中的4096指的是RSA密钥长度为4096位。
+> # -C "邮箱" ：C是comment的缩写。-C表示要提供一个新注释，用于识别这个密钥，所以“”里面不一定非要填邮箱，可以是任何内容，邮箱仅仅是识别用的key
+> ```
+
+如果每次不想提交或拉取的时候都输入密码的话，那么密码就留空，这里的密码只是 git 验证密码，而不是 gitee 或 github 远程账户密码
 
 
 
-之后会生成私钥和公钥，私钥自己留着，公钥内容复制到 Github 中 https://github.com/settings/keys
+生成公钥和私钥会保存在
+
+~~~
+C:\User\用户名\.ssh\id_ed25519.pub		# 公钥
+C:\User\用户名\.ssh\id_ed25519			# 私钥
+~~~
+
+私钥自己留着，公钥内容复制到 Github 中 https://github.com/settings/keys
 
 
 
@@ -300,6 +411,20 @@ ssh -T git@github.com
 ~~~
 url = https://用户名:密码@github.com/用户名/仓库名.git
 ~~~
+
+
+
+## 6. 忽略文件 .gitignore
+
+~~~
+# 填写不被 git 提交的目录
+/node_modules
+/unpackage/dist
+~~~
+
+
+
+如上方配置，我们让 git 忽略了 /unpackage/dist 文件夹，但是由于由于忽略了 dist 文件夹， unpackage 中又没有任何文件的情况下，那么 unpackage 也会被同样忽略，如果想保留 unpackage 文件夹，我们需要在 unpackage 文件夹添加一个 .gitkeep 占位文件就可以让 git 上传时保留 unpackage 文件夹。
 
 
 
